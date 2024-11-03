@@ -99,6 +99,9 @@ const users = {
     },
 
     logoutUser: (req, res) => {
+        //dinagdag ko lang -Ang
+        res.redirect('/login');
+
         req.session.destroy((err) => {
             if (err) {
                 console.error('Error logging out:', err);
@@ -149,7 +152,31 @@ const users = {
 
     profile: (req, res) => {
         res.render('profile');
-      }
+    },
+
+    admin_dashboard:  (req, res) => {
+            res.render('admin_dashboard');
+    },
+
+    admin_users:  (req, res) => {
+        res.render('admin_users');
+    },
+
+    admin_upload:  (req, res) => {
+    res.render('admin_upload');
+    },
+
+    admin_notification:  (req, res) => {
+    res.render('admin_notification');
+    },
+
+    admin_recent:  (req, res) => {
+    res.render('admin_recent');
+    },
+
+    admin_trash:  (req, res) => {
+    res.render('admin_trash');
+    }
 };
 
 module.exports = users;
