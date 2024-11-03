@@ -11,7 +11,6 @@ router.get('/login', UserCon.loginPage);
 router.post('/login', UserCon.loginUser);
 router.get('/logout', UserCon.logoutUser);
 
-router.get('/admin', UserCon.admin_page);
 router.get('/user', UserCon.user_page);
 router.get('/profile', UserCon.profile);
 

@@ -88,7 +88,7 @@ const users = {
                 req.session.user = { user_id: user.user_id, role: user.role };
 
                 if (role === 'Admin') {
-                    res.redirect('/admin');
+                    res.redirect('/admin-dashboard');
                 } else if (role === 'User') {
                     res.redirect('/user');
                 } else {
@@ -137,13 +137,13 @@ const users = {
         });
     },
 
-    admin_page: (req, res) => {
+    admin_users: (req, res) => {
         const stats = {
             totalUsers: 150,   
             activeUsers: 120, 
         };
 
-        res.render('admin_page', { user: req.session.user, stats });
+        res.render('admin_users', { user: req.session.user, stats });
     },
 
     user_page: (req, res) => {

@@ -1,0 +1,110 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+  }
+
+  .sidebar {
+    background-color: #003366;
+    color: #ffffff;
+    width: 250px;
+    height: 100vh;
+    padding-top: 20px;
+    position: fixed;
+  }
+
+  .logo img {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+  }
+
+  nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+  }
+
+  nav ul li {
+    margin: 15px 0;
+  }
+
+  nav ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  nav ul li a:hover,
+  nav ul li a.active {
+    background-color: #005b99;
+    border-radius: 4px;
+  }
+
+  .icon {
+    margin-right: 10px;
+  }
+
+  .logout {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .logout button {
+    background-color: #ff0000;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .logout button:hover {
+    background-color: #cc0000;
+  }
+
+  .content {
+    margin-left: 250px; 
+    padding: 20px;
+    background-color: #f4f4f9;
+    height: 100vh;
+    overflow-y: auto;
+    width: calc(100% - 250px);
+  }
+
+  .header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .user-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .user-table th,
+  .user-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+
+  .user-table th {
+    background-color: #005b99;
+    color: #ffffff;
+    font-weight: bold;
+  }
+
+  .user-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
