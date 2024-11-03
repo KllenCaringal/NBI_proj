@@ -4,7 +4,6 @@ const crypto = require('crypto');
 const emailService = require('../services/email_service.js'); 
 
 const users = {
-
     registerPage: (req, res) => {
         res.render('register', { successMessage: null });
     },
@@ -84,23 +83,49 @@ const users = {
                     return res.status(400).send('Incorrect password.');
                 }
 
-                // Save user session and redirect based on role
-                req.session.user = { user_id: user.user_id, role: user.role };
+                // Save user session
+                req.session.user = { 
+                    user_id: user.user_id, 
+                    role: user.roles, 
+                    firstname: user.firstname, 
+                    lastname: user.lastname 
+                };
 
-                if (role === 'Admin') {
-                    res.redirect('/admin-dashboard');
-                } else if (role === 'User') {
-                    res.redirect('/user_home');
-                } else {
-                    res.status(400).send('Invalid role.');
-                }
+                // Log the user's login
+                User.logUserLogin({
+                    user_id: req.session.user.user_id,
+                    role: req.session.user.role,  // Ensure the role is stored correctly
+                    firstname: req.session.user.firstname,
+                    lastname: req.session.user.lastname
+                }, (err) => {
+                    if (err) {
+                        console.error('Error logging login:', err);
+                        return res.status(500).send('Server error logging login.');
+                    }
+
+                    // Redirect based on role
+                    if (role === 'Admin') {
+                        res.redirect('/admin-dashboard');
+                    } else if (role === 'User') {
+                        res.redirect('/user_home');
+                    } else {
+                        res.status(400).send('Invalid role.');
+                    }
+                });
             });
         });
     },
 
     logoutUser: (req, res) => {
-        //dinagdag ko lang -Ang
-        res.redirect('/login');
+        // Log the user's logout
+        if (req.session.user) {
+            User.logUserLogout(req.session.user.user_id, (err) => {
+                if (err) {
+                    console.error('Error logging logout:', err);
+                    return res.status(500).send('Error logging out. Please try again.');
+                }
+            });
+        }
 
         req.session.destroy((err) => {
             if (err) {
@@ -137,7 +162,7 @@ const users = {
         });
     },
 
-
+    // Other functions remain unchanged...
     user_page: (req, res) => {
         res.render('user_page', { user: req.session.user });
     },
@@ -146,46 +171,49 @@ const users = {
         res.render('profile');
     },
 
-    admin_dashboard:  (req, res) => {
-            res.render('admin_dashboard');
+    admin_dashboard: (req, res) => {
+        res.render('admin_dashboard');
     },
 
-    admin_users:  (req, res) => {
+    admin_users: (req, res) => {
         res.render('admin_users');
     },
 
-    admin_upload:  (req, res) => {
-    res.render('admin_upload');
+    admin_upload: (req, res) => {
+        res.render('admin_upload');
     },
 
-    admin_notification:  (req, res) => {
-    res.render('admin_notification');
+    admin_notification: (req, res) => {
+        res.render('admin_notification');
     },
 
-    admin_activity:  (req, res) => {
-    res.render('admin_activity');
+    admin_activity: (req, res) => {
+        res.render('admin_activity');
     },
 
-    admin_trash:  (req, res) => {
-    res.render('admin_trash');
+    admin_trash: (req, res) => {
+        res.render('admin_trash');
     },
 
-    user_home:  (req, res) => {
+    user_home: (req, res) => {
         res.render('user_home');
     },
-    user_message:  (req, res) => {
+
+    user_message: (req, res) => {
         res.render('user_message');
     },
-    user_upload:  (req, res) => {
+
+    user_upload: (req, res) => {
         res.render('user_upload');
     },
-    user_settings:  (req, res) => {
+
+    user_settings: (req, res) => {
         res.render('user_settings');
     },
-    user_notifications:  (req, res) => {
+
+    user_notifications: (req, res) => {
         res.render('user_notifications');
     },
-
 };
 
 module.exports = users;

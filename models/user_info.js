@@ -47,6 +47,28 @@ function createDatabaseAndTable() {
                     console.log('Users table ensured.');
                 }
             });
+
+            // Create logs table if it doesn't exist
+            const createLogsTableQuery = `
+                CREATE TABLE IF NOT EXISTS logs (
+                    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+                    user_id VARCHAR(250),
+                    role VARCHAR(50),
+                    firstname VARCHAR(250),
+                    lastname VARCHAR(250),
+                    login_time DATETIME,
+                    logout_time DATETIME,
+                    status TINYINT(1) DEFAULT 1
+                )
+            `;
+
+            db.query(createLogsTableQuery, (err) => {
+                if (err) {
+                    console.error('Error creating logs table:', err);
+                } else {
+                    console.log('Logs table ensured.');
+                }
+            });
         });
     });
 }
@@ -85,7 +107,8 @@ const User = {
     // Create a new user
     create: (userData, callback) => {
         const query = `
-            INSERT INTO users (user_id, firstname, lastname, age, gender, contact_num, email, sitio, barangay, province, roles, verification_token, verified, token_expiry, password) 
+            INSERT INTO users (user_id, firstname, lastname, age, gender, contact_num, email, 
+            sitio, barangay, province, roles, verification_token, verified, token_expiry, password) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         db.query(query, userData, (err, results) => {
@@ -109,6 +132,39 @@ const User = {
         db.query(query, [status, userId], (err, results) => {
             if (err) return callback(err, null);
             return callback(null, results);
+        });
+    },
+
+    // Log user login
+    logUserLogin: (userDetails, callback) => {
+        const { user_id, role, firstname, lastname } = userDetails;
+        const login_time = new Date();
+        const status = 1; // 1 for login
+
+        const query = 'INSERT INTO logs (user_id, role, firstname, lastname, login_time, status) VALUES (?, ?, ?, ?, ?, ?)';
+        const values = [user_id, role, firstname, lastname, login_time, status];
+
+        db.query(query, values, (err, results) => {
+            if (err) {
+                return callback(err);
+            }
+            callback(null, results);
+        });
+    },
+
+    // Log user logout
+    logUserLogout: (user_id, callback) => {
+        const logout_time = new Date();
+        const status = 0; // 0 for logout
+
+        const query = 'UPDATE logs SET logout_time = ?, status = ? WHERE user_id = ? AND status = 1 ORDER BY login_time DESC LIMIT 1';
+        const values = [logout_time, status, user_id];
+
+        db.query(query, values, (err, results) => {
+            if (err) {
+                return callback(err);
+            }
+            callback(null, results);
         });
     },
 };
