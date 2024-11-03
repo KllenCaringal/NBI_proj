@@ -1,22 +1,58 @@
-const db = require('../config/database');
+const db = require('../config/database'); // Import the existing database connection
 const bcrypt = require('bcrypt');
 
-// Function to create the `nbi_users` database if it doesn't exist
-function createDatabase() {
+// Function to create the `nbi_users` database and `users` table if they don't exist
+function createDatabaseAndTable() {
     db.query("CREATE DATABASE IF NOT EXISTS nbi_users", (err) => {
         if (err) {
             console.error("Error creating database:", err);
-        } else {
-            console.log("Database 'nbi_users' created or already exists.");
-            db.changeUser({ database: 'nbi_users' }, (err) => {
-                if (err) console.error("Error switching to database 'nbi_users':", err);
-            });
+            return;
         }
+        console.log("Database 'nbi_users' ensured.");
+
+        // Switch to the `nbi_users` database
+        db.changeUser({ database: 'nbi_users' }, (err) => {
+            if (err) {
+                console.error("Error switching to database 'nbi_users':", err);
+                return;
+            }
+
+            // Create users table if it doesn't exist
+            const createUsersTableQuery = `
+                CREATE TABLE IF NOT EXISTS users (
+                    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+                    user_id VARCHAR(250),
+                    firstname VARCHAR(250),
+                    lastname VARCHAR(250),
+                    age INT,
+                    gender VARCHAR(250),
+                    contact_num VARCHAR(250),
+                    email VARCHAR(250) UNIQUE,
+                    sitio VARCHAR(250),
+                    barangay VARCHAR(250),
+                    province VARCHAR(250),
+                    roles VARCHAR(250),
+                    verification_token VARCHAR(250),
+                    verified TINYINT(1) DEFAULT 0,
+                    token_expiry DATETIME,
+                    password VARCHAR(250),
+                    status VARCHAR(50) DEFAULT 'Active'
+                )
+            `;
+
+            db.query(createUsersTableQuery, (err) => {
+                if (err) {
+                    console.error('Error creating users table:', err);
+                } else {
+                    console.log('Users table ensured.');
+                }
+            });
+        });
     });
 }
 
-// Call the function to create the database when the file is loaded
-createDatabase();
+// Call the function to ensure database and table setup on load
+createDatabaseAndTable();
 
 const User = {
     // Find user by email
@@ -50,7 +86,8 @@ const User = {
     create: (userData, callback) => {
         const query = `
             INSERT INTO users (user_id, firstname, lastname, age, gender, contact_num, email, sitio, barangay, province, roles, verification_token, verified, token_expiry, password) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
         db.query(query, userData, (err, results) => {
             if (err) return callback(err, null);
             return callback(null, results);
@@ -75,41 +112,5 @@ const User = {
         });
     },
 };
-
-// Function to create the users table if it doesn't exist
-function createUsersTable() {
-    const query = `
-        CREATE TABLE IF NOT EXISTS users (
-            id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-            user_id VARCHAR(250),
-            firstname VARCHAR(250),
-            lastname VARCHAR(250),
-            age INT,
-            gender VARCHAR(250),
-            contact_num VARCHAR(250),
-            email VARCHAR(250) UNIQUE,
-            sitio VARCHAR(250),
-            barangay VARCHAR(250),
-            province VARCHAR(250),
-            roles VARCHAR(250),
-            verification_token VARCHAR(250),
-            verified TINYINT(1) DEFAULT 0,
-            token_expiry DATETIME,
-            password VARCHAR(250),
-            status VARCHAR(50) DEFAULT 'Active'
-        )
-    `;
-    
-    db.query(query, (err, result) => {
-        if (err) {
-            console.error('Error creating users table:', err);
-        } else {
-            console.log('Users table created or already exists.');
-        }
-    });
-}
-
-// Call the function to create the table when the file is loaded
-createUsersTable();
 
 module.exports = User;
