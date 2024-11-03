@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recent</title>
-  <style>
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -73,27 +67,3 @@
     .logout button:hover {
       background-color: #cc0000;
     }
-  </style>
-</head>
-<body>
-  <div class="sidebar">
-    <div class="logo">
-      <img src="/path/to/logo.png" alt="Logo" />
-    </div>
-    <nav>
-      <ul>
-        <li><a href="/admindashboard" ><i class="nav-item nav-link"></i> Dashboard</a></li>
-        <li><a href="/adminusers"><i class="nav-item nav-link"></i> Users</a></li>
-        <li><a href="/adminupload"><i class="nav-item nav-link"></i> Upload</a></li>
-        <li><a href="/adminnotification"><i class="nav-item nav-link"></i> Notification</a></li>
-        <li><a href="/adminrecent" class="active"><i class="nav-item nav-link"></i> Recent</a></li>
-        <li><a href="/admintrash"><i class="nav-item nav-link"></i> Trash</a></li>
-      </ul>
-    </nav>
-    <div class="logout">
-        <a href="/logout"></a>
-      <button>Log Out</button>
-    </div>
-  </div>
-</body>
-</html>

@@ -68,8 +68,9 @@ body {
     background-color: #cc0000;
   }
 
+  
   .content {
-    margin-left: 250px; 
+    margin-left: 250px;
     padding: 20px;
     background-color: #f4f4f9;
     height: 100vh;
@@ -83,28 +84,21 @@ body {
     margin-bottom: 20px;
   }
 
-  .user-table {
-    width: 100%;
-    border-collapse: collapse;
+  .card {
     background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
   }
 
-  .user-table th,
-  .user-table td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    text-align: left;
-  }
-
-  .user-table th {
-    background-color: #005b99;
-    color: #ffffff;
+  .card-title {
+    font-size: 18px;
     font-weight: bold;
   }
 
-  .user-table tr:nth-child(even) {
-    background-color: #f2f2f2;
+  .card-content {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555555;
   }

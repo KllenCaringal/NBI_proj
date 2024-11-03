@@ -170,8 +170,8 @@ const users = {
     res.render('admin_notification');
     },
 
-    admin_recent:  (req, res) => {
-    res.render('admin_recent');
+    admin_activity:  (req, res) => {
+    res.render('admin_activity');
     },
 
     admin_trash:  (req, res) => {

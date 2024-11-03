@@ -15,12 +15,12 @@ router.get('/admin', UserCon.admin_page);
 router.get('/user', UserCon.user_page);
 router.get('/profile', UserCon.profile);
 
-router.get('/admindashboard', UserCon.admin_dashboard);
-router.get('/adminusers', UserCon.admin_users);
-router.get('/adminupload', UserCon.admin_upload);
-router.get('/adminnotification', UserCon.admin_notification);
-router.get('/adminrecent', UserCon.admin_recent);
-router.get('/admintrash', UserCon.admin_trash);
+router.get('/admin-dashboard', UserCon.admin_dashboard);
+router.get('/admin-users', UserCon.admin_users);
+router.get('/admin-upload', UserCon.admin_upload);
+router.get('/admin-notification', UserCon.admin_notification);
+router.get('/admin-activity', UserCon.admin_activity);
+router.get('/admin-trash', UserCon.admin_trash);
 
 
 module.exports = router;

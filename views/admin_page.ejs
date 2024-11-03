@@ -1,45 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/css/admin_page.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users</title>
+  <link rel="stylesheet" href="/css/admin_page.css">
 </head>
 <body>
-    <header>
-        <h1>Admin Dashboard</h1>
-        <nav>
-            <a href="/logout">Logout</a>
-        </nav>
-    </header>
-    <main>
-        <section class="welcome">
-            <h2>Welcome, <%= user.firstname %> <%= user.lastname %>!</h2>
-            <p>Your role: <strong><%= user.roles %></strong></p>
-        </section>
+  <div class="sidebar">
+    <div class="logo">
+      <img src="/path/to/logo.png" alt="Logo" />
+    </div>
+    <nav>
+        <ul>
+          <li><a href="/admin-dashboard" ><i class="nav-item nav-link"></i> Dashboard</a></li>
+          <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
+          <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
+          <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
+          <li><a href="/admin-activity" class="active"><i class="nav-item nav-link"></i> Activity</a></li>
+          <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
+        </ul>
+      </nav>
+    <div class="logout">
+      <a href="/logout">
+        <button>Log Out</button>
+      </a>
+    </div>
+  </div>
 
-        <section class="actions">
-            <h2>Admin Actions</h2>
-            <ul>
-                <li><a href="/manage-users">Manage Users</a></li>
-                <li><a href="/view-reports">View Reports</a></li>
-                <li><a href="/settings">Settings</a></li>
-                <li><a href="/profile">Profile</a></li>
-            </ul>
-        </section>
+  <div class="content">
+    <div class="header">Users</div>
 
-        <section class="statistics">
-            <h2>Site Statistics</h2>
-            <div class="stat">
-                <h3>Total Users</h3>
-                <p><%= stats.totalUsers %></p>
-            </div>
-            <div class="stat">
-                <h3>Active Users</h3>
-                <p><%= stats.activeUsers %></p>
-            </div>
-        </section>
-    </main>
+
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>001</td>
+          <td>John Doe</td>
+          <td>johndoe@example.com</td>
+          <td>Admin</td>
+          <td>Active</td>
+        </tr>
+        <tr>
+          <td>002</td>
+          <td>Jane Smith</td>
+          <td>janesmith@example.com</td>
+          <td>User</td>
+          <td>Inactive</td>
+        </tr>
+        <tr>
+          <td>003</td>
+          <td>Robert Brown</td>
+          <td>robertbrown@example.com</td>
+          <td>Editor</td>
+          <td>Active</td>
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
