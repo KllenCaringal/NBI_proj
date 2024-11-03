@@ -90,7 +90,7 @@ const users = {
                 if (role === 'Admin') {
                     res.redirect('/admin-dashboard');
                 } else if (role === 'User') {
-                    res.redirect('/user');
+                    res.redirect('/user_home');
                 } else {
                     res.status(400).send('Invalid role.');
                 }
@@ -137,14 +137,6 @@ const users = {
         });
     },
 
-    admin_users: (req, res) => {
-        const stats = {
-            totalUsers: 150,   
-            activeUsers: 120, 
-        };
-
-        res.render('admin_users', { user: req.session.user, stats });
-    },
 
     user_page: (req, res) => {
         res.render('user_page', { user: req.session.user });

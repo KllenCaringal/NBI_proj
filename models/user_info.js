@@ -1,6 +1,23 @@
 const db = require('../config/database');
 const bcrypt = require('bcrypt');
 
+// Function to create the `nbi_users` database if it doesn't exist
+function createDatabase() {
+    db.query("CREATE DATABASE IF NOT EXISTS nbi_users", (err) => {
+        if (err) {
+            console.error("Error creating database:", err);
+        } else {
+            console.log("Database 'nbi_users' created or already exists.");
+            db.changeUser({ database: 'nbi_users' }, (err) => {
+                if (err) console.error("Error switching to database 'nbi_users':", err);
+            });
+        }
+    });
+}
+
+// Call the function to create the database when the file is loaded
+createDatabase();
+
 const User = {
     // Find user by email
     findByEmail: (email, callback) => {
