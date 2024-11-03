@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+    }
+
+    .sidebar {
+      background-color: #003366;
+      color: #ffffff;
+      width: 250px;
+      height: 100vh;
+      padding-top: 20px;
+      position: fixed;
+    }
+
+    .logo img {
+      display: block;
+      margin: 0 auto;
+      width: 80%;
+    }
+
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 20px 0;
+    }
+
+    nav ul li {
+      margin: 15px 0;
+    }
+
+    nav ul li a {
+      color: #ffffff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    nav ul li a:hover,
+    nav ul li a.active {
+      background-color: #005b99;
+      border-radius: 4px;
+    }
+
+    .icon {
+      margin-right: 10px;
+    }
+
+    .logout {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .logout button {
+      background-color: #ff0000;
+      color: #ffffff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .logout button:hover {
+      background-color: #cc0000;
+    }
+
+    /* Main content area */
+    .content {
+      margin-left: 250px; /* Width of the sidebar */
+      padding: 20px;
+      background-color: #f4f4f9;
+      height: 100vh;
+      overflow-y: auto;
+      width: calc(100% - 250px);
+    }
+
+    .header {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .card-content {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555555;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">
+      <img src="/path/to/logo.png" alt="Logo" />
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/admindashboard" class="active"><i class="nav-item nav-link"></i> Dashboard</a></li>
+        <li><a href="/adminusers"><i class="nav-item nav-link"></i> Users</a></li>
+        <li><a href="/adminupload"><i class="nav-item nav-link"></i> Upload</a></li>
+        <li><a href="/adminnotification"><i class="nav-item nav-link"></i> Notification</a></li>
+        <li><a href="/adminrecent"><i class="nav-item nav-link"></i> Recent</a></li>
+        <li><a href="/admintrash"><i class="nav-item nav-link"></i> Trash</a></li>
+      </ul>
+    </nav>
+    <div class="logout">
+      <a href="/logout">
+        <button>Log Out</button>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="content">
+    <div class="header">Dashboard</div>
+    
+    <!-- Sample Card 1 -->
+    <div class="card">
+      <div class="card-title">Welcome to the Dashboard</div>
+      <div class="card-content">
+        Here is some introductory text about your dashboard. Use this space to provide a quick overview or important notifications.
+      </div>
+    </div>
+    
+    <!-- Sample Card 2 -->
+    <div class="card">
+      <div class="card-title">Recent Activity</div>
+      <div class="card-content">
+        <ul>
+          <li>User John Doe uploaded a file.</li>
+          <li>New notification: System update available.</li>
+          <li>Admin Jane Smith added a new user.</li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Sample Card 3 -->
+    <div class="card">
+      <div class="card-title">Statistics</div>
+      <div class="card-content">
+        <p>Total Users: 152</p>
+        <p>Files Uploaded: 453</p>
+        <p>Notifications Sent: 89</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
