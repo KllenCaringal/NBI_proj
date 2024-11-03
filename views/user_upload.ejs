@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBI SKGV - Upload</title>
+    <link rel="stylesheet" href="/css/style.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="navbar" id="navbar">
+        <div class="navbar-left">
+            <div class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</div>
+            <img src="/images/loggg.png" alt="Logo" class="navbar-logo">
+            <div class="title" id="title">NBI SKGV</div>
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="🔍" aria-label="Search">
+        </div>
+        <div class="navbar-right profile-settings">
+            <div class="icon" onclick="redirectToPage('/profile')">
+                <i class="fas fa-user profile-icon"></i>
+            </div>
+            <span>|</span>
+            <div class="icon" onclick="redirectToPage('/user_settings')">
+                <i class="fas fa-cog profile-icon"></i>
+            </div>
+        </div>
+    </div>
+    <div id="sidebar" class="sidebar">
+        <div class="back-button" onclick="toggleSidebar()">←</div>
+        <ul>
+            <li><span class="sidebar-icon">🏠</span><a href="/user_home">Home</a></li>
+            <li><span class="sidebar-icon">💬</span><a href="/user_message">Message</a></li>
+            <li><span class="sidebar-icon">📤</span><a href="/user_upload">Upload</a></li>
+            <li><span class="sidebar-icon">🔔</span><a href="/user_notifications">Notification</a></li>
+        </ul>
+        <div class="logout" onclick="handleLogout()">
+            <span class="sidebar-icon">🚪</span>Logout
+        </div>
+    </div>
+    <div class="content">
+        <div class="upload-container">
+            <h1>Upload Your File</h1>
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+                <label for="caseTitle">Case Title:</label>
+                <input type="text" id="caseTitle" name="caseTitle" required>
+
+                <label for="concern">Concern:</label>
+                <textarea id="concern" name="concern" required></textarea>
+
+                <label for="dateSent">Date Sent:</label>
+                <input type="date" id="dateSent" name="dateSent" required>
+
+                <label for="dateOfNeed">Date of Need:</label>
+                <input type="date" id="dateOfNeed" name="dateOfNeed" required>
+
+                <label for="file">Attach File:</label>
+                <input type="file" id="file" name="file" accept="*/*" required>
+
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const title = document.getElementById('title');
+            const hamburger = document.getElementById('hamburger');
+            const content = document.querySelector('.content'); 
+        
+            if (sidebar.style.left === '0px') {
+                sidebar.style.left = '-250px';
+                title.classList.remove('shifted');
+                hamburger.classList.remove('hidden');
+                content.classList.remove('shifted'); 
+            } else {
+                sidebar.style.left = '0px';
+                title.classList.add('shifted');
+                hamburger.classList.add('hidden');
+                content.classList.add('shifted'); 
+            }
+        }
+        
+        function redirectToPage(url) {
+            window.location.href = url;
+        }
+
+        function handleLogout() {
+            alert('Logout clicked');
+           
+        }
+    </script>
+</body>
+</html>

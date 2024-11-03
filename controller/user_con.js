@@ -176,7 +176,24 @@ const users = {
 
     admin_trash:  (req, res) => {
     res.render('admin_trash');
-    }
+    },
+
+    user_home:  (req, res) => {
+        res.render('user_home');
+    },
+    user_message:  (req, res) => {
+        res.render('user_message');
+    },
+    user_upload:  (req, res) => {
+        res.render('user_upload');
+    },
+    user_settings:  (req, res) => {
+        res.render('user_settings');
+    },
+    user_notifications:  (req, res) => {
+        res.render('user_notifications');
+    },
+
 };
 
 module.exports = users;

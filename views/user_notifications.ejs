@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBI Notifications</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+<body>
+    <div class="navbar" id="navbar">
+        <div class="navbar-left">
+            <div class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</div>
+            <img src="/images/loggg.png" alt="Logo" class="navbar-logo">
+            <div class="title" id="title">NBI SKGV</div>
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="🔍" aria-label="Search">
+        </div>
+        <div class="navbar-right profile-settings">
+            <div class="icon" onclick="redirectToPage('/profile')">
+                <i class="fas fa-user profile-icon"></i>
+            </div>
+            <span>|</span>
+            <div class="icon" onclick="redirectToPage('/user_settings')">
+                <i class="fas fa-cog profile-icon"></i>
+            </div>
+        </div>
+    </div>
+    <div id="sidebar" class="sidebar">
+        <div class="back-button" onclick="toggleSidebar()">←</div>
+        <ul>
+            <li><span class="sidebar-icon">🏠</span><a href="/user_home">Home</a></li>
+            <li><span class="sidebar-icon">💬</span><a href="/user_message">Message</a></li>
+            <li><span class="sidebar-icon">📤</span><a href="/user_upload">Upload</a></li>
+            <li><span class="sidebar-icon">🔔</span><a href="/user_notifications">Notification</a></li>
+        </ul>
+        <div class="logout" onclick="handleLogout()">
+            <span class="sidebar-icon">🚪</span>Logout
+        </div>
+    </div>
+  
+    <br>
+    <header>
+        <h1>NBI Notifications</h1>
+    </header>
+   
+    <p>You have a new notification: <strong>Case update available.</strong></p>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const title = document.getElementById('title');
+            const hamburger = document.getElementById('hamburger');
+            const content = document.querySelector('.content'); 
+        
+            if (sidebar.style.left === '0px') {
+                sidebar.style.left = '-250px';
+                title.classList.remove('shifted');
+                hamburger.classList.remove('hidden');
+                content.classList.remove('shifted');
+            } else {
+                sidebar.style.left = '0px';
+                title.classList.add('shifted');
+                hamburger.classList.add('hidden');
+                content.classList.add('shifted'); 
+            }
+        }
+        
+        function redirectToPage(url) {
+            window.location.href = url;
+        }
+
+        function handleLogout() {
+            alert('Logout clicked');
+            
+        }
+    </script>
+</body>
+</html>
