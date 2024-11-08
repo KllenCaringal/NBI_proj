@@ -1,7 +1,6 @@
-const db = require('../config/database'); // Import the existing database connection
+const db = require('../config/database'); 
 const bcrypt = require('bcrypt');
 
-// Function to create the `nbi_users` database and `users` table if they don't exist
 function createDatabaseAndTable() {
     db.query("CREATE DATABASE IF NOT EXISTS nbi_users", (err) => {
         if (err) {
@@ -9,7 +8,6 @@ function createDatabaseAndTable() {
             return;
         }
         console.log("Database 'nbi_users' ensured.");
-
         // Switch to the `nbi_users` database
         db.changeUser({ database: 'nbi_users' }, (err) => {
             if (err) {
