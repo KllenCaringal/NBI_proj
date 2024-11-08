@@ -1,0 +1,148 @@
+.navbar {
+    width: 100%;
+    background-color: #003366;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+.navbar-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+.title {
+    font-size: 20px;
+    color: white;
+}
+.search-container input {
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+}
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+.icon {
+    font-size: 28px;
+    margin-left: 15px;
+    cursor: pointer;
+}
+.hamburger {
+    font-size: 28px;
+    cursor: pointer;
+    display: block;
+}
+.profile-settings span {
+    color: white;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    position: absolute;
+    left: -250px;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #003366;
+    padding-top: 20px;
+    transition: left 0.3s ease-in-out;
+}
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+.sidebar ul li {
+    padding: 10px;
+    color: white;
+}
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
+.sidebar ul li a:hover {
+    background-color: #004080;
+}
+.sidebar .logout {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    padding: 10px;
+    color: white;
+    cursor: pointer;
+}
+.sidebar .logout:hover {
+    background-color: #004080;
+}
+
+/* Content Styling */
+.content {
+    margin-left: 0;
+    padding: 20px;
+    transition: margin-left 0.3s ease-in-out;
+}
+.upload-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+.upload-container h1 {
+    text-align: center;
+    font-size: 30px;
+    color: #003366;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+}
+form label {
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: #333;
+}
+form input[type="text"],
+form input[type="date"],
+form textarea,
+form input[type="file"] {
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+form textarea {
+    resize: vertical;
+}
+form button {
+    background-color: #003366;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+form button:hover {
+    background-color: #004080;
+}
+
+/* Sidebar Toggle Effects */
+.shifted {
+    margin-left: 250px;
+}
+.hidden {
+    display: none;
+}

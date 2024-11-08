@@ -1,0 +1,106 @@
+.navbar {
+    width: 100%;
+    background-color: #003366;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+.title {
+    font-size: 20px;
+    color: white;
+    margin-left: 10px;
+}
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+.icon {
+    font-size: 28px;
+    margin-left: 15px;
+    cursor: pointer;
+}
+.back-button {
+    font-size: 28px;
+    background: none;
+    border: none;
+    color: #003366;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* Settings Container */
+.settings-container {
+    padding: 20px;
+    margin-top: 80px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+h1 {
+    text-align: center;
+    color: #003366;
+    font-size: 32px;
+}
+
+/* Settings Sections */
+.settings-section {
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+.settings-section h2 {
+    font-size: 24px;
+    color: #003366;
+    margin-bottom: 10px;
+}
+.settings-section p {
+    font-size: 18px;
+    color: #333;
+}
+.settings-section button {
+    background-color: #003366;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+.settings-section button:hover {
+    background-color: #004080;
+}
+
+/* Settings Checkboxes */
+.settings-section label {
+    font-size: 18px;
+    display: block;
+    margin: 10px 0;
+}
+.settings-section input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* Dropdown Menus */
+.settings-section select {
+    padding: 8px;
+    font-size: 16px;
+    margin-top: 10px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+}
+
+/* Hover Effects */
+button:hover {
+    background-color: #004080;
+}
