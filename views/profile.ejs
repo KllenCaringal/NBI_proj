@@ -8,68 +8,71 @@
 </head>
 
 <body>
-    <!-- Header Section -->
-    <header class="nbi-header">
-        <div class="branding">
-            <img src="/images/nbi-logo.png" alt="NBI Logo" class="logo">
-            <h1>National Bureau of Investigation</h1>
-        </div>
-        <nav class="nav-links">
-            <a href="#">Dashboard</a>
-            <% if (user.role === 'Admin') { %>
-                <a href="#">Manage Users</a>
-                <a href="#">Admin Reports</a>
-            <% } else { %>
-                <a href="#">Cases</a>
-            <% } %>
-            <a href="#">Reports</a>
-            <a href="/logout">Logout</a>
-        </nav>
-    </header>
-
-    <!-- Profile Container -->
-    <main class="profile-container">
-        <section class="profile-info">
-            <img src="<%= user.profilePic || '/images/profile-pic.jpg' %>" alt="Profile Picture" class="profile-pic">
-            <div class="details">
-                <h2><%= user.firstname %> <%= user.lastname %></h2>
-                <p><strong>ID:</strong> <%= user.user_id %></p>
-                <p><strong>Role:</strong> <%= user.role %></p>
-                <p><strong>Moto:</strong> <%= user.moto %></p> <!-- Added "Moto" field -->
-                <button class="btn-primary">Update Profile</button>
+    <!-- Main Container to apply flex layout -->
+    <div class="main-container">
+        <!-- Header Section -->
+        <header class="nbi-header">
+            <div class="branding">
+                <img src="/images/nbi-logo.png" alt="NBI Logo" class="logo">
+                <h1>National Bureau of Investigation</h1>
             </div>
-        </section>
-
-        <!-- Tabs Section -->
-        <section class="tabs-section">
-            <div class="tabs">
-                <button class="tab-button active" onclick="showTab('overview')">Overview</button>
+            <nav class="nav-links">
+                <a href="#">Dashboard</a>
                 <% if (user.role === 'Admin') { %>
-                    <button class="tab-button" onclick="showTab('admin-tasks')">Admin Tasks</button>
+                    <a href="#">Manage Users</a>
+                    <a href="#">Admin Reports</a>
                 <% } else { %>
-                    <button class="tab-button" onclick="showTab('cases')">Cases</button>
+                    <a href="#">Cases</a>
                 <% } %>
-                <button class="tab-button" onclick="showTab('settings')">Settings</button>
-            </div>
-            <div class="tab-content" id="overview">
-                <p><strong>First Name:</strong> <%= user.firstname %></p>
-                <p><strong>Last Name:</strong> <%= user.lastname %></p>
-                <p><strong>Moto:</strong> <%= user.moto %></p> <!-- Overview showing Moto -->
-            </div>
-            <% if (user.role === 'Admin') { %>
-                <div class="tab-content" id="admin-tasks" style="display:none;">
-                    Admin-specific tasks and management tools.
+                <a href="#">Reports</a>
+                <a href="/logout">Logout</a>
+            </nav>
+        </header>
+
+        <!-- Profile Container -->
+        <main class="profile-container">
+            <section class="profile-info">
+                <img src="<%= user.profilePic || '/images/profile-pic.jpg' %>" alt="Profile Picture" class="profile-pic">
+                <div class="details">
+                    <h2><%= user.firstname %> <%= user.lastname %></h2>
+                    <p><strong>ID:</strong> <%= user.user_id %></p>
+                    <p><strong>Role:</strong> <%= user.role %></p>
+                    <p><strong>Moto:</strong> <%= user.moto %></p>
+                    <button class="btn-primary">Update Profile</button>
                 </div>
-            <% } else { %>
-                <div class="tab-content" id="cases" style="display:none;">
-                    List of active and closed cases.
+            </section>
+
+            <!-- Tabs Section -->
+            <section class="tabs-section">
+                <div class="tabs">
+                    <button class="tab-button active" onclick="showTab('overview')">Overview</button>
+                    <% if (user.role === 'Admin') { %>
+                        <button class="tab-button" onclick="showTab('admin-tasks')">Admin Tasks</button>
+                    <% } else { %>
+                        <button class="tab-button" onclick="showTab('cases')">Cases</button>
+                    <% } %>
+                    <button class="tab-button" onclick="showTab('settings')">Settings</button>
                 </div>
-            <% } %>
-            <div class="tab-content" id="settings" style="display:none;">
-                Profile and account settings.
-            </div>
-        </section>
-    </main>
+                <div class="tab-content" id="overview">
+                    <p><strong>First Name:</strong> <%= user.firstname %></p>
+                    <p><strong>Last Name:</strong> <%= user.lastname %></p>
+                    <p><strong>Moto:</strong> <%= user.moto %></p>
+                </div>
+                <% if (user.role === 'Admin') { %>
+                    <div class="tab-content" id="admin-tasks" style="display:none;">
+                        Admin-specific tasks and management tools.
+                    </div>
+                <% } else { %>
+                    <div class="tab-content" id="cases" style="display:none;">
+                        List of active and closed cases.
+                    </div>
+                <% } %>
+                <div class="tab-content" id="settings" style="display:none;">
+                    Profile and account settings.
+                </div>
+            </section>
+        </main>
+    </div>
 
     <!-- Footer Section -->
     <footer class="nbi-footer">

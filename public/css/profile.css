@@ -5,11 +5,19 @@
     box-sizing: border-box;
 }
 
-/* Body Styling */
-body {
+/* Ensure the body and .main-container take the full height */
+html, body {
+    height: 100%;
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     color: #333;
+}
+
+/* Main container that flexes and pushes footer to bottom */
+.main-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header Styling */
@@ -50,6 +58,7 @@ body {
 
 /* Profile Container Styling */
 .profile-container {
+    flex: 1;
     max-width: 800px;
     margin: 40px auto;
     padding: 20px;
@@ -134,6 +143,5 @@ body {
     padding: 10px 0;
     background-color: #003366;
     color: #fff;
-    margin-top: 20px;
     font-size: 14px;
 }
