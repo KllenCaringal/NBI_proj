@@ -5,11 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <link rel="stylesheet" href="/css/admin_dashboard.css">
+  
+  <!-- Add Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Add some custom styles for the activity section */
+    .activity-card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .activity-card .activity-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .activity-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .activity-list li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .activity-list li i {
+      font-size: 20px;
+      margin-right: 15px;
+      color: #4caf50; /* Green for success activity */
+    }
+
+    .activity-list li span {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .activity-list li .timestamp {
+      font-size: 12px;
+      color: #999;
+      margin-left: auto;
+    }
+  </style>
 </head>
 <body>
   <div class="sidebar">
     <div class="logo">
-      <img src="/path/to/logo.png" alt="Logo" />
+      <img src="/images/nbi_logo.png" alt="Logo" />
     </div>
     <nav>
       <ul>
@@ -29,37 +76,66 @@
     </div>
   </div>
 
-  
   <div class="content">
     <div class="header">Dashboard</div>
-    
-    
+
     <div class="card">
       <div class="card-title">Welcome to the Dashboard</div>
       <div class="card-content">
         Here is some introductory text about your dashboard. Use this space to provide a quick overview or important notifications.
       </div>
     </div>
-    
-   
-    <div class="card">
-      <div class="card-title">Recent Activity</div>
-      <div class="card-content">
-        <ul>
-          <li>User John Doe uploaded a file.</li>
-          <li>New notification: System update available.</li>
-          <li>Admin Jane Smith added a new user.</li>
-        </ul>
-      </div>
+
+    <!-- Recent Activity Card -->
+    <div class="activity-card">
+      <div class="activity-title">Recent Activity</div>
+      <ul class="activity-list">
+        <li>
+          <i class="fa fa-upload"></i>
+          <span>User John Doe uploaded a file.</span>
+          <span class="timestamp">2 hours ago</span>
+        </li>
+        <li>
+          <i class="fa fa-bell"></i>
+          <span>New notification: System update available.</span>
+          <span class="timestamp">5 hours ago</span>
+        </li>
+        <li>
+          <i class="fa fa-user-plus"></i>
+          <span>Admin Jane Smith added a new user.</span>
+          <span class="timestamp">1 day ago</span>
+        </li>
+      </ul>
     </div>
-    
-    
-    <div class="card">
+
+    <div class="card" style="background-color: #bfe9ff;">
       <div class="card-title">Statistics</div>
       <div class="card-content">
-        <p>Total Users: 152</p>
-        <p>Files Uploaded: 453</p>
-        <p>Notifications Sent: 89</p>
+        <canvas id="statisticsChart" width="400" height="200"></canvas>
+        <script>
+          // Data for the chart
+          var ctx = document.getElementById('statisticsChart').getContext('2d');
+          var statisticsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ['Total Users', 'Files Uploaded', 'Notifications Sent'], // X-axis labels
+              datasets: [{
+                label: 'Statistics',
+                data: [152, 453, 89], // Data for each label
+                backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)', 'rgba(75, 192, 192, 1)'],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+        </script>
       </div>
     </div>
   </div>

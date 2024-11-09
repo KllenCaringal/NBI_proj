@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link rel="stylesheet" href="/css/register.css"> 
+    <link rel="stylesheet" href="/css/register.css">
 </head>
 <body>
+    <div class="overlay"></div> 
     <div class="container">
+        <div class="login-header">
+            <img src="/images/nbi_logo.png" alt="Logo" class="logo-icon">
+        </div>
         <h2>Create an Account</h2>
         <form action="/register" method="POST">
-            <div class="form-group">
+              <div class="form-group">
                 <label for="user_id">User ID</label>
                 <input type="text" id="user_id" name="user_id" required>
             </div>
@@ -71,8 +75,7 @@
         </form>
         <p>Already have an account? <a href="/login">Login here</a></p>
     </div>
-
-    <div id="successMessage" style="display:none;">
+      <div id="successMessage" style="display:none;">
         <%= successMessage || '' %>
     </div>
     
