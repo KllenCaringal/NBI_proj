@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NBI SKGV - Messages</title>
+    <title>NBI SKGV - User Messages</title>
     <link rel="stylesheet" href="/css/user-message.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="navbar" id="navbar">
+    <div class="navbar">
         <div class="navbar-left">
-            <div class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</div>
+            <div class="hamburger" onclick="toggleSidebar()">☰</div>
             <img src="/images/nbi_logo.png" alt="Logo" class="navbar-logo">
-            <div class="title" id="title">NBI SKGV</div>
+            <div class="title">NBI SKGV</div>
         </div>
         <div class="search-container">
             <input type="text" placeholder="🔍" aria-label="Search">
@@ -27,17 +27,14 @@
             </div>
         </div>
     </div>
-    <div id="sidebar" class="sidebar">
-        <div class="back-button" onclick="toggleSidebar()">←</div>
+    <div class="sidebar">
         <ul>
-            <li><span class="sidebar-icon">🏠</span><a href="/user_home">Home</a></li>
-            <li><span class="sidebar-icon">💬</span><a href="/user_message">Message</a></li>
-            <li><span class="sidebar-icon">📤</span><a href="/user_upload">Upload</a></li>
-            <li><span class="sidebar-icon">🔔</span><a href="/user_notifications">Notification</a></li>
+            <li><a href="/user_home">Home</a></li>
+            <li><a href="/user_message" class="active">Messages</a></li>
+            <li><a href="/user_upload">Upload</a></li>
+            <li><a href="/user_notifications">Notifications</a></li>
         </ul>
-        <div class="logout" onclick="handleLogout()">
-            <span class="sidebar-icon">🚪</span>Logout
-        </div>
+        <div class="logout" onclick="handleLogout()">Logout</div>
     </div>
     <div class="content">
         <h1>Messages</h1>
@@ -45,46 +42,36 @@
             <div class="message-area" id="messageArea"></div>
             <div class="input-area">
                 <input type="text" id="messageInput" placeholder="Type your message..." aria-label="Message">
-                <button onclick="sendMessage()">Send</button>
+                <button id="sendButton">Send</button>
             </div>
         </div>
     </div>
+    <script src="/socket.io/socket.io.js"></script>
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const title = document.getElementById('title');
-            const hamburger = document.getElementById('hamburger');
-            const content = document.querySelector('.content'); 
-    
-            if (sidebar.style.left === '0px') {
-                sidebar.style.left = '-250px';
-                title.classList.remove('shifted');
-                hamburger.classList.remove('hidden');
-                content.classList.remove('shifted');
-            } else {
-                sidebar.style.left = '0px';
-                title.classList.add('shifted');
-                hamburger.classList.add('hidden');
-                content.classList.add('shifted'); 
+
+        const socket = io();
+
+        document.getElementById("sendButton").addEventListener("click", sendMessage);
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const messageText = messageInput.value.trim();
+
+            if (messageText) {
+                socket.emit('chat message', messageText); 
+                messageInput.value = ''; 
             }
+
         }
-        
-        function redirectToPage(url) {
-            window.location.href = url;
-        }
-    
-        function handleLogout() {
-            // Perform the logout request (this can be a GET request to the /logout route)
-            fetch('/logout', { method: 'GET' })
-                .then(response => {
-                    if (response.ok) {
-                        window.location.href = '/login'; // Redirect to login page after logout
-                    }
-                })
-                .catch(error => {
-                    console.error('Logout error:', error);
-                });
-        }
+
+        socket.on('chat message', (msg) => {
+            const messageArea = document.getElementById('messageArea');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'received');
+            messageElement.innerText = msg;
+            messageArea.appendChild(messageElement);
+            messageArea.scrollTop = messageArea.scrollHeight;
+        });
     </script>
     
 </body>

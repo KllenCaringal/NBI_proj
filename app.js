@@ -2,9 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const routes = require('./routes/router');
+
 const app = express();
-
-
 app.use(session({
     secret: 'yourSecretKey', 
     resave: false,

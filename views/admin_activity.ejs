@@ -1,16 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Activity</title>
-  <link rel="stylesheet" href="/css/admin_notification.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Activity</title>
+    <link rel="stylesheet" href="/css/admin_notification.css">
 </head>
 <body>
-  <div class="sidebar">
-    <div class="logo">
-      <img src="/path/to/logo.png" alt="Logo" />
+    <div class="sidebar">
+        <div class="logo">
+            <img src="/images/nbi_logo.png" alt="Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin-dashboard">Dashboard</a></li>
+                <li><a href="/admin-users">Users</a></li>
+                <li><a href="/admin-upload">Upload</a></li>
+                <li><a href="/admin-notification">Notifications</a></li>
+                <li><a href="/admin-activity" class="active">Activity</a></li>
+                <li><a href="/admin-trash">Trash</a></li>
+                <li><a href="/profile">Profile</a></li>
+            </ul>
+        </nav>
+        <div class="logout">
+            <button onclick="handleLogout()">Log Out</button>
+        </div>
     </div>
+
     <nav>
       <ul>
         <li><a href="/admin-dashboard" ><i class="nav-item nav-link"></i> Dashboard</a></li>
@@ -26,7 +42,33 @@
       <a href="/logout">
         <button>Log Out</button>
       </a>
+
     </div>
-  </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        document.getElementById("sendButton").addEventListener("click", sendMessage);
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const messageText = messageInput.value.trim();
+
+            if (messageText) {
+                socket.emit('chat message', messageText); 
+                messageInput.value = ''; 
+            }
+        }
+
+        socket.on('chat message', (msg) => {
+            const messageArea = document.getElementById('messageArea');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'received');
+            messageElement.innerText = msg;
+            messageArea.appendChild(messageElement);
+            messageArea.scrollTop = messageArea.scrollHeight;
+        });
+    </script>
 </body>
 </html>
