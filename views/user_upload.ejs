@@ -69,17 +69,17 @@
         </div>
     </div>
     <script>
-        function toggleSidebar() {
+       function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const title = document.getElementById('title');
             const hamburger = document.getElementById('hamburger');
             const content = document.querySelector('.content'); 
-        
+    
             if (sidebar.style.left === '0px') {
                 sidebar.style.left = '-250px';
                 title.classList.remove('shifted');
                 hamburger.classList.remove('hidden');
-                content.classList.remove('shifted'); 
+                content.classList.remove('shifted');
             } else {
                 sidebar.style.left = '0px';
                 title.classList.add('shifted');
@@ -91,9 +91,17 @@
         function redirectToPage(url) {
             window.location.href = url;
         }
-
+    
         function handleLogout() {
-            alert('Logout clicked');
+            fetch('/logout', { method: 'GET' })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/login'; // Redirect to login page after logout
+                    }
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                });
         }
     </script>
 </body>
