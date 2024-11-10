@@ -59,17 +59,17 @@ const users = {
     },
 
     loginUser: (req, res) => {
-        const { user_id, password, role } = req.body;
+        const { user_id, password } = req.body;
 
-        // Find user by user_id and role
-        User.findByUserIdAndRole(user_id, role, (err, user) => {
+        // Find user by user_id
+        User.findByUserId(user_id, (err, user) => {
             if (err) {
                 console.error('Database error:', err);
                 return res.status(500).send('Server error.');
             }
 
             if (!user) {
-                return res.status(400).send('Invalid user ID or role.');
+                return res.status(400).send('Invalid user ID.');
             }
 
             // Check password
@@ -83,10 +83,10 @@ const users = {
                     return res.status(400).send('Incorrect password.');
                 }
 
-                // Save user session
+                // Save user session with role and other details
                 req.session.user = { 
                     user_id: user.user_id, 
-                    role: user.roles, 
+                    role: user.roles,  // User's role from the database
                     firstname: user.firstname, 
                     lastname: user.lastname 
                 };
@@ -103,12 +103,13 @@ const users = {
                         return res.status(500).send('Server error logging login.');
                     }
 
-                    // Redirect based on role
-                    if (role === 'Admin') {
+                    // Redirect based on role from database
+                    if (user.roles === 'admin') {
                         res.redirect('/admin-dashboard');
-                    } else if (role === 'User') {
+                    } else if (user.roles === 'user') {
                         res.redirect('/user_home');
                     } else {
+                        console.error('Role mismatch: Invalid role:', user.roles); // Log this error
                         res.status(400).send('Invalid role.');
                     }
                 });

@@ -68,7 +68,7 @@
             const title = document.getElementById('title');
             const hamburger = document.getElementById('hamburger');
             const content = document.querySelector('.content'); 
-        
+    
             if (sidebar.style.left === '0px') {
                 sidebar.style.left = '-250px';
                 title.classList.remove('shifted');
@@ -85,11 +85,20 @@
         function redirectToPage(url) {
             window.location.href = url;
         }
-
+    
         function handleLogout() {
-            alert('Logout clicked');
-            
+            // Perform the logout request (this can be a GET request to the /logout route)
+            fetch('/logout', { method: 'GET' })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/login'; // Redirect to login page after logout
+                    }
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                });
         }
     </script>
+    
 </body>
 </html>

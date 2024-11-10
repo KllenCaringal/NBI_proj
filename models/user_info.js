@@ -8,14 +8,12 @@ function createDatabaseAndTable() {
             return;
         }
         console.log("Database 'nbi_users' ensured.");
-        // Switch to the `nbi_users` database
         db.changeUser({ database: 'nbi_users' }, (err) => {
             if (err) {
                 console.error("Error switching to database 'nbi_users':", err);
                 return;
             }
 
-            // Create users table if it doesn't exist
             const createUsersTableQuery = `
                 CREATE TABLE IF NOT EXISTS users (
                     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -37,7 +35,6 @@ function createDatabaseAndTable() {
                     status VARCHAR(50) DEFAULT 'Active'
                 )
             `;
-
             db.query(createUsersTableQuery, (err) => {
                 if (err) {
                     console.error('Error creating users table:', err);
@@ -46,7 +43,6 @@ function createDatabaseAndTable() {
                 }
             });
 
-            // Create logs table if it doesn't exist
             const createLogsTableQuery = `
                 CREATE TABLE IF NOT EXISTS logs (
                     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -59,7 +55,6 @@ function createDatabaseAndTable() {
                     status TINYINT(1) DEFAULT 1
                 )
             `;
-
             db.query(createLogsTableQuery, (err) => {
                 if (err) {
                     console.error('Error creating logs table:', err);
@@ -84,12 +79,13 @@ const User = {
         });
     },
 
-    // Find user by user_id and role (for login)
-    findByUserIdAndRole: (user_id, role, callback) => {
-        const query = 'SELECT * FROM users WHERE user_id = ? AND roles = ?';
-        db.query(query, [user_id, role], (err, results) => {
+    // Find user by user_id (fetch role as well)
+    findByUserId: (user_id, callback) => {
+        const query = 'SELECT * FROM users WHERE user_id = ?';
+        db.query(query, [user_id], (err, results) => {
             if (err) return callback(err, null);
-            return callback(null, results[0]);
+            if (results.length === 0) return callback(null, null);
+            return callback(null, results[0]); // Return user details including role
         });
     },
 
@@ -165,6 +161,18 @@ const User = {
             callback(null, results);
         });
     },
+
+    // Update password
+    updatePassword: (userId, newPassword, callback) => {
+        bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
+            if (err) return callback(err);
+            const query = 'UPDATE users SET password = ? WHERE id = ?';
+            db.query(query, [hashedPassword, userId], (err, results) => {
+                if (err) return callback(err);
+                return callback(null, results);
+            });
+        });
+    }
 };
 
 module.exports = User;

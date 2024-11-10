@@ -55,12 +55,12 @@
             const title = document.getElementById('title');
             const hamburger = document.getElementById('hamburger');
             const content = document.querySelector('.content'); 
-        
+    
             if (sidebar.style.left === '0px') {
                 sidebar.style.left = '-250px';
                 title.classList.remove('shifted');
                 hamburger.classList.remove('hidden');
-                content.classList.remove('shifted'); 
+                content.classList.remove('shifted');
             } else {
                 sidebar.style.left = '0px';
                 title.classList.add('shifted');
@@ -69,29 +69,23 @@
             }
         }
         
-
         function redirectToPage(url) {
             window.location.href = url;
         }
-
+    
         function handleLogout() {
-            alert('Logout clicked');
-            
-        }
-
-        function sendMessage() {
-            const messageInput = document.getElementById('messageInput');
-            const messageText = messageInput.value.trim();
-            if (messageText) {
-                const messageArea = document.getElementById('messageArea');
-                const messageElement = document.createElement('div');
-                messageElement.classList.add('message');
-                messageElement.innerText = messageText;
-                messageArea.appendChild(messageElement);
-                messageInput.value = ''; 
-                messageArea.scrollTop = messageArea.scrollHeight;
-            }
+            // Perform the logout request (this can be a GET request to the /logout route)
+            fetch('/logout', { method: 'GET' })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/login'; // Redirect to login page after logout
+                    }
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                });
         }
     </script>
+    
 </body>
 </html>
