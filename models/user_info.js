@@ -63,6 +63,26 @@ function createDatabaseAndTable() {
                     console.log('Logs table ensured.');
                 }
             });
+
+            // Add creation of the uploads table
+            const createUploadsTableQuery = `
+                CREATE TABLE IF NOT EXISTS uploads (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    case_title VARCHAR(255) NOT NULL,
+                    concern TEXT NOT NULL,
+                    date_sent DATE NOT NULL,
+                    date_of_need DATE NOT NULL,
+                    file_path VARCHAR(255) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            `;
+            db.query(createUploadsTableQuery, (err) => {
+                if (err) {
+                    console.error('Error creating uploads table:', err);
+                } else {
+                    console.log('Uploads table ensured.');
+                }
+            });
         });
     });
 }
