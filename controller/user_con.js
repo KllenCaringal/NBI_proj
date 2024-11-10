@@ -1,7 +1,20 @@
 const User = require('../models/user_info');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-const emailService = require('../services/email_service.js'); 
+const emailService = require('../services/email_service.js');
+const multer = require('multer');
+const path = require('path');
+
+// Configure Multer for profile picture upload
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/images'); // Save in public/images directory
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+    }
+});
+const upload = multer({ storage: storage }).single('profile_pic'); // Middleware for single file upload
 
 const users = {
     registerPage: (req, res) => {
@@ -9,46 +22,58 @@ const users = {
     },
 
     registerUser: (req, res) => {
-        const { user_id, firstname, lastname, age, gender, contact_num, email, sitio, barangay, province, roles, password } = req.body;
-
-        const verificationToken = crypto.randomBytes(32).toString('hex'); 
-        const verified = 0; 
-        const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); 
-
-        User.findByEmail(email, (err, existingUser) => {
+        // Use `upload` middleware for file handling
+        upload(req, res, (err) => {
             if (err) {
-                console.error('Database error:', err);
-                return res.status(500).send('Database error.');
+                console.error('Error uploading file:', err);
+                return res.status(500).send('Error uploading file.');
             }
-            if (existingUser) {
-                return res.status(400).send('User already exists.');
-            }
-
-            bcrypt.hash(password, 10, (err, hashedPassword) => {
+    
+            // Extract form data
+            const { user_id, firstname, lastname, age, gender, contact_num, email, sitio, barangay, province, roles, password } = req.body;
+            const verificationToken = crypto.randomBytes(32).toString('hex');
+            const verified = 0;
+            const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+            const profilePicPath = req.file ? '/images/' + req.file.filename : null; // Save image path for database
+    
+            User.findByEmail(email, (err, existingUser) => {
                 if (err) {
-                    console.error('Error hashing password:', err);
-                    return res.status(500).send('Error hashing password.');
+                    console.error('Database error:', err);
+                    return res.status(500).send('Database error.');
                 }
-
-                const userData = [
-                    user_id, firstname, lastname, age, gender, contact_num, email, 
-                    sitio, barangay, province, roles, verificationToken, verified, tokenExpiry, hashedPassword
-                ];
-                
-                User.create(userData, (err, results) => {
+                if (existingUser) {
+                    return res.status(400).send('User already exists.');
+                }
+    
+                // Hash password and save user
+                bcrypt.hash(password, 10, (err, hashedPassword) => {
                     if (err) {
-                        console.error('Error saving user to database:', err);
-                        return res.status(500).send('Error saving user to database.');
+                        console.error('Error hashing password:', err);
+                        return res.status(500).send('Error hashing password.');
                     }
-
-                    emailService.sendVerificationEmail(email, verificationToken)
-                        .then(() => {
-                            res.render('register', { successMessage: 'Registration successful! Please verify your email.' });
-                        })
-                        .catch(emailErr => {
-                            console.error('Error sending verification email:', emailErr);
-                            res.status(500).send('Registration successful, but failed to send verification email.');
-                        });
+    
+                    const userData = [
+                        user_id, firstname, lastname, age, gender, contact_num, email, 
+                        sitio, barangay, province, roles, verificationToken, verified, tokenExpiry, hashedPassword, profilePicPath
+                    ];
+    
+                    // Insert into database
+                    User.create(userData, (err, results) => {
+                        if (err) {
+                            console.error('Error saving user to database:', err);
+                            return res.status(500).send('Error saving user to database.');
+                        }
+    
+                        // Send verification email
+                        emailService.sendVerificationEmail(email, verificationToken)
+                            .then(() => {
+                                res.render('register', { successMessage: 'Registration successful! Please verify your email.' });
+                            })
+                            .catch(emailErr => {
+                                console.error('Error sending verification email:', emailErr);
+                                res.status(500).send('Registration successful, but failed to send verification email.');
+                            });
+                    });
                 });
             });
         });
@@ -61,7 +86,6 @@ const users = {
     loginUser: (req, res) => {
         const { user_id, password } = req.body;
 
-        // Find user by user_id
         User.findByUserId(user_id, (err, user) => {
             if (err) {
                 console.error('Database error:', err);
@@ -72,7 +96,6 @@ const users = {
                 return res.status(400).send('Invalid user ID.');
             }
 
-            // Check password
             bcrypt.compare(password, user.password, (err, isMatch) => {
                 if (err) {
                     console.error('Error comparing passwords:', err);
@@ -83,18 +106,16 @@ const users = {
                     return res.status(400).send('Incorrect password.');
                 }
 
-                // Save user session with role and other details
                 req.session.user = { 
                     user_id: user.user_id, 
-                    role: user.roles,  // User's role from the database
+                    role: user.roles, 
                     firstname: user.firstname, 
                     lastname: user.lastname 
                 };
 
-                // Log the user's login
                 User.logUserLogin({
                     user_id: req.session.user.user_id,
-                    role: req.session.user.role,  // Ensure the role is stored correctly
+                    role: req.session.user.role,
                     firstname: req.session.user.firstname,
                     lastname: req.session.user.lastname
                 }, (err) => {
@@ -103,13 +124,12 @@ const users = {
                         return res.status(500).send('Server error logging login.');
                     }
 
-                    // Redirect based on role from database
                     if (user.roles === 'admin') {
                         res.redirect('/admin-dashboard');
                     } else if (user.roles === 'user') {
                         res.redirect('/user_home');
                     } else {
-                        console.error('Role mismatch: Invalid role:', user.roles); // Log this error
+                        console.error('Role mismatch: Invalid role:', user.roles);
                         res.status(400).send('Invalid role.');
                     }
                 });
@@ -118,7 +138,6 @@ const users = {
     },
 
     logoutUser: (req, res) => {
-        // Log the user's logout
         if (req.session.user) {
             User.logUserLogout(req.session.user.user_id, (err) => {
                 if (err) {
@@ -163,7 +182,6 @@ const users = {
         });
     },
 
-    // Other functions remain unchanged...
     user_page: (req, res) => {
         res.render('user_page', { user: req.session.user });
     },

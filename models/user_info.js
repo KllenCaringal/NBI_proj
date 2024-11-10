@@ -32,7 +32,8 @@ function createDatabaseAndTable() {
                     verified TINYINT(1) DEFAULT 0,
                     token_expiry DATETIME,
                     password VARCHAR(250),
-                    status VARCHAR(50) DEFAULT 'Active'
+                    status VARCHAR(50) DEFAULT 'Active',
+                    profile_pic VARCHAR(250) DEFAULT NULL 
                 )
             `;
             db.query(createUsersTableQuery, (err) => {
@@ -102,8 +103,8 @@ const User = {
     create: (userData, callback) => {
         const query = `
             INSERT INTO users (user_id, firstname, lastname, age, gender, contact_num, email, 
-            sitio, barangay, province, roles, verification_token, verified, token_expiry, password) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            sitio, barangay, province, roles, verification_token, verified, token_expiry, password, profile_pic) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         db.query(query, userData, (err, results) => {
             if (err) return callback(err, null);

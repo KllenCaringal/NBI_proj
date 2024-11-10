@@ -5,12 +5,12 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'nbiaminuser@gmail.com', 
-        pass: 'zyku wesk odlt nktx' 
+        pass: 'vnju hbck ukum ylmr' 
     }
 });
 
 const sendVerificationEmail = (email, verificationToken) => {
-    const verificationLink = `http://localhost:8080/verify/${verificationToken}`;
+    const verificationLink = `http://localhost:8090/verify/${verificationToken}`;
 
     const mailOptions = {
         from: '"Furni" <your_email@gmail.com>', 
