@@ -25,5 +25,6 @@ router.get('/user_message', UserCon.user_message);
 router.get('/user_upload', UserCon.user_upload);
 router.get('/user_settings', UserCon.user_settings);
 router.get('/user_notifications', UserCon.user_notifications);
+router.post('/saveUpload', UserCon.saveUpload);
 
 module.exports = router;

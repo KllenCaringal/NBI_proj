@@ -15,6 +15,16 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage }).single('profile_pic');
 
+const uploadFileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/uploads');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+const fileUpload = multer({ storage: uploadFileStorage }).single('upload_file');
+
 const users = {
     registerPage: (req, res) => {
         res.render('register', { successMessage: null });
@@ -220,7 +230,30 @@ const users = {
     },
 
     user_upload: (req, res) => {
-        res.render('user_upload');
+        res.render('user_upload', { successMessage: null });
+    },
+    saveUpload: (req, res) => {
+        fileUpload(req, res, (err) => {
+            if (err) {
+                console.error('Error uploading file:', err);
+                return res.status(500).send('Error uploading file.');
+            }
+
+            const { user_id, case_title, concern, date_sent, date_of_need} = req.body;
+            const filePath = req.file ? '/uploads/' + req.file.filename : null;
+
+            const uploadData = [
+               user_id, case_title, concern, date_sent, date_of_need, filePath
+            ];
+
+            User.addUpload(uploadData, (err, results) => {
+                if (err) {
+                    console.error('Error saving upload:', err);
+                    return res.status(500).send('Error saving upload.');
+                }
+                res.render('user_upload', { successMessage: 'File uploaded successfully!' });
+            });
+        });
     },
 
     user_settings: (req, res) => {

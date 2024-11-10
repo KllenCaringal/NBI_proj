@@ -42,21 +42,27 @@
     <div class="content">
         <div class="upload-container">
             <h1>Upload Your File</h1>
-            <form action="/upload" method="POST" enctype="multipart/form-data">
+            <% if (successMessage) { %>
+                <div class="success-message"><%= successMessage %></div>
+            <% } %>
+            <form action="/saveUpload" method="POST" enctype="multipart/form-data">
+                <label for="user_id">User ID:</label>
+                <input type="text" id="user_id" name="user_id" required>
+
                 <label for="caseTitle">Case Title:</label>
-                <input type="text" id="caseTitle" name="caseTitle" required>
+                <input type="text" id="caseTitle" name="case_title" required>
 
                 <label for="concern">Concern:</label>
                 <textarea id="concern" name="concern" required></textarea>
 
                 <label for="dateSent">Date Sent:</label>
-                <input type="date" id="dateSent" name="dateSent" required>
-
+                <input type="date" id="dateSent" name="date_sent" required>
+                
                 <label for="dateOfNeed">Date of Need:</label>
-                <input type="date" id="dateOfNeed" name="dateOfNeed" required>
+                <input type="date" id="dateOfNeed" name="date_of_need" required>
 
                 <label for="file">Attach File:</label>
-                <input type="file" id="file" name="file" accept="*/*" required>
+                <input type="file" id="file" name="upload_file" accept="*/*" required>
 
                 <button type="submit">Send</button>
             </form>
@@ -88,7 +94,6 @@
 
         function handleLogout() {
             alert('Logout clicked');
-           
         }
     </script>
 </body>

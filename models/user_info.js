@@ -1,4 +1,4 @@
-const db = require('../config/database'); 
+const db = require('../config/database');
 const bcrypt = require('bcrypt');
 
 function createDatabaseAndTable() {
@@ -37,11 +37,8 @@ function createDatabaseAndTable() {
                 )
             `;
             db.query(createUsersTableQuery, (err) => {
-                if (err) {
-                    console.error('Error creating users table:', err);
-                } else {
-                    console.log('Users table ensured.');
-                }
+                if (err) console.error('Error creating users table:', err);
+                else console.log('Users table ensured.');
             });
 
             const createLogsTableQuery = `
@@ -57,17 +54,14 @@ function createDatabaseAndTable() {
                 )
             `;
             db.query(createLogsTableQuery, (err) => {
-                if (err) {
-                    console.error('Error creating logs table:', err);
-                } else {
-                    console.log('Logs table ensured.');
-                }
+                if (err) console.error('Error creating logs table:', err);
+                else console.log('Logs table ensured.');
             });
 
-            // Add creation of the uploads table
             const createUploadsTableQuery = `
                 CREATE TABLE IF NOT EXISTS uploads (
                     id INT AUTO_INCREMENT PRIMARY KEY,
+                    user_id VARCHAR(250),
                     case_title VARCHAR(255) NOT NULL,
                     concern TEXT NOT NULL,
                     date_sent DATE NOT NULL,
@@ -77,18 +71,15 @@ function createDatabaseAndTable() {
                 )
             `;
             db.query(createUploadsTableQuery, (err) => {
-                if (err) {
-                    console.error('Error creating uploads table:', err);
-                } else {
-                    console.log('Uploads table ensured.');
-                }
+                if (err) console.error('Error creating uploads table:', err);
+                else console.log('Uploads table ensured.');
             });
         });
     });
 }
 
-// Call the function to ensure database and table setup on load
 createDatabaseAndTable();
+
 
 const User = {
     // Find user by email
@@ -192,6 +183,17 @@ const User = {
                 if (err) return callback(err);
                 return callback(null, results);
             });
+        });
+    },
+
+    addUpload: (uploadData, callback) => {
+        const query = `
+            INSERT INTO uploads (user_id, case_title, concern, date_sent, date_of_need, file_path)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `;
+        db.query(query, uploadData, (err, results) => {
+            if (err) return callback(err, null);
+            return callback(null, results);
         });
     }
 };
