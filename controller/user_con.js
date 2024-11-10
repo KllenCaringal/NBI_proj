@@ -27,10 +27,14 @@ const users = {
                 return res.status(500).send('Error uploading file.');
             }
     
+            // Extract form data
             const { user_id, firstname, lastname, age, gender, contact_num, email, sitio, barangay, province, roles, password } = req.body;
             const verificationToken = crypto.randomBytes(32).toString('hex');
             const verified = 0;
             const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+            
+            // Define profilePicPath within the scope of upload function
+            const profilePicPath = req.file ? '/images/' + req.file.filename : null;
     
             User.findByEmail(email, (err, existingUser) => {
                 if (err) {
@@ -58,7 +62,6 @@ const users = {
                             return res.status(500).send('Error saving user to database.');
                         }
     
-
                         emailService.sendVerificationEmail(email, verificationToken)
                             .then(() => {
                                 res.render('register', { successMessage: 'Registration successful! Please verify your email.' });
