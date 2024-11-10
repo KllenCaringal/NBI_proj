@@ -5,16 +5,15 @@ const emailService = require('../services/email_service.js');
 const multer = require('multer');
 const path = require('path');
 
-// Configure Multer for profile picture upload
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/images'); // Save in public/images directory
+        cb(null, 'public/images'); 
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+        cb(null, Date.now() + path.extname(file.originalname)); 
     }
 });
-const upload = multer({ storage: storage }).single('profile_pic'); // Middleware for single file upload
+const upload = multer({ storage: storage }).single('profile_pic');
 
 const users = {
     registerPage: (req, res) => {
@@ -22,19 +21,16 @@ const users = {
     },
 
     registerUser: (req, res) => {
-        // Use `upload` middleware for file handling
         upload(req, res, (err) => {
             if (err) {
                 console.error('Error uploading file:', err);
                 return res.status(500).send('Error uploading file.');
             }
     
-            // Extract form data
             const { user_id, firstname, lastname, age, gender, contact_num, email, sitio, barangay, province, roles, password } = req.body;
             const verificationToken = crypto.randomBytes(32).toString('hex');
             const verified = 0;
             const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
-            const profilePicPath = req.file ? '/images/' + req.file.filename : null; // Save image path for database
     
             User.findByEmail(email, (err, existingUser) => {
                 if (err) {
@@ -45,7 +41,6 @@ const users = {
                     return res.status(400).send('User already exists.');
                 }
     
-                // Hash password and save user
                 bcrypt.hash(password, 10, (err, hashedPassword) => {
                     if (err) {
                         console.error('Error hashing password:', err);
@@ -57,14 +52,13 @@ const users = {
                         sitio, barangay, province, roles, verificationToken, verified, tokenExpiry, hashedPassword, profilePicPath
                     ];
     
-                    // Insert into database
                     User.create(userData, (err, results) => {
                         if (err) {
                             console.error('Error saving user to database:', err);
                             return res.status(500).send('Error saving user to database.');
                         }
     
-                        // Send verification email
+
                         emailService.sendVerificationEmail(email, verificationToken)
                             .then(() => {
                                 res.render('register', { successMessage: 'Registration successful! Please verify your email.' });
