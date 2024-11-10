@@ -48,6 +48,7 @@
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+
         const socket = io();
 
         document.getElementById("sendButton").addEventListener("click", sendMessage);
@@ -60,6 +61,7 @@
                 socket.emit('chat message', messageText); 
                 messageInput.value = ''; 
             }
+
         }
 
         socket.on('chat message', (msg) => {
@@ -71,5 +73,6 @@
             messageArea.scrollTop = messageArea.scrollHeight;
         });
     </script>
+    
 </body>
 </html>

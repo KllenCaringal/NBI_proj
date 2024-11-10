@@ -4,10 +4,7 @@ const { Server } = require('socket.io');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const routes = require('./routes/router');
-
 const app = express();
-const server = http.createServer(app); 
-const io = new Server(server);
 
 
 app.use(session({

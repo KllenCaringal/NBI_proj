@@ -1,7 +1,19 @@
 const User = require('../models/user_info');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-const emailService = require('../services/email_service.js'); 
+const emailService = require('../services/email_service.js');
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/images'); 
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); 
+    }
+});
+const upload = multer({ storage: storage }).single('profile_pic');
 
 const users = {
     registerPage: (req, res) => {
@@ -9,46 +21,56 @@ const users = {
     },
 
     registerUser: (req, res) => {
-        const { user_id, firstname, lastname, age, gender, contact_num, email, sitio, barangay, province, roles, password } = req.body;
-
-        const verificationToken = crypto.randomBytes(32).toString('hex'); 
-        const verified = 0; 
-        const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); 
-
-        User.findByEmail(email, (err, existingUser) => {
+        upload(req, res, (err) => {
             if (err) {
-                console.error('Database error:', err);
-                return res.status(500).send('Database error.');
+                console.error('Error uploading file:', err);
+                return res.status(500).send('Error uploading file.');
             }
-            if (existingUser) {
-                return res.status(400).send('User already exists.');
-            }
-
-            bcrypt.hash(password, 10, (err, hashedPassword) => {
+    
+            // Extract form data
+            const { user_id, firstname, lastname, age, gender, contact_num, email, sitio, barangay, province, roles, password } = req.body;
+            const verificationToken = crypto.randomBytes(32).toString('hex');
+            const verified = 0;
+            const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+            
+            // Define profilePicPath within the scope of upload function
+            const profilePicPath = req.file ? '/images/' + req.file.filename : null;
+    
+            User.findByEmail(email, (err, existingUser) => {
                 if (err) {
-                    console.error('Error hashing password:', err);
-                    return res.status(500).send('Error hashing password.');
+                    console.error('Database error:', err);
+                    return res.status(500).send('Database error.');
                 }
-
-                const userData = [
-                    user_id, firstname, lastname, age, gender, contact_num, email, 
-                    sitio, barangay, province, roles, verificationToken, verified, tokenExpiry, hashedPassword
-                ];
-                
-                User.create(userData, (err, results) => {
+                if (existingUser) {
+                    return res.status(400).send('User already exists.');
+                }
+    
+                bcrypt.hash(password, 10, (err, hashedPassword) => {
                     if (err) {
-                        console.error('Error saving user to database:', err);
-                        return res.status(500).send('Error saving user to database.');
+                        console.error('Error hashing password:', err);
+                        return res.status(500).send('Error hashing password.');
                     }
-
-                    emailService.sendVerificationEmail(email, verificationToken)
-                        .then(() => {
-                            res.render('register', { successMessage: 'Registration successful! Please verify your email.' });
-                        })
-                        .catch(emailErr => {
-                            console.error('Error sending verification email:', emailErr);
-                            res.status(500).send('Registration successful, but failed to send verification email.');
-                        });
+    
+                    const userData = [
+                        user_id, firstname, lastname, age, gender, contact_num, email, 
+                        sitio, barangay, province, roles, verificationToken, verified, tokenExpiry, hashedPassword, profilePicPath
+                    ];
+    
+                    User.create(userData, (err, results) => {
+                        if (err) {
+                            console.error('Error saving user to database:', err);
+                            return res.status(500).send('Error saving user to database.');
+                        }
+    
+                        emailService.sendVerificationEmail(email, verificationToken)
+                            .then(() => {
+                                res.render('register', { successMessage: 'Registration successful! Please verify your email.' });
+                            })
+                            .catch(emailErr => {
+                                console.error('Error sending verification email:', emailErr);
+                                res.status(500).send('Registration successful, but failed to send verification email.');
+                            });
+                    });
                 });
             });
         });
@@ -59,20 +81,18 @@ const users = {
     },
 
     loginUser: (req, res) => {
-        const { user_id, password, role } = req.body;
+        const { user_id, password } = req.body;
 
-        // Find user by user_id and role
-        User.findByUserIdAndRole(user_id, role, (err, user) => {
+        User.findByUserId(user_id, (err, user) => {
             if (err) {
                 console.error('Database error:', err);
                 return res.status(500).send('Server error.');
             }
 
             if (!user) {
-                return res.status(400).send('Invalid user ID or role.');
+                return res.status(400).send('Invalid user ID.');
             }
 
-            // Check password
             bcrypt.compare(password, user.password, (err, isMatch) => {
                 if (err) {
                     console.error('Error comparing passwords:', err);
@@ -83,7 +103,6 @@ const users = {
                     return res.status(400).send('Incorrect password.');
                 }
 
-                // Save user session
                 req.session.user = { 
                     user_id: user.user_id, 
                     role: user.roles, 
@@ -91,10 +110,9 @@ const users = {
                     lastname: user.lastname 
                 };
 
-                // Log the user's login
                 User.logUserLogin({
                     user_id: req.session.user.user_id,
-                    role: req.session.user.role,  // Ensure the role is stored correctly
+                    role: req.session.user.role,
                     firstname: req.session.user.firstname,
                     lastname: req.session.user.lastname
                 }, (err) => {
@@ -103,12 +121,12 @@ const users = {
                         return res.status(500).send('Server error logging login.');
                     }
 
-                    // Redirect based on role
-                    if (role === 'Admin') {
+                    if (user.roles === 'admin') {
                         res.redirect('/admin-dashboard');
-                    } else if (role === 'User') {
+                    } else if (user.roles === 'user') {
                         res.redirect('/user_home');
                     } else {
+                        console.error('Role mismatch: Invalid role:', user.roles);
                         res.status(400).send('Invalid role.');
                     }
                 });
@@ -117,7 +135,6 @@ const users = {
     },
 
     logoutUser: (req, res) => {
-        // Log the user's logout
         if (req.session.user) {
             User.logUserLogout(req.session.user.user_id, (err) => {
                 if (err) {
@@ -162,7 +179,6 @@ const users = {
         });
     },
 
-    // Other functions remain unchanged...
     user_page: (req, res) => {
         res.render('user_page', { user: req.session.user });
     },

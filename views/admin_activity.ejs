@@ -27,15 +27,22 @@
         </div>
     </div>
 
-    <div class="content">
-        <h1>Admin Chat</h1>
-        <div class="chat-container">
-            <div class="message-area" id="messageArea"></div>
-            <div class="input-area">
-                <input type="text" id="messageInput" placeholder="Type your message..." aria-label="Message">
-                <button id="sendButton">Send</button>
-            </div>
-        </div>
+    <nav>
+      <ul>
+        <li><a href="/admin-dashboard" ><i class="nav-item nav-link"></i> Dashboard</a></li>
+        <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
+        <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
+        <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
+        <li><a href="/admin-activity" class="active"><i class="nav-item nav-link"></i> Activity</a></li>
+        <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
+        <li><a href="/profile"><i class="nav-item nav-link"></i> Profile</a></li>
+      </ul>
+    </nav>
+    <div class="logout">
+      <a href="/logout">
+        <button>Log Out</button>
+      </a>
+
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
