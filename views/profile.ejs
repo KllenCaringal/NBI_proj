@@ -32,12 +32,14 @@
         <!-- Profile Container -->
         <main class="profile-container">
             <section class="profile-info">
-                <img src="<%= user.profile_pic || '/images/profile-pic.jpg' %>" alt="Profile Picture" class="profile-pic">
+                <!-- Display user's profile picture if it exists, or show a default image -->
+                <img src="<%= user.profile_pic ? user.profile_pic : '/images/default-profile-pic.jpg' %>" 
+                     alt="Profile Picture" class="profile-pic">
                 <div class="details">
                     <h2><%= user.firstname %> <%= user.lastname %></h2>
                     <p><strong>ID:</strong> <%= user.user_id %></p>
                     <p><strong>Role:</strong> <%= user.role %></p>
-                    <p><strong>Moto:</strong> <%= user.moto %></p>
+                    <p><strong>Motto:</strong> <%= user.motto %></p>
                     <button class="btn-primary">Update Profile</button>
                 </div>
             </section>
@@ -56,7 +58,7 @@
                 <div class="tab-content" id="overview">
                     <p><strong>First Name:</strong> <%= user.firstname %></p>
                     <p><strong>Last Name:</strong> <%= user.lastname %></p>
-                    <p><strong>Moto:</strong> <%= user.moto %></p>
+                    <p><strong>Motto:</strong> <%= user.motto %></p>
                 </div>
                 <% if (user.role === 'Admin') { %>
                     <div class="tab-content" id="admin-tasks" style="display:none;">
