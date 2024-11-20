@@ -199,7 +199,6 @@ const users = {
             return res.redirect('/login');
         }
     
-        // Extract user_id from session to fetch user details
         const userId = req.session.user.user_id;
     
         User.findByUserId(userId, (err, user) => {
@@ -212,7 +211,6 @@ const users = {
                 return res.status(404).send('User not found');
             }
     
-            // Pass the user data to the profile view
             res.render('profile', { user });
         });
     },
