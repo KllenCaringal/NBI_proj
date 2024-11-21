@@ -1,0 +1,176 @@
+/* Base Styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  background-color: var(--bg-color, #003366);
+  color: var(--text-color, #ffffff);
+  width: 250px;
+  height: 100vh;
+  padding-top: 20px;
+  position: fixed;
+  animation: slide-in 0.5s ease-out;
+}
+
+.logo img {
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+}
+
+/* Navigation */
+nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+nav ul li {
+  margin: 15px 0;
+}
+
+nav ul li a {
+  color: var(--text-color, #ffffff);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+nav ul li a:hover,
+nav ul li a.active {
+  background-color: var(--hover-bg-color, #005b99);
+  border-radius: 4px;
+}
+
+nav ul li a:focus {
+  outline: 2px solid var(--text-color, #ffffff);
+}
+
+/* Icon Spacing */
+.icon {
+  margin-right: 10px;
+}
+
+/* Logout Button */
+.logout {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.logout button {
+  background-color: var(--logout-bg-color, #ff0000);
+  color: var(--text-color, #ffffff);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout button:hover {
+  background-color: var(--logout-hover-color, #cc0000);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .logo img {
+    width: 70%;
+  }
+
+  nav ul li a {
+    font-size: 14px;
+  }
+}
+
+/* Animation */
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* CSS Variables for Dark Mode Support */
+:root {
+  --bg-color: #003366;
+  --text-color: #ffffff;
+  --hover-bg-color: #005b99;
+  --logout-bg-color: #ff0000;
+  --logout-hover-color: #cc0000;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for a modern look */
+}
+
+table th, 
+table td {
+  padding: 12px 16px; /* Spacious padding for readability */
+  text-align: left;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+table th {
+  background-color: #004080; /* Darker blue for a professional header */
+  color: #ffffff; /* White text for better contrast */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em; /* Slight spacing for a cleaner header */
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Soft gray for alternate row background */
+}
+
+table tr:nth-child(odd) {
+  background-color: #ffffff; /* White for odd rows */
+}
+
+table tr:hover {
+  background-color: #e3f2fd; /* Soft blue hover effect */
+  transform: scale(1.01); /* Slight zoom effect on hover */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+table td {
+  color: #333333; /* Neutral text color */
+}
+
+table th:first-child, 
+table td:first-child {
+  border-top-left-radius: 8px; /* Rounded corners for the first cell */
+}
+
+table th:last-child, 
+table td:last-child {
+  border-top-right-radius: 8px; /* Rounded corners for the last cell */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  table th, table td {
+    font-size: 12px; /* Smaller font size for narrow screens */
+    padding: 8px 12px;
+  }
+}

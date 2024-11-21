@@ -282,6 +282,16 @@ const users = {
     user_notifications: (req, res) => {
         res.render('user_notifications');
     },
+
+    admin_logs: async (req, res) => {
+        try {
+            const logs = await User.getLogs();
+            res.render('admin_logs', { logs });
+        } catch (error) {
+            console.error('Error fetching logs:', error);
+            res.status(500).send('An error occurred while fetching logs.');
+        }
+    },
 };
 
 module.exports = users;

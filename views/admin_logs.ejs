@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Logs</title>
+  <link rel="stylesheet" href="/css/admin_dashboard.css">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">
+      <img src="/images/nbi_logo.png" alt="Logo">
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/admin-dashboard"><i class="nav-item nav-link"></i> Dashboard</a></li>
+        <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
+        <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
+        <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
+        <li><a href="/admin-activity"><i class="nav-item nav-link"></i> Activity</a></li>
+        <li><a href="/admin-logs" class="active"><i class="nav-item nav-link"></i> Logs</a></li>
+        <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
+        <li><a href="/profile"><i class="nav-item nav-link"></i> Profile</a></li>
+      </ul>
+    </nav>
+    <div class="logout">
+      <a href="/logout">
+        <button>Log Out</button>
+      </a>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="header">Admin Logs</div>
+    <div class="card">
+      <div class="card-title">Logs</div>
+      <div class="card-content">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User ID</th>
+              <th>Role</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Login Time</th>
+              <th>Logout Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (logs.length > 0) { %>
+              <% logs.forEach(log => { %>
+                <tr>
+                  <td><%= log.id %></td>
+                  <td><%= log.user_id %></td>
+                  <td><%= log.role %></td>
+                  <td><%= log.firstname %></td>
+                  <td><%= log.lastname %></td>
+                  <td><%= log.login_time %></td>
+                  <td><%= log.logout_time ? log.logout_time : 'N/A' %></td>
+                  <td><%= log.status === 1 ? 'Active' : 'Inactive' %></td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="8">No logs found.</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

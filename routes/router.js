@@ -19,6 +19,7 @@ router.get('/admin-upload', UserCon.admin_upload);
 router.get('/admin-notification', UserCon.admin_notification);
 router.get('/admin-activity', UserCon.admin_activity);
 router.get('/admin-trash', UserCon.admin_trash);
+router.get('/admin-logs', UserCon.admin_logs);
 
 router.get('/user_home', UserCon.user_home);
 router.get('/user_message', UserCon.user_message);

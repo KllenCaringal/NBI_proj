@@ -195,7 +195,18 @@ const User = {
             if (err) return callback(err, null);
             return callback(null, results);
         });
-    }
+    },
+
+    getLogs: () => {
+        return new Promise((resolve, reject) => {
+            const query = 'SELECT * FROM logs ORDER BY login_time DESC';
+            db.query(query, (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
+    },
+
 };
 
 module.exports = User;
