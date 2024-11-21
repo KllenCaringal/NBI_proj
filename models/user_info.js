@@ -206,6 +206,27 @@ const User = {
             });
         });
     },
+
+    getAllUsers: (callback) => {
+        const query = 'SELECT user_id, firstname, lastname, email, contact_num, roles FROM users';
+        db.query(query, (err, results) => {
+          if (err) return callback(err, null);
+          return callback(null, results);
+        });
+    },
+
+    getAllUploads: (callback) => {
+        const query = `
+            SELECT uploads.id, uploads.case_title, uploads.concern, uploads.date_sent, uploads.date_of_need, uploads.file_path, uploads.created_at, users.user_id
+            FROM uploads
+            LEFT JOIN users ON uploads.user_id = users.user_id
+            ORDER BY uploads.created_at DESC
+        `;
+        db.query(query, (err, results) => {
+            if (err) return callback(err, null);
+            return callback(null, results);
+        });
+    },
 };
 
 module.exports = User;

@@ -13,11 +13,11 @@
     </div>
     <nav>
       <ul>
-        <li><a href="/admin-dashboard" ><i class="nav-item nav-link"></i> Dashboard</a></li>
-        <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
+        <li><a href="/admin-dashboard"><i class="nav-item nav-link"></i> Dashboard</a></li>
+        <li><a href="/admin-users" class="active"><i class="nav-item nav-link"></i> Users</a></li>
         <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
         <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
-        <li><a href="/admin-activity" class="active"><i class="nav-item nav-link"></i> Activity</a></li>
+        <li><a href="/admin-logs"><i class="nav-item nav-link"></i> Logs</a></li>
         <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
         <li><a href="/profile"><i class="nav-item nav-link"></i> Profile</a></li>
       </ul>
@@ -31,41 +31,33 @@
 
   <div class="content">
     <div class="header">Users</div>
-<br>
-
+    <br>
     <table class="user-table">
       <thead>
         <tr>
           <th>User ID</th>
           <th>Name</th>
           <th>Email</th>
+          <th>Contact</th>
           <th>Role</th>
-          <th>Status</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>001</td>
-          <td>John Doe</td>
-          <td>johndoe@example.com</td>
-          <td>Admin</td>
-          <td>Active</td>
-        </tr>
-        <tr>
-          <td>002</td>
-          <td>Jane Smith</td>
-          <td>janesmith@example.com</td>
-          <td>User</td>
-          <td>Inactive</td>
-        </tr>
-        <tr>
-          <td>003</td>
-          <td>Robert Brown</td>
-          <td>robertbrown@example.com</td>
-          <td>Editor</td>
-          <td>Active</td>
-        </tr>
-        
+        <% if (users && users.length > 0) { %>
+          <% users.forEach(user => { %>
+            <tr>
+              <td><%= user.user_id %></td>
+              <td><%= user.firstname + ' ' + user.lastname %></td>
+              <td><%= user.email %></td>
+              <td><%= user.contact_num %></td>
+              <td><%= user.roles %></td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="6" style="text-align: center;">No users found.</td>
+          </tr>
+        <% } %>
       </tbody>
     </table>
   </div>

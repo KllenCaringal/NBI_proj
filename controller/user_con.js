@@ -220,19 +220,26 @@ const users = {
     },
 
     admin_users: (req, res) => {
-        res.render('admin_users');
-    },
+        User.getAllUsers((err, users) => {
+          if (err) {
+            console.error('Error fetching users:', err);
+            return res.status(500).send('Server error');
+          }
+          res.render('admin_users', { users });
+        });
+      },
 
-    admin_upload: (req, res) => {
-        res.render('admin_upload');
+      admin_upload: (req, res) => {
+        User.getAllUploads((err, uploads) => {
+            if (err) {
+                return res.status(500).send('Error retrieving uploads');
+            }
+            res.render('admin_upload', { uploads });
+        });
     },
 
     admin_notification: (req, res) => {
         res.render('admin_notification');
-    },
-
-    admin_activity: (req, res) => {
-        res.render('admin_activity');
     },
 
     admin_trash: (req, res) => {

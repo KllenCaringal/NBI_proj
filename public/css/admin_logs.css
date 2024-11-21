@@ -12,7 +12,7 @@ body {
   height: 100vh;
   padding-top: 20px;
   position: fixed;
-  animation: slide-in 0.5s ease-out;
+
 }
 
 .logo img {

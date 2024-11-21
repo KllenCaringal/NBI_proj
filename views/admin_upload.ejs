@@ -18,7 +18,7 @@
         <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
         <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
         <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
-        <li><a href="/admin-activity" class="active"><i class="nav-item nav-link"></i> Activity</a></li>
+        <li><a href="/admin-logs"><i class="nav-item nav-link"></i> Logs</a></li>
         <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
         <li><a href="/profile"><i class="nav-item nav-link"></i> Profile</a></li>
       </ul>
@@ -36,6 +36,7 @@
       <table>
         <thead>
           <tr>
+            <th>User ID</th>
             <th>Case Title</th>
             <th>Concern</th>
             <th>Date Sent</th>
@@ -44,21 +45,17 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Example row -->
-          <tr>
-            <td>Case 1</td>
-            <td>Urgent Issue</td>
-            <td>2024-11-01</td>
-            <td>2024-11-05</td>
-            <td><a href="#">Download</a></td>
-          </tr>
-          <tr>
-            <td>Case 2</td>
-            <td>Data Inquiry</td>
-            <td>2024-10-25</td>
-            <td>2024-10-28</td>
-            <td><a href="#">Download</a></td>
-          </tr>
+          <!-- Loop through each upload -->
+          <% uploads.forEach(upload => { %>
+            <tr>
+              <td><%= upload.user_id %></td> <!-- Display user_id -->
+              <td><%= upload.case_title %></td>
+              <td><%= upload.concern %></td>
+              <td><%= upload.date_sent %></td>
+              <td><%= upload.date_of_need %></td>
+              <td><a href="/uploads/<%= upload.file_path %>" download>Download</a></td>
+            </tr>
+          <% }) %>
         </tbody>
       </table>
     </div>
