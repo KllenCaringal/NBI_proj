@@ -215,7 +215,6 @@ const users = {
         });
     },
     
-
     admin_dashboard: (req, res) => {
         res.render('admin_dashboard');
     },
@@ -247,7 +246,6 @@ const users = {
     user_message: (req, res) => {
         res.render('user_message');
     },
-
     user_upload: (req, res) => {
         res.render('user_upload', { successMessage: null });
     },
