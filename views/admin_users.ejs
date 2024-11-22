@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Users</title>
   <link rel="stylesheet" href="/css/admin_users.css">
+
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 </head>
 <body>
   <div class="sidebar">
@@ -32,7 +35,7 @@
   <div class="content">
     <div class="header">Users</div>
     <br>
-    <table class="user-table">
+    <table id="usersTable" class="display">
       <thead>
         <tr>
           <th>User ID</th>
@@ -55,11 +58,27 @@
           <% }) %>
         <% } else { %>
           <tr>
-            <td colspan="6" style="text-align: center;">No users found.</td>
+            <td colspan="5" style="text-align: center;">No users found.</td>
           </tr>
         <% } %>
       </tbody>
     </table>
   </div>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <!-- DataTables JS -->
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <!-- Initialize DataTable -->
+  <script>
+    $(document).ready(function() {
+      $('#usersTable').DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        responsive: true
+      });
+    });
+  </script>
 </body>
 </html>

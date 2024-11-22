@@ -6,6 +6,9 @@
   <title>Upload Details</title>
   <link rel="stylesheet" href="/css/admin_upload.css">
   
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  
 </head>
 <body>
   <div class="sidebar">
@@ -33,7 +36,7 @@
   <div class="main-content">
     <h1>Uploaded Files</h1>
     <div class="table-container">
-      <table>
+      <table id="uploadsTable">
         <thead>
           <tr>
             <th>User ID</th>
@@ -45,10 +48,9 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Loop through each upload -->
           <% uploads.forEach(upload => { %>
             <tr>
-              <td><%= upload.user_id %></td> <!-- Display user_id -->
+              <td><%= upload.user_id %></td>
               <td><%= upload.case_title %></td>
               <td><%= upload.concern %></td>
               <td><%= upload.date_sent %></td>
@@ -61,5 +63,16 @@
     </div>
   </div>
 
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <!-- DataTables JS -->
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <!-- Custom Script -->
+  <script>
+    $(document).ready(function() {
+      // Initialize DataTable
+      $('#uploadsTable').DataTable();
+    });
+  </script>
 </body>
 </html>

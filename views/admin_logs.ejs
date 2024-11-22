@@ -1,80 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Logs</title>
-  <link rel="stylesheet" href="/css/admin_logs.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-</head>
-<body>
-  <div class="sidebar">
-    <div class="logo">
-      <img src="/images/nbi_logo.png" alt="NBI Logo">
-    </div>
-    <nav>
-      <ul>
-        <li><a href="/admin-dashboard"><i class="nav-item nav-link"></i> Dashboard</a></li>
-        <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
-        <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
-        <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
-        <li><a href="/admin-logs" class="active"><i class="nav-item nav-link"></i> Logs</a></li>
-        <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
-        <li><a href="/profile"><i class="nav-item nav-link"></i> Profile</a></li>
-      </ul>
-    </nav>
-    <div class="logout">
-      <a href="/logout">
-        <button>Log Out</button>
-      </a>
-    </div>
-  </div>
-
-  <div class="content">
-    <div class="header">Admin Logs</div>
-    <div class="card">
-      <div class="card-title">Logs</div>
-      <div class="card-content">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>User ID</th>
-              <th>Role</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Login Time</th>
-              <th>Logout Time</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% if (logs.length > 0) { %>
-              <% logs.forEach(log => { %>
-                <tr>
-                  <td><%= log.id %></td>
-                  <td><%= log.user_id %></td>
-                  <td><%= log.role %></td>
-                  <td><%= log.firstname %></td>
-                  <td><%= log.lastname %></td>
-                  <td><%= log.login_time %></td>
-                  <td><%= log.logout_time ? log.logout_time : 'N/A' %></td>
-                  <td>
-                    <span class="<%= log.status === 1 ? 'active' : 'inactive' %>">
-                      <%= log.status === 1 ? 'Active' : 'Inactive' %>
-                    </span>
-                  </td>
-                </tr>
-              <% }) %>
-            <% } else { %>
-              <tr>
-                <td colspan="8">No logs found.</td>
-              </tr>
-            <% } %>
-          </tbody>
-        </table>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Admin Logs</title>
+      <link rel="stylesheet" href="/css/admin_logs.css">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+      <!-- DataTables CSS -->
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    </head>
+    <body>
+      <div class="sidebar">
+        <div class="logo">
+          <img src="/images/nbi_logo.png" alt="NBI Logo">
+        </div>
+        <nav>
+          <ul>
+            <li><a href="/admin-dashboard"><i class="nav-item nav-link"></i> Dashboard</a></li>
+            <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
+            <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
+            <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
+            <li><a href="/admin-logs" class="active"><i class="nav-item nav-link"></i> Logs</a></li>
+            <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
+            <li><a href="/profile"><i class="nav-item nav-link"></i> Profile</a></li>
+          </ul>
+        </nav>
+        <div class="logout">
+          <a href="/logout">
+            <button>Log Out</button>
+          </a>
+        </div>
       </div>
-    </div>
-  </div>
-</body>
-</html>
+
+      <div class="content">
+        <div class="header">Admin Logs</div>
+        <div class="card">
+          <div class="card-title">Logs</div>
+          <div class="card-content">
+            <table id="logsTable" class="display">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>User ID</th>
+                  <th>Role</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Login Time</th>
+                  <th>Logout Time</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (logs.length > 0) { %>
+                  <% logs.forEach(log => { %>
+                    <tr>
+                      <td><%= log.id %></td>
+                      <td><%= log.user_id %></td>
+                      <td><%= log.role %></td>
+                      <td><%= log.firstname %></td>
+                      <td><%= log.lastname %></td>
+                      <td><%= log.login_time %></td>
+                      <td><%= log.logout_time ? log.logout_time : 'N/A' %></td>
+                      <td>
+                        <span class="<%= log.status === 1 ? 'active' : 'inactive' %>">
+                          <%= log.status === 1 ? 'Active' : 'Inactive' %>
+                        </span>
+                      </td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="8">No logs found.</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- jQuery -->
+      <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+      <!-- DataTables JS -->
+      <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+      <script>
+        $(document).ready(function () {
+          $('#logsTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            responsive: true,
+            language: {
+              search: "Filter logs:",
+              lengthMenu: "Show _MENU_ logs per page",
+            },
+          });
+        });
+      </script>
+    </body>
+    </html>
