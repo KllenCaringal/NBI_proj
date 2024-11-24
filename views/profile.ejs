@@ -6,7 +6,6 @@
     <title>User Profile</title>
     <link rel="stylesheet" href="/css/profile.css">
 </head>
-
 <body>
     <!-- Main Container to apply flex layout -->
     <div class="main-container">
@@ -32,7 +31,6 @@
         <!-- Profile Container -->
         <main class="profile-container">
             <section class="profile-info">
-                <!-- Display user's profile picture if it exists, or show a default image -->
                 <img src="<%= user.profile_pic ? user.profile_pic : '/images/default-profile-pic.jpg' %>" 
                      alt="Profile Picture" class="profile-pic">
                 <div class="details">
@@ -70,7 +68,26 @@
                     </div>
                 <% } %>
                 <div class="tab-content" id="settings" style="display:none;">
-                    Profile and account settings.
+                    <h3>Update Profile</h3>
+                    <form action="/update-profile" method="POST" enctype="multipart/form-data" class="update-form">
+                        <div class="form-group">
+                            <label for="firstname">First Name</label>
+                            <input type="text" id="firstname" name="firstname" value="<%= user.firstname %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname">Last Name</label>
+                            <input type="text" id="lastname" name="lastname" value="<%= user.lastname %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="motto">Motto</label>
+                            <textarea id="motto" name="motto" rows="3"><%= user.motto %></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile_pic">Profile Picture</label>
+                            <input type="file" id="profile_pic" name="profile_pic" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn-primary">Save Changes</button>
+                    </form>
                 </div>
             </section>
         </main>
@@ -84,9 +101,16 @@
     <!-- JavaScript for Tab Functionality -->
     <script>
         function showTab(tab) {
+            // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+
+            // Display the selected tab
             document.getElementById(tab).style.display = 'block';
+
+            // Remove 'active' class from all buttons
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+
+            // Add 'active' class to the clicked button
             document.querySelector(`.tab-button[onclick="showTab('${tab}')"]`).classList.add('active');
         }
     </script>
