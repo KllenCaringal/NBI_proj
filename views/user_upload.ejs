@@ -4,36 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBI SKGV - Upload</title>
-    <link rel="stylesheet" href="/css/user-upload.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/user-upload.css">
 </head>
 <body>
-    <div class="navbar" id="navbar">
+    <div class="navbar">
         <div class="navbar-left">
-            <div class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</div>
-            <img src="/images/nbi_logo.png" alt="Logo" class="navbar-logo">
-            <div class="title" id="title">NBI SKGV</div>
+            <div class="hamburger" onclick="toggleSidebar()">☰</div>
+            <img src="/images/nbi_logo.png" alt="NBI Logo" class="navbar-logo">
+            <div class="title">NBI SKGV</div>
         </div>
         <div class="search-container">
-            <input type="text" placeholder="🔍" aria-label="Search">
+            <input type="text" placeholder="Search..." aria-label="Search">
         </div>
         <div class="navbar-right profile-settings">
-            <div class="icon" onclick="redirectToPage('/profile')">
-                <i class="fas fa-user profile-icon"></i>
-            </div>
-            <span>|</span>
-            <div class="icon" onclick="redirectToPage('/user_settings')">
-                <i class="fas fa-cog profile-icon"></i>
-            </div>
+            <div class="icon" onclick="redirectToPage('/profile')">👤</div>
+            <div class="icon" onclick="redirectToPage('/user_settings')">⚙️</div>
         </div>
     </div>
+
     <div id="sidebar" class="sidebar">
-        <div class="back-button" onclick="toggleSidebar()">←</div>
         <ul>
-            <li><span class="sidebar-icon">🏠</span><a href="/user_home">Home</a></li>
-            <li><span class="sidebar-icon">💬</span><a href="/user_message">Message</a></li>
-            <li><span class="sidebar-icon">📤</span><a href="/user_upload">Upload</a></li>
-            <li><span class="sidebar-icon">🔔</span><a href="/user_notifications">Notification</a></li>
+            <li><a href="/user_home"><span class="sidebar-icon">🏠</span>Home</a></li>
+            <li><a href="/user_message" class="active"><span class="sidebar-icon">💬</span>Messages</a></li>
+            <li><a href="/user_upload"><span class="sidebar-icon">📤</span>Upload</a></li>
+            <li><a href="/user_notifications"><span class="sidebar-icon">🔔</span>Notifications</a></li>
         </ul>
         <div class="logout" onclick="handleLogout()">
             <span class="sidebar-icon">🚪</span>Logout
@@ -96,7 +92,7 @@
             fetch('/logout', { method: 'GET' })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = '/login'; // Redirect to login page after logout
+                        window.location.href = '/login'; 
                     }
                 })
                 .catch(error => {

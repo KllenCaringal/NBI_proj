@@ -4,39 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBI SKGV - User Messages</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/user-message.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="navbar">
         <div class="navbar-left">
             <div class="hamburger" onclick="toggleSidebar()">☰</div>
-            <img src="/images/nbi_logo.png" alt="Logo" class="navbar-logo">
+            <img src="/images/nbi_logo.png" alt="NBI Logo" class="navbar-logo">
             <div class="title">NBI SKGV</div>
         </div>
         <div class="search-container">
-            <input type="text" placeholder="🔍" aria-label="Search">
+            <input type="text" placeholder="Search..." aria-label="Search">
         </div>
         <div class="navbar-right profile-settings">
-            <div class="icon" onclick="redirectToPage('/profile')">
-                <i class="fas fa-user profile-icon"></i>
-            </div>
-            <span>|</span>
-            <div class="icon" onclick="redirectToPage('/user_settings')">
-                <i class="fas fa-cog profile-icon"></i>
-            </div>
+            <div class="icon" onclick="redirectToPage('/profile')">👤</div>
+            <div class="icon" onclick="redirectToPage('/user_settings')">⚙️</div>
         </div>
     </div>
-    <div class="sidebar">
+
+    <div id="sidebar" class="sidebar">
         <ul>
-            <li><a href="/user_home">Home</a></li>
-            <li><a href="/user_message" class="active">Messages</a></li>
-            <li><a href="/user_upload">Upload</a></li>
-            <li><a href="/user_notifications">Notifications</a></li>
+            <li><a href="/user_home"><span class="sidebar-icon">🏠</span>Home</a></li>
+            <li><a href="/user_message" class="active"><span class="sidebar-icon">💬</span>Messages</a></li>
+            <li><a href="/user_upload"><span class="sidebar-icon">📤</span>Upload</a></li>
+            <li><a href="/user_notifications"><span class="sidebar-icon">🔔</span>Notifications</a></li>
         </ul>
-        <div class="logout" onclick="handleLogout()">Logout</div>
+        <div class="logout" onclick="handleLogout()">
+            <span class="sidebar-icon">🚪</span>Logout
+        </div>
     </div>
-    <div class="content">
+
+    <div id="content" class="content">
         <h1>Messages</h1>
         <div class="chat-container">
             <div class="message-area" id="messageArea"></div>
@@ -46,33 +45,99 @@
             </div>
         </div>
     </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        let sidebarOpen = false;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            sidebarOpen = !sidebarOpen;
+            sidebar.classList.toggle('open');
+            content.classList.toggle('shifted');
+            
+            if (window.innerWidth <= 768) {
+                document.body.style.marginLeft = sidebarOpen ? '100%' : '0';
+            }
+        }
+
+        function redirectToPage(url) {
+            console.log('Redirecting to:', url);
+        }
+
+        function handleLogout() {
+            fetch('/logout', { method: 'GET' })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/login'; 
+                    }
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                });
+        }
+
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.querySelector('.hamburger');
+            if (sidebarOpen && !sidebar.contains(event.target) && event.target !== hamburger) {
+                toggleSidebar();
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.body.style.marginLeft = '0';
+            }
+        });
 
         const socket = io();
 
         document.getElementById("sendButton").addEventListener("click", sendMessage);
+        document.getElementById("messageInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
 
         function sendMessage() {
             const messageInput = document.getElementById('messageInput');
             const messageText = messageInput.value.trim();
 
             if (messageText) {
-                socket.emit('chat message', messageText); 
-                messageInput.value = ''; 
+                socket.emit('chat message', messageText);
+                addMessage(messageText, 'sent');
+                messageInput.value = '';
             }
-
         }
 
-        socket.on('chat message', (msg) => {
+        function addMessage(msg, type) {
             const messageArea = document.getElementById('messageArea');
             const messageElement = document.createElement('div');
-            messageElement.classList.add('message', 'received');
+            messageElement.classList.add('message', type);
             messageElement.innerText = msg;
             messageArea.appendChild(messageElement);
             messageArea.scrollTop = messageArea.scrollHeight;
+        }
+
+        socket.on('chat message', (msg) => {
+            addMessage(msg, 'received');
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileIcon = document.getElementById('profileIcon');
+            const settingsIcon = document.getElementById('settingsIcon');
+
+            profileIcon.addEventListener('click', function() {
+                redirectToPage('/profile');
+            });
+
+            settingsIcon.addEventListener('click', function() {
+                redirectToPage('/user_settings');
+            });
         });
     </script>
-    
 </body>
 </html>

@@ -3,102 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NBI SKGV - Home</title>
+    <title>NBI SKGV - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/user-home.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="navbar" id="navbar">
+    <div class="navbar">
         <div class="navbar-left">
-            <div class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</div>
-            <img src="/images/nbi_logo.png" alt="Logo" class="navbar-logo">
-            <div class="title" id="title">NBI SKGV</div>
+            <div class="hamburger" onclick="toggleSidebar()">☰</div>
+            <img src="/images/nbi_logo.png" alt="NBI Logo" class="navbar-logo">
+            <div class="title">NBI SKGV</div>
         </div>
         <div class="search-container">
-            <input type="text" placeholder="🔍" aria-label="Search">
+            <input type="text" placeholder="Search..." aria-label="Search">
         </div>
         <div class="navbar-right profile-settings">
-            <div class="icon" onclick="redirectToPage('/profile')">
-                <i class="fas fa-user profile-icon"></i>
-            </div>
-            <span>|</span>
-            <div class="icon" onclick="redirectToPage('/user_settings')">
-                <i class="fas fa-cog profile-icon"></i>
-            </div>
+            <div class="icon" id="profileIcon">👤</div>
+            <div class="icon" id="settingsIcon">⚙️</div>
         </div>
     </div>
+
     <div id="sidebar" class="sidebar">
-        <div class="back-button" onclick="toggleSidebar()">←</div>
         <ul>
-            <li><span class="sidebar-icon">🏠</span><a href="/user_home">Home</a></li>
-            <li><span class="sidebar-icon">💬</span><a href="/user_message">Message</a></li>
-            <li><span class="sidebar-icon">📤</span><a href="/user_upload">Upload</a></li>
-            <li><span class="sidebar-icon">🔔</span><a href="/user_notifications">Notification</a></li>
-            
+            <li><a href="/user_home" onclick="loadContent('home')"><span class="sidebar-icon">🏠</span>Home</a></li>
+            <li><a href="/user_message" onclick="loadContent('message')"><span class="sidebar-icon">💬</span>Message</a></li>
+            <li><a href="/user_upload" onclick="loadContent('upload')"><span class="sidebar-icon">📤</span>Upload</a></li>
+            <li><a href="/user_notifications" onclick="loadContent('notification')"><span class="sidebar-icon">🔔</span>Notification</a></li>
         </ul>
         <div class="logout" onclick="handleLogout()">
             <span class="sidebar-icon">🚪</span>Logout
         </div>
     </div>
-    <br>
-    <br>
-    <h1>NEW CASES</h1>
-    <BR>
-    <div class="content1">
-        <div class="page-container1">
-            
+
+    <div id="content" class="content">
+        <h1>NEW CASES</h1>
+        <div class="case-container">
+            <div class="case-card">
+                <h2>Case A</h2>
+                <p>Details for Case A. This is a placeholder for case information. It includes important data about the ongoing investigation.</p>
+            </div>
+            <div class="case-card">
+                <h2>Case B</h2>
+                <p>Details for Case B. This is a placeholder for case information. It contains crucial evidence and witness statements.</p>
+            </div>
+            <div class="case-card">
+                <h2>Case C</h2>
+                <p>Details for Case C. This is a placeholder for case information. It outlines the timeline of events and key suspects.</p>
+            </div>
         </div>
     </div>
-    <br>
-  <div class="content2">
-        <div class="page-container3">
-            
-        </div>
-    </div>
-    <br>
-    <div class="content3">
-        <div class="page-container3">
-            
-        </div>
-    </div>
-    <br>
+
     <script>
+        let sidebarOpen = false;
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            const title = document.getElementById('title');
-            const hamburger = document.getElementById('hamburger');
-            const content = document.querySelector('.content'); 
-    
-            if (sidebar.style.left === '0px') {
-                sidebar.style.left = '-250px';
-                title.classList.remove('shifted');
-                hamburger.classList.remove('hidden');
-                content.classList.remove('shifted');
-            } else {
-                sidebar.style.left = '0px';
-                title.classList.add('shifted');
-                hamburger.classList.add('hidden');
-                content.classList.add('shifted'); 
+            const content = document.getElementById('content');
+            sidebarOpen = !sidebarOpen;
+            sidebar.classList.toggle('open');
+            content.classList.toggle('shifted');
+            
+            if (window.innerWidth <= 768) {
+                document.body.style.marginLeft = sidebarOpen ? '100%' : '0';
             }
         }
-        
+
         function redirectToPage(url) {
             window.location.href = url;
         }
-    
+
         function handleLogout() {
-            // Perform the logout request (this can be a GET request to the /logout route)
             fetch('/logout', { method: 'GET' })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = '/login'; // Redirect to login page after logout
+                        window.location.href = '/login'; 
                     }
                 })
                 .catch(error => {
                     console.error('Logout error:', error);
                 });
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileIcon = document.getElementById('profileIcon');
+            const settingsIcon = document.getElementById('settingsIcon');
+
+            profileIcon.addEventListener('click', function() {
+                redirectToPage('/profile');
+            });
+
+            settingsIcon.addEventListener('click', function() {
+                redirectToPage('/user_settings');
+            });
+        });
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.querySelector('.hamburger');
+            if (sidebarOpen && !sidebar.contains(event.target) && event.target !== hamburger) {
+                toggleSidebar();
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.body.style.marginLeft = '0';
+            }
+        });
     </script>
-    
 </body>
 </html>

@@ -3,85 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - NBI Client</title>
     <link rel="stylesheet" href="/css/user-settings.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
 </head>
 <body>
-    <div class="navbar">
+    <nav class="navbar">
         <div class="navbar-left">
             <button onclick="goBack()" class="back-button">←</button>
             <div class="title">NBI SKGV</div>
         </div>
-        <div class="navbar-right profile-settings">
-            <div class="icon" onclick="redirectToPage('/profile')">
-                <i class="fas fa-user profile-icon"></i>
-            </div>
+        <div class="navbar-right">
+            <div class="icon" onclick="redirectToPage('/profile')">👤</div>
             <span>|</span>
-            <div class="icon" onclick="redirectToPage('/user_settings')">
-                <i class="fas fa-cog profile-icon"></i>
-            </div>
+            <div class="icon" onclick="redirectToPage('/user_settings')">⚙️</div>
         </div>
-    </div>
-    <div class="settings-container">
+    </nav>
+
+    <main>
         <h1>Settings</h1>
+
         <div class="settings-section">
             <h2>Account Settings</h2>
-            <p><strong>Email:</strong> user@example.com</p>
-            <button onclick="handleChangeEmail()">Change Email</button>
-            <p><strong>Password:</strong> ••••••••</p>
-            <button onclick="handleChangePassword()">Change Password</button>
+            <div class="setting-item">
+                <p><strong>Email:</strong> <span id="userEmail">user@example.com</span></p>
+                <button onclick="handleChangeEmail()">Change Email</button>
+            </div>
+            <div class="setting-item">
+                <p><strong>Password:</strong> ••••••••</p>
+                <button onclick="handleChangePassword()">Change Password</button>
+            </div>
         </div>
+
         <div class="settings-section">
             <h2>Notification Settings</h2>
-            <label>
-                <input type="checkbox" checked> Receive email notifications
-            </label>
-            <label>
-                <input type="checkbox" checked> Receive SMS updates
-            </label>
+            <div class="setting-item">
+                <label for="emailNotifications">Receive email notifications</label>
+                <label class="switch">
+                    <input type="checkbox" id="emailNotifications" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <label for="smsUpdates">Receive SMS updates</label>
+                <label class="switch">
+                    <input type="checkbox" id="smsUpdates" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
         </div>
+
         <div class="settings-section">
             <h2>Privacy Settings</h2>
-            <label>
-                <input type="checkbox"> Make profile private
-            </label>
-            <label>
-                <input type="checkbox" checked> Enable two-factor authentication
-            </label>
+            <div class="setting-item">
+                <label for="privateProfile">Make profile private</label>
+                <label class="switch">
+                    <input type="checkbox" id="privateProfile">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <label for="twoFactorAuth">Enable two-factor authentication</label>
+                <label class="switch">
+                    <input type="checkbox" id="twoFactorAuth" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
         </div>
+
         <div class="settings-section">
             <h2>General Settings</h2>
-            <label>
-                Language:
-                <select>
-                    <option>English</option>
-                    <option>Spanish</option>
-                    <option>Filipino</option>
+            <div class="setting-item">
+                <label for="language">Language:</label>
+                <select id="language">
+                    <option value="english" selected>English</option>
+                    <option value="spanish">Spanish</option>
+                    <option value="filipino">Filipino</option>
                 </select>
-            </label>
-            <label>
-                Time Zone:
-                <select>
-                    <option>GMT +0</option>
-                    <option>GMT +8 (Philippines)</option>
-                    <option>GMT -5 (Eastern Time)</option>
+            </div>
+            <div class="setting-item">
+                <label for="timezone">Time Zone:</label>
+                <select id="timezone">
+                    <option value="gmt+0">GMT +0</option>
+                    <option value="gmt+8" selected>GMT +8 (Philippines)</option>
+                    <option value="gmt-5">GMT -5 (Eastern Time)</option>
                 </select>
-            </label>
+            </div>
         </div>
-    </div>
+    </main>
+
     <script>
         function goBack() {
             window.history.back();
         }
 
+        function redirectToPage(url) {
+            console.log('Redirecting to:', url);
+            // Implement actual redirection logic here
+        }
+
         function handleChangeEmail() {
-            alert('Redirecting to change email settings...');
+            const newEmail = prompt('Enter new email address:');
+            if (newEmail) {
+                document.getElementById('userEmail').textContent = newEmail;
+                alert('Email updated successfully!');
+            }
         }
 
         function handleChangePassword() {
-            alert('Redirecting to change password settings...');
+            const newPassword = prompt('Enter new password:');
+            if (newPassword) {
+                alert('Password updated successfully!');
+            }
         }
+
+        // Add event listeners for switches and selects if needed
+        document.querySelectorAll('.switch input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                console.log(this.id + ' changed to ' + this.checked);
+                // Implement logic for handling checkbox changes
+            });
+        });
+
+        document.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', function() {
+                console.log(this.id + ' changed to ' + this.value);
+                // Implement logic for handling select changes
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileIcon = document.getElementById('profileIcon');
+            const settingsIcon = document.getElementById('settingsIcon');
+
+            profileIcon.addEventListener('click', function() {
+                redirectToPage('/profile');
+            });
+
+            settingsIcon.addEventListener('click', function() {
+                redirectToPage('/user_settings');
+            });
+        });
     </script>
 </body>
 </html>

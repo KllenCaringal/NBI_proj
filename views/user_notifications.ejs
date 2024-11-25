@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBI Notifications</title>
-    <link rel="stylesheet" href="/css/user-notif.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
+    <link rel="stylesheet" href="/css/user-notif.css">
 </head>
 <body>
     <div class="navbar" id="navbar">
@@ -42,30 +42,29 @@
         </div>
     </div>
   
-    <br>
-    <header>
-        <h1>NBI Notifications</h1>
-    </header>
-   
-    <p>You have a new notification: <strong>Case update available.</strong></p>
+    <div class="content">
+        <header>
+            <h1>NBI Notifications</h1>
+        </header>
+        <div class="notification-container">
+            <div class="notification">
+                <p>You have a new notification: <strong>Case update available.</strong></p>
+            </div>
+        </div>
+    </div>
 
     <script>
+         let sidebarOpen = false;
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            const title = document.getElementById('title');
-            const hamburger = document.getElementById('hamburger');
-            const content = document.querySelector('.content'); 
-    
-            if (sidebar.style.left === '0px') {
-                sidebar.style.left = '-250px';
-                title.classList.remove('shifted');
-                hamburger.classList.remove('hidden');
-                content.classList.remove('shifted');
-            } else {
-                sidebar.style.left = '0px';
-                title.classList.add('shifted');
-                hamburger.classList.add('hidden');
-                content.classList.add('shifted'); 
+            const content = document.getElementById('content');
+            sidebarOpen = !sidebarOpen;
+            sidebar.classList.toggle('open');
+            content.classList.toggle('shifted');
+            
+            if (window.innerWidth <= 768) {
+                document.body.style.marginLeft = sidebarOpen ? '100%' : '0';
             }
         }
         
@@ -74,18 +73,30 @@
         }
     
         function handleLogout() {
-            // Perform the logout request (this can be a GET request to the /logout route)
             fetch('/logout', { method: 'GET' })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = '/login'; // Redirect to login page after logout
+                        window.location.href = '/login';
                     }
                 })
                 .catch(error => {
                     console.error('Logout error:', error);
                 });
         }
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.querySelector('.hamburger');
+            if (sidebarOpen && !sidebar.contains(event.target) && event.target !== hamburger) {
+                toggleSidebar();
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.body.style.marginLeft = '0';
+            }
+        });
     </script>
-    
 </body>
 </html>
