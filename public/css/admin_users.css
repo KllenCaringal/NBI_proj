@@ -71,7 +71,7 @@ body {
   .content {
     margin-left: 250px; 
     padding: 20px;
-    background-color: #cecece;
+    background-color: #f5ebeb;
     height: 100vh;
     overflow-y: auto;
     width: calc(100% - 250px);
@@ -87,7 +87,7 @@ body {
     padding: 10px;
     background-color: #112158;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(255, 125, 125, 0.1);
   }
   table {
     width: 100%;
@@ -98,7 +98,7 @@ body {
 
   .user-table {
     overflow-x: auto; /* Allows scrolling if table is too wide */
-    background-color: #fff;
+    background-color: #ffffff;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

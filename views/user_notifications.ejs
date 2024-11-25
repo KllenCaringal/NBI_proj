@@ -2,59 +2,71 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NBI Notifications</title>
+    <title>NBI SKGV - Notifications</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/css/user-notif.css">
+   <link rel="stylesheet" href="/css/user-notif.css">
 </head>
 <body>
-    <div class="navbar" id="navbar">
+    <div class="navbar">
         <div class="navbar-left">
-            <div class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</div>
-            <img src="/images/nbi_logo.png" alt="Logo" class="navbar-logo">
-            <div class="title" id="title">NBI SKGV</div>
+            <div class="hamburger" onclick="toggleSidebar()">☰</div>
+            <img src="/images/nbi_logo.png" alt="NBI Logo" class="navbar-logo">
+            <div class="title">NBI SKGV</div>
         </div>
         <div class="search-container">
-            <input type="text" placeholder="🔍" aria-label="Search">
+            <input type="text" placeholder="Search..." aria-label="Search">
         </div>
         <div class="navbar-right profile-settings">
-            <div class="icon" onclick="redirectToPage('/profile')">
-                <i class="fas fa-user profile-icon"></i>
-            </div>
-            <span>|</span>
-            <div class="icon" onclick="redirectToPage('/user_settings')">
-                <i class="fas fa-cog profile-icon"></i>
-            </div>
+            <div class="icon" id="profileIcon" role="button" aria-label="Profile">👤</div>
+            <div class="icon" id="settingsIcon" role="button" aria-label="Settings">⚙️</div>
         </div>
     </div>
+
     <div id="sidebar" class="sidebar">
-        <div class="back-button" onclick="toggleSidebar()">←</div>
         <ul>
-            <li><span class="sidebar-icon">🏠</span><a href="/user_home">Home</a></li>
-            <li><span class="sidebar-icon">💬</span><a href="/user_message">Message</a></li>
-            <li><span class="sidebar-icon">📤</span><a href="/user_upload">Upload</a></li>
-            <li><span class="sidebar-icon">🔔</span><a href="/user_notifications">Notification</a></li>
+            <li><a href="/user_home"><span class="sidebar-icon">🏠</span>Home</a></li>
+            <li><a href="/user_message"><span class="sidebar-icon">💬</span>Message</a></li>
+            <li><a href="/user_upload"><span class="sidebar-icon">📤</span>Upload</a></li>
+            <li><a href="/user_notifications"><span class="sidebar-icon">🔔</span>Notification</a></li>
         </ul>
-        <div class="logout" onclick="handleLogout()">
+        <div class="logout" onclick="handleLogout()" role="button" tabindex="0">
             <span class="sidebar-icon">🚪</span>Logout
         </div>
     </div>
-  
-    <div class="content">
-        <header>
-            <h1>NBI Notifications</h1>
-        </header>
-        <div class="notification-container">
-            <div class="notification">
-                <p>You have a new notification: <strong>Case update available.</strong></p>
+
+    <div id="content" class="content">
+        <h1>Notifications</h1>
+        <div class="notification-list">
+            <div class="notification-item">
+                <div class="notification-icon">🔔</div>
+                <div class="notification-content">
+                    <div class="notification-title">New Case Assigned</div>
+                    <div class="notification-message">You have been assigned to Case #12345. Please review the details and take necessary action.</div>
+                </div>
+                <div class="notification-time">2 hours ago</div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon">📅</div>
+                <div class="notification-content">
+                    <div class="notification-title">Upcoming Meeting</div>
+                    <div class="notification-message">Reminder: Team meeting scheduled for tomorrow at 10:00 AM in Conference Room A.</div>
+                </div>
+                <div class="notification-time">1 day ago</div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon">📊</div>
+                <div class="notification-content">
+                    <div class="notification-title">Monthly Report Due</div>
+                    <div class="notification-message">Your monthly activity report is due in 3 days. Please submit it before the deadline.</div>
+                </div>
+                <div class="notification-time">2 days ago</div>
             </div>
         </div>
     </div>
 
     <script>
-         let sidebarOpen = false;
+        let sidebarOpen = false;
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -67,22 +79,35 @@
                 document.body.style.marginLeft = sidebarOpen ? '100%' : '0';
             }
         }
-        
+
         function redirectToPage(url) {
             window.location.href = url;
         }
-    
+
         function handleLogout() {
             fetch('/logout', { method: 'GET' })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = '/login';
+                        window.location.href = '/login'; 
                     }
                 })
                 .catch(error => {
                     console.error('Logout error:', error);
                 });
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileIcon = document.getElementById('profileIcon');
+            const settingsIcon = document.getElementById('settingsIcon');
+
+            profileIcon.addEventListener('click', function() {
+                redirectToPage('/profile');
+            });
+
+            settingsIcon.addEventListener('click', function() {
+                redirectToPage('/user_settings');
+            });
+        });
 
         document.addEventListener('click', function(event) {
             const sidebar = document.getElementById('sidebar');
