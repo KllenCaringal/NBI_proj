@@ -12,6 +12,9 @@ router.post('/login', UserCon.loginUser);
 router.get('/logout', UserCon.logoutUser);
 
 router.get('/profile', UserCon.profile);
+router.get('/api/user', UserCon.getUserData);
+router.get('/api/cases', UserCon.getUserCases);
+router.post('/api/updateProfile', UserCon.updateProfile);
 
 router.get('/admin-dashboard', UserCon.admin_dashboard);
 router.get('/admin-users', UserCon.admin_users);

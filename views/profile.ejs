@@ -3,116 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>Profile</title>
     <link rel="stylesheet" href="/css/profile.css">
 </head>
 <body>
-    <!-- Main Container to apply flex layout -->
-    <div class="main-container">
-        <!-- Header Section -->
-        <header class="nbi-header">
-            <div class="branding">
-                <img src="/images/nbi_logo.png" alt="NBI Logo" class="logo">
-                <h1>National Bureau of Investigation</h1>
+    <header class="header">
+        <button class="icon-button" onclick="history.back()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <h1>Patient's details</h1>
+        <div class="header-right">
+            <div class="search-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="search" placeholder="Search..." class="search-input">
             </div>
-            <nav class="nav-links">
-                <a href="/admin-dashboard">Dashboard</a>
-                <% if (user.role === 'Admin') { %>
-                    <a href="#">Manage Users</a>
-                    <a href="#">Admin Reports</a>
-                <% } else { %>
-                    <a href="#">Cases</a>
-                <% } %>
-                <a href="#">Reports</a>
-                <a href="/logout">Logout</a>
-            </nav>
-        </header>
+            <button class="icon-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            </button>
+            <button class="icon-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            </button>
+            <img src="https://via.placeholder.com/150" alt="User Avatar" class="avatar" id="profilePic">
+        </div>
+    </header>
 
-        <!-- Profile Container -->
-        <main class="profile-container">
-            <section class="profile-info">
-                <img src="<%= user.profile_pic ? user.profile_pic : '/images/default-profile-pic.jpg' %>" 
-                     alt="Profile Picture" class="profile-pic">
-                <div class="details">
-                    <h2><%= user.firstname %> <%= user.lastname %></h2>
-                    <p><strong>ID:</strong> <%= user.user_id %></p>
-                    <p><strong>Role:</strong> <%= user.role %></p>
-                    <p><strong>Motto:</strong> <%= user.motto %></p>
-                    <button class="btn-primary">Update Profile</button>
+    <div class="container">
+        <div class="grid">
+            <!-- Profile Card -->
+            <div class="card">
+                <img src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-image" id="profilePic">
+                <h2 class="profile-name" id="fullName"></h2>
+                <p class="profile-id" id="userId"></p>
+                <div class="profile-details">
+                    <div>
+                        <label for="gender">Gender</label>
+                        <p id="gender"></p>
+                    </div>
+                    <div>
+                        <label for="contact">Contact</label>
+                        <p id="contact"></p>
+                    </div>
+                    <div>
+                        <label for="email">Email</label>
+                        <p id="email"></p>
+                    </div>
+                    <div>
+                        <label for="address">Address</label>
+                        <p id="address"></p>
+                    </div>
                 </div>
-            </section>
+                <button id="editBtn" class="edit-button">Edit Profile</button>
+            </div>
 
-            <!-- Tabs Section -->
-            <section class="tabs-section">
-                <div class="tabs">
-                    <button class="tab-button active" onclick="showTab('overview')">Overview</button>
-                    <% if (user.role === 'Admin') { %>
-                        <button class="tab-button" onclick="showTab('admin-tasks')">Admin Tasks</button>
-                    <% } else { %>
-                        <button class="tab-button" onclick="showTab('cases')">Cases</button>
-                    <% } %>
-                    <button class="tab-button" onclick="showTab('settings')">Settings</button>
-                </div>
-                <div class="tab-content" id="overview">
-                    <p><strong>First Name:</strong> <%= user.firstname %></p>
-                    <p><strong>Last Name:</strong> <%= user.lastname %></p>
-                    <p><strong>Motto:</strong> <%= user.motto %></p>
-                </div>
-                <% if (user.role === 'Admin') { %>
-                    <div class="tab-content" id="admin-tasks" style="display:none;">
-                        Admin-specific tasks and management tools.
+            <!-- Main Content -->
+            <div>
+                <!-- Stats Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Total Case Upload</h3>
                     </div>
-                <% } else { %>
-                    <div class="tab-content" id="cases" style="display:none;">
-                        List of active and closed cases.
+                    <div class="total-cases">
+                        <div class="case-count" id="totalCaseCount">0</div>
+                        <div>
+                            <p>Total Cases</p>
+                            <p class="profile-name" id="totalCaseText">0</p>
+                        </div>
                     </div>
-                <% } %>
-                <div class="tab-content" id="settings" style="display:none;">
-                    <h3>Update Profile</h3>
-                    <form action="/update-profile" method="POST" enctype="multipart/form-data" class="update-form">
-                        <div class="form-group">
-                            <label for="firstname">First Name</label>
-                            <input type="text" id="firstname" name="firstname" value="<%= user.firstname %>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastname">Last Name</label>
-                            <input type="text" id="lastname" name="lastname" value="<%= user.lastname %>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="motto">Motto</label>
-                            <textarea id="motto" name="motto" rows="3"><%= user.motto %></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="profile_pic">Profile Picture</label>
-                            <input type="file" id="profile_pic" name="profile_pic" accept="image/*">
-                        </div>
-                        <button type="submit" class="btn-primary">Save Changes</button>
-                    </form>
                 </div>
-            </section>
-        </main>
+
+                <!-- Cases List -->
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Cases</h3>
+                    </div>
+                    <div id="casesList">
+                        <!-- Case items will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Footer Section -->
-    <footer class="nbi-footer">
-        <p>&copy; 2024 National Bureau of Investigation - All Rights Reserved.</p>
-    </footer>
-
-    <!-- JavaScript for Tab Functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        function showTab(tab) {
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+        const editBtn = document.getElementById('editBtn');
+        const profileFields = {
+            fullName: document.getElementById('fullName'),
+            gender: document.getElementById('gender'),
+            contact: document.getElementById('contact'),
+            email: document.getElementById('email'),
+            address: document.getElementById('address')
+        };
+        const casesList = document.getElementById('casesList');
+        const totalCaseCount = document.getElementById('totalCaseCount');
+        const totalCaseText = document.getElementById('totalCaseText');
 
-            // Display the selected tab
-            document.getElementById(tab).style.display = 'block';
+        let isEditing = false;
+        let userData = null;
 
-            // Remove 'active' class from all buttons
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-
-            // Add 'active' class to the clicked button
-            document.querySelector(`.tab-button[onclick="showTab('${tab}')"]`).classList.add('active');
+        async function fetchUserData() {
+            try {
+                const response = await axios.get('/api/user');
+                userData = response.data;
+                updateProfileUI(userData);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
         }
+
+        async function fetchCases() {
+            try {
+                const response = await axios.get('/api/cases');
+                const cases = response.data;
+                updateCasesUI(cases);
+            } catch (error) {
+                console.error('Error fetching cases:', error);
+            }
+        }
+
+        function updateProfileUI(user) {
+            document.getElementById('profilePic').src = user.profile_pic || 'https://via.placeholder.com/150';
+            profileFields.fullName.textContent = `${user.firstname} ${user.lastname}`;
+            document.getElementById('userId').textContent = `User ID: ${user.user_id}`;
+            profileFields.gender.textContent = user.gender;
+            profileFields.contact.textContent = user.contact_num;
+            profileFields.email.textContent = user.email;
+            profileFields.address.textContent = `${user.sitio}, ${user.barangay}, ${user.province}`;
+        }
+
+        function updateCasesUI(cases) {
+            totalCaseCount.textContent = cases.length;
+            totalCaseText.textContent = cases.length;
+
+            casesList.innerHTML = '';
+            cases.forEach(caseItem => {
+                const caseElement = createCaseItem(caseItem);
+                casesList.appendChild(caseElement);
+            });
+        }
+
+        function createCaseItem(caseData) {
+            const caseItem = document.createElement('div');
+            caseItem.className = 'case-item';
+            caseItem.innerHTML = `
+                <img src="https://via.placeholder.com/80" alt="${caseData.case_title}" class="case-image">
+                <div class="case-info">
+                    <h4>${caseData.case_title}</h4>
+                    <p>${caseData.concern}</p>
+                    <p>Date Sent: ${new Date(caseData.date_sent).toLocaleDateString()}</p>
+                </div>
+                <div class="case-actions">
+                    <div class="dropdown">
+                        <button onclick="toggleDropdown(${caseData.id})" class="icon-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                        </button>
+                        <div id="dropdown${caseData.id}" class="dropdown-content">
+                            <a href="#" onclick="downloadCase(${caseData.id})">Download Case</a>
+                            <a href="#" onclick="deleteCase(${caseData.id})">Delete Case</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return caseItem;
+        }
+
+        editBtn.addEventListener('click', async () => {
+            isEditing = !isEditing;
+            editBtn.textContent = isEditing ? 'Save Changes' : 'Edit Profile';
+
+            if (isEditing) {
+                for (const [key, element] of Object.entries(profileFields)) {
+                    const currentText = element.textContent;
+                    let inputElement;
+
+                    if (key === 'fullName') {
+                        inputElement = document.createElement('div');
+                        inputElement.innerHTML = `
+                            <input type="text" id="edit_firstname" value="${userData.firstname}" style="width: 45%;">
+                            <input type="text" id="edit_lastname" value="${userData.lastname}" style="width: 45%;">
+                        `;
+                    } else if (key === 'gender') {
+                        inputElement = document.createElement('select');
+                        inputElement.id = `edit_${key}`;
+                        ['Male', 'Female', 'Other'].forEach(option => {
+                            const optionElement = document.createElement('option');
+                            optionElement.value = option;
+                            optionElement.textContent = option;
+                            inputElement.appendChild(optionElement);
+                        });
+                        inputElement.value = currentText;
+                    } else {
+                        inputElement = document.createElement('input');
+                        inputElement.type = key === 'email' ? 'email' : 'text';
+                        inputElement.id = `edit_${key}`;
+                        inputElement.value = currentText;
+                    }
+
+                    element.innerHTML = '';
+                    element.appendChild(inputElement);
+                }
+            } else {
+                // Save changes
+                const updatedData = {
+                    firstname: document.getElementById('edit_firstname').value,
+                    lastname: document.getElementById('edit_lastname').value,
+                    gender: document.getElementById('edit_gender').value,
+                    contact_num: document.getElementById('edit_contact').value,
+                    email: document.getElementById('edit_email').value,
+                    sitio: userData.sitio,
+                    barangay: userData.barangay,
+                    province: userData.province
+                };
+
+                try {
+                    await axios.post('/api/updateProfile', updatedData);
+                    await fetchUserData(); // Refresh user data
+                } catch (error) {
+                    console.error('Error updating profile:', error);
+                }
+            }
+        });
+
+        function toggleDropdown(id) {
+            document.getElementById(`dropdown${id}`).classList.toggle("show");
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.icon-button')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        function downloadCase(id) {
+            alert(`Downloading case ${id}`);
+            // Implement actual download logic here
+        }
+
+        function deleteCase(id) {
+            if (confirm(`Are you sure you want to delete case ${id}?`)) {
+                alert(`Case ${id} deleted`);
+                // Implement actual delete logic here and refresh the cases list
+            }
+        }
+
+        // Initial data fetch
+        fetchUserData();
+        fetchCases();
     </script>
 </body>
 </html>

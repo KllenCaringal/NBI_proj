@@ -192,28 +192,6 @@ const users = {
     user_page: (req, res) => {
         res.render('user_page', { user: req.session.user });
     },
-
-    profile: (req, res) => {
-        if (!req.session.user) {
-            console.log('User not logged in, redirecting to login');
-            return res.redirect('/login');
-        }
-    
-        const userId = req.session.user.user_id;
-    
-        User.findByUserId(userId, (err, user) => {
-            if (err) {
-                console.error('Error fetching user data:', err);
-                return res.status(500).send('Internal Server Error');
-            }
-    
-            if (!user) {
-                return res.status(404).send('User not found');
-            }
-    
-            res.render('profile', { user });
-        });
-    },
     
     admin_dashboard: (req, res) => {
         res.render('admin_dashboard');
@@ -297,6 +275,70 @@ const users = {
             res.status(500).send('An error occurred while fetching logs.');
         }
     },
+
+    profile: (req, res) => {
+        if (!req.session.user) {
+            console.log('User not logged in, redirecting to login');
+            return res.redirect('/login');
+        }
+        res.render('profile');
+    },
+
+    getUserData: (req, res) => {
+        if (!req.session.user) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        const userId = req.session.user.user_id;
+
+        User.findByUserId(userId, (err, user) => {
+            if (err) {
+                console.error('Error fetching user data:', err);
+                return res.status(500).json({ error: 'Internal Server Error' });
+            }
+
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            res.json(user);
+        });
+    },
+
+    getUserCases: (req, res) => {
+        if (!req.session.user) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        const userId = req.session.user.user_id;
+
+        User.getUserUploads(userId, (err, cases) => {
+            if (err) {
+                console.error('Error fetching user cases:', err);
+                return res.status(500).json({ error: 'Internal Server Error' });
+            }
+
+            res.json(cases);
+        });
+    },
+
+    updateProfile: (req, res) => {
+        if (!req.session.user) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        const userId = req.session.user.user_id;
+        const updatedData = req.body;
+
+        User.updateProfile(userId, updatedData, (err, result) => {
+            if (err) {
+                console.error('Error updating user profile:', err);
+                return res.status(500).json({ error: 'Internal Server Error' });
+            }
+
+            res.json({ message: 'Profile updated successfully' });
+        });
+    }
 };
 
 module.exports = users;

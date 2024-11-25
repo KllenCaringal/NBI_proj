@@ -1,147 +1,217 @@
-/* General Reset */
-* {
+ /* Reset and base styles */
+ * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
-/* Ensure the body and .main-container take the full height */
-html, body {
-    height: 100%;
+body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-}
-
-/* Main container that flexes and pushes footer to bottom */
-.main-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Header Styling */
-.nbi-header {
-    background-color: #003366;
-    color: #fff;
-    padding: 15px 30px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.nbi-header .branding {
-    display: flex;
-    align-items: center;
-}
-
-.nbi-header .branding .logo {
-    height: 50px;
-    margin-right: 15px;
-}
-
-.nbi-header h1 {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.nbi-header .nav-links a {
-    color: #fff;
-    margin-left: 15px;
-    text-decoration: none;
-    font-size: 16px;
-}
-
-.nbi-header .nav-links a:hover {
-    text-decoration: underline;
-}
-
-/* Profile Container Styling */
-.profile-container {
-    flex: 1;
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
-
-/* Profile Info Section */
-.profile-info {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.profile-info .profile-pic {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 20px;
-    border: 3px solid #003366;
-}
-
-.profile-info .details h2 {
-    font-size: 24px;
-    color: #003366;
-    margin-bottom: 5px;
-}
-
-.profile-info .details p {
-    font-size: 16px;
-    color: #666;
-}
-
-.profile-info .btn-primary {
-    padding: 8px 16px;
-    background-color: #003366;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.profile-info .btn-primary:hover {
-    background-color: #00509e;
-}
-
-/* Tabs Section */
-.tabs-section .tabs {
-    display: flex;
-    margin-bottom: 20px;
-}
-
-.tabs-section .tab-button {
-    flex: 1;
-    padding: 10px 0;
-    background-color: #e0e0e0;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    color: #333;
-}
-
-.tabs-section .tab-button.active,
-.tabs-section .tab-button:hover {
-    background-color: #003366;
-    color: #fff;
-}
-
-.tab-content {
-    font-size: 16px;
     line-height: 1.6;
-    color: #555;
+    color: #333;
+    background-color: #f4f4f4;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header styles */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    height: 64px;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid #e5e5e5;
+    background-color: #fff;
+    padding: 0 24px;
+}
+.header h1 {
+    font-size: 18px;
+    font-weight: 600;
+}
+.header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.search-container {
+    position: relative;
     display: none;
 }
+@media (min-width: 768px) {
+    .search-container {
+        display: block;
+    }
+}
+.search-input {
+    width: 300px;
+    padding: 8px 8px 8px 36px;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+}
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+}
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+}
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 
-/* Footer Styling */
-.nbi-footer {
+/* Main content styles */
+.grid {
+    display: grid;
+    gap: 24px;
+}
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr 2fr;
+    }
+}
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+}
+.card-header {
+    margin-bottom: 16px;
+}
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+.profile-image {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 16px;
+    display: block;
+}
+.profile-name {
+    font-size: 24px;
+    font-weight: 600;
     text-align: center;
-    padding: 10px 0;
-    background-color: #003366;
+    margin-bottom: 8px;
+}
+.profile-id {
+    text-align: center;
+    color: #6b7280;
+    margin-bottom: 16px;
+}
+.profile-details {
+    margin-top: 16px;
+}
+.profile-details label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+.profile-details p {
+    margin-bottom: 16px;
+}
+.edit-button {
+    width: 100%;
+    padding: 8px 16px;
+    background-color: #3b82f6;
     color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.edit-button:hover {
+    background-color: #2563eb;
+}
+.total-cases {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.case-count {
+    width: 64px;
+    height: 64px;
+    border: 4px solid #3b82f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 600;
+}
+.case-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    position: relative;
+}
+.case-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.case-info h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.case-info p {
+    color: #6b7280;
     font-size: 14px;
+}
+.case-actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+.show {
+    display: block;
+}
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
 }
