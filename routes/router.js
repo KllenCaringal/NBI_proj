@@ -13,8 +13,7 @@ router.get('/logout', UserCon.logoutUser);
 
 router.get('/profile', UserCon.profile);
 router.get('/api/user', UserCon.getUserData);
-router.get('/api/cases', UserCon.getUserCases);
-router.post('/api/updateProfile', UserCon.updateProfile);
+router.get('/api/cases', UserCon.getCases);
 
 router.get('/admin-dashboard', UserCon.admin_dashboard);
 router.get('/admin-users', UserCon.admin_users);
@@ -23,12 +22,14 @@ router.get('/admin-notification', UserCon.admin_notification);
 router.get('/admin-trash', UserCon.admin_trash);
 router.get('/admin-logs', UserCon.admin_logs);
 
+router.get('/settings', UserCon.settings);
+router.get('/edit_profile', UserCon.edit_profile);
+router.post('/api/updateProfile', UserCon.updateProfile);
+
 router.get('/user_home', UserCon.user_home);
 router.get('/user_message', UserCon.user_message);
 router.get('/user_upload', UserCon.user_upload);
-router.get('/user_settings', UserCon.user_settings);
 router.get('/user_notifications', UserCon.user_notifications);
 router.post('/saveUpload', UserCon.saveUpload);
-
 
 module.exports = router;

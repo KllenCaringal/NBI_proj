@@ -258,10 +258,6 @@ const users = {
         });
     },
 
-    user_settings: (req, res) => {
-        res.render('user_settings');
-    },
-
     user_notifications: (req, res) => {
         res.render('user_notifications');
     },
@@ -305,40 +301,78 @@ const users = {
         });
     },
 
-    getUserCases: (req, res) => {
+    getCases: (req, res) => {
         if (!req.session.user) {
             return res.status(401).json({ error: 'Not authenticated' });
         }
 
         const userId = req.session.user.user_id;
+        const userRole = req.session.user.roles;
 
-        User.getUserUploads(userId, (err, cases) => {
-            if (err) {
-                console.error('Error fetching user cases:', err);
-                return res.status(500).json({ error: 'Internal Server Error' });
-            }
+        if (userRole === 'admin') {
+            User.getAllUploads((err, cases) => {
+                if (err) {
+                    console.error('Error fetching all cases:', err);
+                    return res.status(500).json({ error: 'Internal Server Error' });
+                }
+                res.json(cases);
+            });
+        } else {
+            User.getUserUploads(userId, (err, cases) => {
+                if (err) {
+                    console.error('Error fetching user cases:', err);
+                    return res.status(500).json({ error: 'Internal Server Error' });
+                }
+                res.json(cases);
+            });
+        }
+    },
 
-            res.json(cases);
-        });
+    settings: (req, res) => {
+        res.render('settings');
     },
 
     updateProfile: (req, res) => {
         if (!req.session.user) {
             return res.status(401).json({ error: 'Not authenticated' });
         }
-
+    
         const userId = req.session.user.user_id;
-        const updatedData = req.body;
-
+        const updatedData = {
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            gender: req.body.gender,
+            contact_num: req.body.contact,
+            sitio: req.body.sitio,
+            barangay: req.body.barangay,
+            province: req.body.province
+        };
+    
         User.updateProfile(userId, updatedData, (err, result) => {
             if (err) {
-                console.error('Error updating user profile:', err);
-                return res.status(500).json({ error: 'Internal Server Error' });
+                console.error('Error updating profile:', err);
+                return res.status(500).json({ error: 'Error updating profile' });
             }
-
             res.json({ message: 'Profile updated successfully' });
         });
-    }
+    },
+
+    edit_profile: (req, res) => {
+        if (!req.session.user) {
+            return res.redirect('/login');
+        }
+
+        User.findByUserId(req.session.user.user_id, (err, user) => {
+            if (err) {
+                console.error('Error fetching user data:', err);
+                return res.status(500).send('Server error');
+            }
+            if (!user) {
+                return res.status(404).send('User not found');
+            }
+            res.render('edit_profile', { user: user });
+        });
+    },
 };
 
 module.exports = users;

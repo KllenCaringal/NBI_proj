@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="/css/edit_profile.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <button onclick="goBack()" class="back-button">←</button>
+            <div class="title">NBI SKGV</div>
+        </div>
+        <div class="navbar-right">
+            <div class="icon" id="profileIcon">👤</div>
+            <span>|</span>
+            <div class="icon" id="settingsIcon">⚙️</div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Edit Profile</h1>
+        <form id="editProfileForm">
+            <div class="profile-pic">
+                <img id="profileImage" src="<%= user.profile_pic %>" alt="Profile Picture">
+                <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
+                <button type="button" onclick="document.getElementById('profilePicInput').click()">Change Picture</button>
+            </div>
+            <div class="form-group">
+                <label for="firstname">First Name:</label>
+                <input type="text" id="firstname" name="firstname" value="<%= user.firstname %>" required>
+            </div>
+            <div class="form-group">
+                <label for="lastname">Last Name:</label>
+                <input type="text" id="lastname" name="lastname" value="<%= user.lastname %>" required>
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="male" <%= user.gender === 'male' ? 'selected' : '' %>>Male</option>
+                    <option value="female" <%= user.gender === 'female' ? 'selected' : '' %>>Female</option>
+                    <option value="other" <%= user.gender === 'other' ? 'selected' : '' %>>Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="contact">Contact:</label>
+                <input type="tel" id="contact" name="contact" value="<%= user.contact_num %>" required>
+            </div>
+            <div class="form-group">
+                <label for="sitio">Sitio:</label>
+                <input type="text" id="sitio" name="sitio" value="<%= user.sitio %>" required>
+            </div>
+            <div class="form-group">
+                <label for="barangay">Barangay:</label>
+                <input type="text" id="barangay" name="barangay" value="<%= user.barangay %>" required>
+            </div>
+            <div class="form-group">
+                <label for="province">Province:</label>
+                <input type="text" id="province" name="province" value="<%= user.province %>" required>
+            </div>
+            <button type="submit" class="submit-btn">Save Changes</button>
+        </form>
+    </div>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        document.getElementById('profilePicInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profileImage').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('editProfileForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+
+            fetch('/edit_profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                } else {
+                    alert('Profile updated successfully!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the profile.');
+            });
+        });
+    </script>
+</body>
+</html>

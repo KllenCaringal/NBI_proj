@@ -217,7 +217,7 @@ const User = {
 
     getAllUploads: (callback) => {
         const query = `
-            SELECT uploads.id, uploads.case_title, uploads.concern, uploads.date_sent, uploads.date_of_need, uploads.file_path, uploads.created_at, users.user_id
+            SELECT uploads.*, users.user_id, users.firstname, users.lastname
             FROM uploads
             LEFT JOIN users ON uploads.user_id = users.user_id
             ORDER BY uploads.created_at DESC
@@ -231,6 +231,30 @@ const User = {
     getUserUploads: (userId, callback) => {
         const query = 'SELECT * FROM uploads WHERE user_id = ? ORDER BY created_at DESC';
         db.query(query, [userId], (err, results) => {
+            if (err) return callback(err, null);
+            return callback(null, results);
+        });
+    },
+    
+    updateProfile: (userId, updatedData, callback) => {
+        const query = `
+            UPDATE users 
+            SET firstname = ?, lastname = ?, gender = ?, contact_num = ?, 
+                email = ?, sitio = ?, barangay = ?, province = ?
+            WHERE user_id = ?
+        `;
+        const values = [
+            updatedData.firstname,
+            updatedData.lastname,
+            updatedData.gender,
+            updatedData.contact_num,
+            updatedData.email,
+            updatedData.sitio,
+            updatedData.barangay,
+            updatedData.province,
+            userId
+        ];
+        db.query(query, values, (err, results) => {
             if (err) return callback(err, null);
             return callback(null, results);
         });

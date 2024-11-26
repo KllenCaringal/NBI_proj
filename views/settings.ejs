@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - NBI SKGV</title>
+    <link rel="stylesheet" href="/css/user-settings.css">
+    <style>
+        .settings-container {
+            padding-top: 80px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .settings-button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            text-align: left;
+            background-color: white;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            border-radius: 4px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .settings-button:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <button onclick="goBack()" class="back-button">←</button>
+            <div class="title">NBI SKGV</div>
+        </div>
+        <div class="navbar-right">
+            <div class="icon" id="profileIcon">👤</div>
+            <span>|</span>
+            <div class="icon" id="settingsIcon">⚙️</div>
+        </div>
+    </nav>
+
+    <div class="settings-container">
+        <h1>Settings</h1>
+        <button class="settings-button" onclick="redirectToPage('/profile')">View Profile</button>
+        <button class="settings-button" onclick="redirectToPage('/edit_profile')">Edit Profile</button>
+        <button class="settings-button" onclick="redirectToPage('/about_us')">About Us</button>
+        <button class="settings-button" onclick="redirectToPage('/help_support')">Help and Support</button>
+        <button class="settings-button" onclick="handleLogout('/logout')">Logout</button>
+    </div>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        function redirectToPage(url) {
+            console.log('Redirecting to:', url);
+            // Implement actual redirection logic here
+            window.location.href = url;
+        }
+        function handleLogout() {
+            fetch('/logout', { method: 'GET' })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/login'; 
+                    }
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileIcon = document.getElementById('profileIcon');
+            const settingsIcon = document.getElementById('settingsIcon');
+
+            profileIcon.addEventListener('click', function() {
+                redirectToPage('/profile');
+            });
+
+            settingsIcon.addEventListener('click', function() {
+                redirectToPage('/settings');
+            });
+        });
+    </script>
+</body>
+</html>

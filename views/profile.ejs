@@ -11,7 +11,7 @@
         <button class="icon-button" onclick="history.back()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
         </button>
-        <h1>Patient's details</h1>
+        <h1>My Profile</h1>
         <div class="header-right">
             <div class="search-container">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -51,7 +51,6 @@
                         <p id="address"></p>
                     </div>
                 </div>
-                <button id="editBtn" class="edit-button">Edit Profile</button>
             </div>
 
             <!-- Main Content -->
@@ -85,7 +84,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        const editBtn = document.getElementById('editBtn');
         const profileFields = {
             fullName: document.getElementById('fullName'),
             gender: document.getElementById('gender'),
@@ -97,7 +95,6 @@
         const totalCaseCount = document.getElementById('totalCaseCount');
         const totalCaseText = document.getElementById('totalCaseText');
 
-        let isEditing = false;
         let userData = null;
 
         async function fetchUserData() {
@@ -150,6 +147,7 @@
                     <h4>${caseData.case_title}</h4>
                     <p>${caseData.concern}</p>
                     <p>Date Sent: ${new Date(caseData.date_sent).toLocaleDateString()}</p>
+                    ${userData.roles === 'admin' ? `<p>Uploader: (ID: ${caseData.user_id})</p>` : ''}
                 </div>
                 <div class="case-actions">
                     <div class="dropdown">
@@ -165,63 +163,6 @@
             `;
             return caseItem;
         }
-
-        editBtn.addEventListener('click', async () => {
-            isEditing = !isEditing;
-            editBtn.textContent = isEditing ? 'Save Changes' : 'Edit Profile';
-
-            if (isEditing) {
-                for (const [key, element] of Object.entries(profileFields)) {
-                    const currentText = element.textContent;
-                    let inputElement;
-
-                    if (key === 'fullName') {
-                        inputElement = document.createElement('div');
-                        inputElement.innerHTML = `
-                            <input type="text" id="edit_firstname" value="${userData.firstname}" style="width: 45%;">
-                            <input type="text" id="edit_lastname" value="${userData.lastname}" style="width: 45%;">
-                        `;
-                    } else if (key === 'gender') {
-                        inputElement = document.createElement('select');
-                        inputElement.id = `edit_${key}`;
-                        ['Male', 'Female', 'Other'].forEach(option => {
-                            const optionElement = document.createElement('option');
-                            optionElement.value = option;
-                            optionElement.textContent = option;
-                            inputElement.appendChild(optionElement);
-                        });
-                        inputElement.value = currentText;
-                    } else {
-                        inputElement = document.createElement('input');
-                        inputElement.type = key === 'email' ? 'email' : 'text';
-                        inputElement.id = `edit_${key}`;
-                        inputElement.value = currentText;
-                    }
-
-                    element.innerHTML = '';
-                    element.appendChild(inputElement);
-                }
-            } else {
-                // Save changes
-                const updatedData = {
-                    firstname: document.getElementById('edit_firstname').value,
-                    lastname: document.getElementById('edit_lastname').value,
-                    gender: document.getElementById('edit_gender').value,
-                    contact_num: document.getElementById('edit_contact').value,
-                    email: document.getElementById('edit_email').value,
-                    sitio: userData.sitio,
-                    barangay: userData.barangay,
-                    province: userData.province
-                };
-
-                try {
-                    await axios.post('/api/updateProfile', updatedData);
-                    await fetchUserData(); // Refresh user data
-                } catch (error) {
-                    console.error('Error updating profile:', error);
-                }
-            }
-        });
 
         function toggleDropdown(id) {
             document.getElementById(`dropdown${id}`).classList.toggle("show");

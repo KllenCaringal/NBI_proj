@@ -32,6 +32,7 @@ app.use((req, res, next) => {
     }
 });
 
+app.use(express.json());
 app.use('/', routes);
 
 const PORT = 8090;
