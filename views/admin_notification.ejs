@@ -1,32 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notification</title>
-  <link rel="stylesheet" href="/css/admin_notification.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBI Administrative Notifications</title>
+    <link rel="stylesheet" href="/css/admin_dashboard.css">
+    <link rel="stylesheet" href="/css/admin_notification.css">
+    
 </head>
 <body>
-  <div class="sidebar">
-    <div class="logo">
-      <img src="/images/nbi_logo.png" alt="Logo" />
+    <!-- Add sidebar from dashboard -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="/images/nbi_logo.png" alt="Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin-dashboard"><i class="nav-item nav-link"></i> Dashboard</a></li>
+                <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
+                <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
+                <li><a href="/admin-notification" class="active"><i class="nav-item nav-link"></i> Notification</a></li>
+                <li><a href="/admin-logs"><i class="nav-item nav-link"></i> Logs</a></li>
+                <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
+                <li><a href="/profile"><i class="nav-item nav-link"></i> Profile</a></li>
+            </ul>
+        </nav>
+        <div class="logout">
+            <a href="/logout">
+                <button>Log Out</button>
+            </a>
+        </div>
     </div>
-    <nav>
-      <ul>
-        <li><a href="/admin-dashboard" ><i class="nav-item nav-link"></i> Dashboard</a></li>
-        <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
-        <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
-        <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
-        <li><a href="/admin-logs"><i class="nav-item nav-link"></i> Logs</a></li>
-        <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
-        <li><a href="/profile"><i class="nav-item nav-link"></i> Profile</a></li>
-      </ul>
-    </nav>
-    <div class="logout">
-      <a href="/logout">
-        <button>Log Out</button>
-      </a>
+
+    <!-- Original notification content -->
+    <div class="content">
+        <div class="notification-header">
+            <h1>Administrative Notifications</h1>
+            <div class="notification-filters">
+                <button class="filter-button active" onclick="filterNotifications('all')">All</button>
+                <button class="filter-button" onclick="filterNotifications('unread')">Unread</button>
+                <button class="filter-button" onclick="filterNotifications('priority')">Priority</button>
+            </div>
+        </div>
+
+        <div class="notification-container" id="notificationList">
+            <!-- Notifications will be dynamically inserted here -->
+        </div>
     </div>
-  </div>
+
+    <!-- Original JavaScript remains unchanged -->
+    <script>
+        // All the original notification JavaScript code remains exactly the same
+        const notifications = [
+            {
+                id: 1,
+                type: 'case_update',
+                title: 'New Case Assignment',
+                message: 'Case #NBI-2024-0127 has been assigned to Agent Rodriguez. Requires immediate attention.',
+                timestamp: '2024-02-15T09:30:00',
+                priority: 'high',
+                unread: true,
+                category: 'Case Management'
+            },
+            {
+                id: 2,
+                type: 'clearance_request',
+                title: 'Clearance Application Review Required',
+                message: 'Batch of 50 clearance applications pending review from Manila Regional Office.',
+                timestamp: '2024-02-15T09:15:00',
+                priority: 'medium',
+                unread: true,
+                category: 'Clearance Processing'
+            },
+            {
+                id: 3,
+                type: 'system_alert',
+                title: 'System Maintenance Notice',
+                message: 'Scheduled system maintenance on February 16, 2024, from 22:00 to 23:00 PHT.',
+                timestamp: '2024-02-15T08:45:00',
+                priority: 'low',
+                unread: false,
+                category: 'System Administration'
+            }
+        ];
+
+        function getTimeAgo(timestamp) {
+            const now = new Date();
+            const notificationDate = new Date(timestamp);
+            const diffInMinutes = Math.floor((now - notificationDate) / 60000);
+
+            if (diffInMinutes < 60) {
+                return `${diffInMinutes} minutes ago`;
+            } else if (diffInMinutes < 1440) {
+                const hours = Math.floor(diffInMinutes / 60);
+                return `${hours} hours ago`;
+            } else {
+                const days = Math.floor(diffInMinutes / 1440);
+                return `${days} days ago`;
+            }
+        }
+
+        function getPriorityClass(priority) {
+            switch(priority) {
+                case 'high': return 'priority-high';
+                case 'medium': return 'priority-medium';
+                case 'low': return 'priority-low';
+                default: return '';
+            }
+        }
+
+        function renderNotifications(filter = 'all') {
+            const container = document.getElementById('notificationList');
+            container.innerHTML = '';
+
+            let filteredNotifications = notifications;
+            if (filter === 'unread') {
+                filteredNotifications = notifications.filter(n => n.unread);
+            } else if (filter === 'priority') {
+                filteredNotifications = notifications.filter(n => n.priority === 'high');
+            }
+
+            filteredNotifications.forEach(notification => {
+                const notificationElement = document.createElement('div');
+                notificationElement.className = `notification-item ${notification.unread ? 'unread' : ''}`;
+                notificationElement.innerHTML = `
+                    <div class="notification-icon">
+                        <span class="priority-indicator ${getPriorityClass(notification.priority)}"></span>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">
+                            ${notification.title}
+                        </div>
+                        <div class="notification-message">
+                            ${notification.message}
+                        </div>
+                        <div class="notification-meta">
+                            <span>${notification.category} • ${getTimeAgo(notification.timestamp)}</span>
+                            <div class="notification-actions">
+                                ${notification.unread ? 
+                                    `<button class="action-button mark-read" onclick="markAsRead(${notification.id})">Mark as Read</button>` : 
+                                    ''}
+                                <button class="action-button delete" onclick="deleteNotification(${notification.id})">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(notificationElement);
+            });
+        }
+
+        function filterNotifications(filter) {
+            document.querySelectorAll('.filter-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderNotifications(filter);
+        }
+
+        function markAsRead(id) {
+            const notification = notifications.find(n => n.id === id);
+            if (notification) {
+                notification.unread = false;
+                renderNotifications();
+            }
+        }
+
+        function deleteNotification(id) {
+            const index = notifications.findIndex(n => n.id === id);
+            if (index > -1) {
+                notifications.splice(index, 1);
+                renderNotifications();
+            }
+        }
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNotifications();
+        });
+
+        // Simulate new notifications
+        setInterval(() => {
+            const randomTypes = ['case_update', 'clearance_request', 'system_alert'];
+            const randomPriorities = ['high', 'medium', 'low'];
+            const randomCategories = ['Case Management', 'Clearance Processing', 'System Administration'];
+            
+            if (Math.random() < 0.3) {
+                notifications.unshift({
+                    id: Date.now(),
+                    type: randomTypes[Math.floor(Math.random() * randomTypes.length)],
+                    title: `New ${randomCategories[Math.floor(Math.random() * randomCategories.length)]} Alert`,
+                    message: 'New notification message...',
+                    timestamp: new Date().toISOString(),
+                    priority: randomPriorities[Math.floor(Math.random() * randomPriorities.length)],
+                    unread: true,
+                    category: randomCategories[Math.floor(Math.random() * randomCategories.length)]
+                });
+                renderNotifications();
+            }
+        }, 30000);
+    </script>
 </body>
 </html>

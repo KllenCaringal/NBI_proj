@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NBI SKGV - Dashboard</title>
+    <title>NBI Case Management System - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/user-home.css">
 </head>
@@ -12,23 +12,23 @@
         <div class="navbar-left">
             <div class="hamburger" onclick="toggleSidebar()">☰</div>
             <img src="/images/nbi_logo.png" alt="NBI Logo" class="navbar-logo">
-            <div class="title">NBI SKGV</div>
+            <div class="title">NBI Case Management System</div>
         </div>
         <div class="search-container">
-            <input type="text" placeholder="Search..." aria-label="Search">
+            <input type="text" placeholder="Search case number..." aria-label="Search">
         </div>
         <div class="navbar-right profile-settings">
-            <div class="icon" id="profileIcon">👤</div>
-            <div class="icon" id="settingsIcon">⚙️</div>
+            <div class="icon" id="profileIcon" title="View Profile">👤</div>
+            <div class="icon" id="settingsIcon" title="Account Settings">⚙️</div>
         </div>
     </div>
 
     <div id="sidebar" class="sidebar">
         <ul>
-            <li><a href="/user_home" onclick="loadContent('home')"><span class="sidebar-icon">🏠</span>Home</a></li>
-            <li><a href="/user_message" onclick="loadContent('message')"><span class="sidebar-icon">💬</span>Message</a></li>
-            <li><a href="/user_upload" onclick="loadContent('upload')"><span class="sidebar-icon">📤</span>Upload</a></li>
-            <li><a href="/user_notifications" onclick="loadContent('notification')"><span class="sidebar-icon">🔔</span>Notification</a></li>
+            <li><a href="/user_home"><span class="sidebar-icon">🏠</span>Home</a></li>
+            <li><a href="/user_message" class="active"><span class="sidebar-icon">💬</span>Messages</a></li>
+            <li><a href="/user_upload"><span class="sidebar-icon">📤</span>Upload</a></li>
+            <li><a href="/user_notifications"><span class="sidebar-icon">🔔</span>Notifications</a></li>
         </ul>
         <div class="logout" onclick="handleLogout()">
             <span class="sidebar-icon">🚪</span>Logout
@@ -36,24 +36,37 @@
     </div>
 
     <div id="content" class="content">
-        <h1>NEW CASES</h1>
+        <h1>Active Investigations</h1>
         <div class="case-container">
             <div class="case-card">
-                <h2>Case A</h2>
-                <p>Details for Case A. This is a placeholder for case information. It includes important data about the ongoing investigation.</p>
+                <h2>Case ID: NBI-2024-0127</h2>
+                <p>Type: Cybercrime Investigation<br>
+                Status: Active<br>
+                Priority: High<br>
+                Location: Metro Manila<br>
+                Date Initiated: January 27, 2024</p>
             </div>
             <div class="case-card">
-                <h2>Case B</h2>
-                <p>Details for Case B. This is a placeholder for case information. It contains crucial evidence and witness statements.</p>
+                <h2>Case ID: NBI-2024-0135</h2>
+                <p>Type: Financial Fraud Investigation<br>
+                Status: Pending Review<br>
+                Priority: Medium<br>
+                Location: Cebu City<br>
+                Date Initiated: February 3, 2024</p>
             </div>
             <div class="case-card">
-                <h2>Case C</h2>
-                <p>Details for Case C. This is a placeholder for case information. It outlines the timeline of events and key suspects.</p>
+                <h2>Case ID: NBI-2024-0142</h2>
+                <p>Type: Document Analysis<br>
+                Status: Under Investigation<br>
+                Priority: Standard<br>
+                Location: Davao City<br>
+                Date Initiated: February 10, 2024</p>
             </div>
         </div>
     </div>
 
     <script>
+        // Original JavaScript code remains unchanged
         let sidebarOpen = false;
 
         function toggleSidebar() {

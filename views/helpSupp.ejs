@@ -3,134 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Help and Support</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
-        }
-        header {
-            background: #007bff;
-            color: #fff;
-            padding: 1rem 0;
-            text-align: center;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            background: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        h1, h2 {
-            color: #333;
-        }
-        .faq {
-            margin-top: 20px;
-        }
-        .faq-item {
-            margin-bottom: 15px;
-        }
-        .faq-item h3 {
-            margin: 0;
-            cursor: pointer;
-            color: #007bff;
-        }
-        .faq-item p {
-            display: none;
-            margin: 5px 0 0;
-            padding: 10px;
-            background: #f1f1f1;
-            border-left: 4px solid #007bff;
-        }
-        .contact {
-            margin-top: 30px;
-        }
-        .contact form {
-            display: flex;
-            flex-direction: column;
-        }
-        .contact form label {
-            margin-bottom: 5px;
-        }
-        .contact form input, .contact form textarea, .contact form button {
-            margin-bottom: 15px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 100%;
-        }
-        .contact form button {
-            background: #007bff;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-        .contact form button:hover {
-            background: #0056b3;
-        }
-        footer {
-            text-align: center;
-            padding: 1rem 0;
-            background: #007bff;
-            color: #fff;
-            margin-top: 20px;
-        }
-    </style>
+    <title>Help and Support - National Bureau of Investigation</title>
+    <link rel="stylesheet" href="/css/help.css">
+</head>
+<body>
+
+    <header>
+        <h1>Help and Support Center</h1>
+    </header>
+    <div style="margin: 10px 0; padding-left: 20px;">
+        <a href="/settings" style="display: inline-block; background: var(--secondary-color); color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+            &larr; Back to Settings
+        </a>
+    </div>
+
+    <div class="container">
+        <section class="section">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">How do I apply for NBI Clearance?</div>
+                    <div class="faq-answer">
+                        <p>To apply for an NBI Clearance:</p>
+                        <ol>
+                            <li>Register an account on the NBI Clearance website</li>
+                            <li>Fill out the application form with your personal information</li>
+                            <li>Choose your preferred payment method and pay the processing fee</li>
+                            <li>Select an NBI branch for your biometrics capture</li>
+                            <li>Visit the selected branch on your scheduled date with valid ID</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">What documents do I need for NBI Clearance application?</div>
+                    <div class="faq-answer">
+                        <p>Please prepare the following documents:</p>
+                        <ul>
+                            <li>Valid government-issued ID (e.g., Passport, Driver's License, SSS ID)</li>
+                            <li>Proof of payment</li>
+                            <li>Application reference number</li>
+                            <li>Birth Certificate (if required)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">How can I track my application status?</div>
+                    <div class="faq-answer">
+                        <p>You can track your application status by:</p>
+                        <ol>
+                            <li>Logging into your NBI Clearance account</li>
+                            <li>Going to the "Track Application" section</li>
+                            <li>Entering your reference number</li>
+                            <li>Checking the current status of your application</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Contact Support</h2>
+            <div class="contact-form">
+                <form id="supportForm" action="#" method="post">
+                    <div class="form-group">
+                        <label for="inquiry-type">Type of Inquiry:</label>
+                        <select id="inquiry-type" name="inquiry-type" required>
+                            <option value="">Select an inquiry type</option>
+                            <option value="application">Application Process</option>
+                            <option value="technical">Technical Support</option>
+                            <option value="payment">Payment Issues</option>
+                            <option value="other">Other Concerns</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name">Full Name:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reference">Reference Number (if applicable):</label>
+                        <input type="text" id="reference" name="reference">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Detailed Description:</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+
+                    <button type="submit">Submit Inquiry</button>
+                </form>
+            </div>
+
+            <div class="contact-info">
+                <h3>Additional Contact Information</h3>
+                <p><strong>Office Hours:</strong> Monday to Friday, 8:00 AM to 5:00 PM</p>
+                <p><strong>Email:</strong> support@nbi.gov.ph</p>
+                <p><strong>Hotline:</strong> (02) 8-XXX-XXXX</p>
+                <p><strong>Address:</strong> NBI Building, Taft Avenue, Manila, Philippines</p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 National Bureau of Investigation. All rights reserved.</p>
+    </footer>
+
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const faqs = document.querySelectorAll(".faq-item h3");
-            faqs.forEach(faq => {
-                faq.addEventListener("click", () => {
-                    const answer = faq.nextElementSibling;
-                    answer.style.display = answer.style.display === "block" ? "none" : "block";
+        document.addEventListener('DOMContentLoaded', function() {
+            // FAQ Accordion
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+                    const answer = question.nextElementSibling;
+                    const isActive = question.classList.contains('active');
+                    
+                    // Close all FAQs
+                    faqQuestions.forEach(q => {
+                        q.classList.remove('active');
+                        q.nextElementSibling.classList.remove('active');
+                    });
+                    
+                    // Open clicked FAQ if it wasn't active
+                    if (!isActive) {
+                        question.classList.add('active');
+                        answer.classList.add('active');
+                    }
                 });
+            });
+
+            // Form Submission
+            const form = document.getElementById('supportForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Add your form submission logic here
+                alert('Your inquiry has been submitted. We will respond to your message shortly.');
+                form.reset();
             });
         });
     </script>
-</head>
-<body>
-    <header>
-        <h1>Help and Support</h1>
-    </header>
-    <div class="container">
-        <section class="faq">
-            <h2>Frequently Asked Questions</h2>
-            <div class="faq-item">
-                <h3>How do I reset my password?</h3>
-                <p>You can reset your password by clicking on the "Forgot Password" link on the login page and following the instructions.</p>
-            </div>
-            <div class="faq-item">
-                <h3>How do I contact customer support?</h3>
-                <p>You can reach our support team by using the contact form below or by emailing us directly at support@example.com.</p>
-            </div>
-            <div class="faq-item">
-                <h3>Where can I find the user manual?</h3>
-                <p>The user manual is available in the 'Resources' section of our website or can be downloaded directly from your account dashboard.</p>
-            </div>
-        </section>
-        
-        <section class="contact">
-            <h2>Contact Us</h2>
-            <form action="#" method="post">
-                <label for="name">Your Name:</label>
-                <input type="text" id="name" name="name" required>
-                
-                <label for="email">Your Email:</label>
-                <input type="email" id="email" name="email" required>
-                
-                <label for="message">Your Message:</label>
-                <textarea id="message" name="message" rows="5" required></textarea>
-                
-                <button type="submit">Submit</button>
-            </form>
-        </section>
-    </div>
-    <footer>
-        <p>&copy; 2024 [Your Company Name]. All rights reserved.</p>
-    </footer>
 </body>
 </html>
