@@ -12,7 +12,7 @@
         <div class="navbar-left">
             <div class="hamburger" onclick="toggleSidebar()">☰</div>
             <img src="/images/nbi_logo.png" alt="NBI Logo" class="navbar-logo">
-            <div class="title">NBI Case Management System</div>
+            <div class="title">NBI SKGV </div>
         </div>
         <div class="search-container">
             <input type="text" placeholder="Search case number..." aria-label="Search">
@@ -36,36 +36,24 @@
 
     <div id="content" class="content">
         <h1>Active Investigations</h1>
-        <div class="case-container">
-            <div class="case-card">
-                <h2>Case ID: NBI-2024-0127</h2>
-                <p>Type: Cybercrime Investigation<br>
-                Status: Active<br>
-                Priority: High<br>
-                Location: Metro Manila<br>
-                Date Initiated: January 27, 2024</p>
-            </div>
-            <div class="case-card">
-                <h2>Case ID: NBI-2024-0135</h2>
-                <p>Type: Financial Fraud Investigation<br>
-                Status: Pending Review<br>
-                Priority: Medium<br>
-                Location: Cebu City<br>
-                Date Initiated: February 3, 2024</p>
-            </div>
-            <div class="case-card">
-                <h2>Case ID: NBI-2024-0142</h2>
-                <p>Type: Document Analysis<br>
-                Status: Under Investigation<br>
-                Priority: Standard<br>
-                Location: Davao City<br>
-                Date Initiated: February 10, 2024</p>
-            </div>
-        </div>
+
+        <% if (cases && cases.length > 0) { %>
+            <% cases.forEach(function(caseItem) { %>
+                <div class="case-card">
+                    <h2>Case: <%= caseItem.title %></h2>
+                    <p>Description: <%= caseItem.description %><br>
+                    Date posted: <%= new Date(caseItem.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+                    <% if (caseItem.file_name) { %>
+                        <a href="/download/<%= caseItem.file_name %>" class="download-btn">Download File</a>
+                    <% } %>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No active cases found.</p>
+        <% } %>
     </div>
 
     <script>
-        // Original JavaScript code remains unchanged
         let sidebarOpen = false;
 
         function toggleSidebar() {
@@ -107,6 +95,30 @@
             settingsIcon.addEventListener('click', function() {
                 redirectToPage('/settings');
             });
+
+            // Add click event listeners to download buttons
+            document.querySelectorAll('.download-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('href');
+                    fetch(url)
+                        .then(response => {
+                            if (response.ok) return response.blob();
+                            throw new Error('Network response was not ok.');
+                        })
+                        .then(blob => {
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.style.display = 'none';
+                            a.href = url;
+                            a.download = this.getAttribute('href').split('/').pop();
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                        })
+                        .catch(error => console.error('Download error:', error));
+                });
+            });
         });
 
         document.addEventListener('click', function(event) {
@@ -125,3 +137,4 @@
     </script>
 </body>
 </html>
+

@@ -333,6 +333,18 @@ const User = {
         });
     },
 
+    getUserCases: (userId, callback) => {
+        const query = `
+            SELECT * FROM admin_cases 
+            WHERE user_id = ? 
+            ORDER BY created_at DESC
+        `;
+        db.query(query, [userId], (err, results) => {
+            if (err) return callback(err, null);
+            return callback(null, results);
+        });
+    },
+
     
 };
 

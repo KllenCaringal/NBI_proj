@@ -201,34 +201,25 @@ const users = {
 
     downloadFile: (req, res) => {
         const filename = req.params.filename;
-        // Ensure the filename is properly sanitized
         const sanitizedFilename = path.basename(filename);
         const filePath = path.join(__dirname, '..', 'public', 'uploads', sanitizedFilename);
-
-        // Log the attempted file access for debugging
         console.log('Attempting to access file:', filePath);
 
-        // Check if file exists
         fs.access(filePath, fs.constants.F_OK, (err) => {
             if (err) {
                 console.error("File not found:", err);
                 return res.status(404).send('File not found');
             }
-
-            // Get file stats to check size and type
             fs.stat(filePath, (err, stats) => {
                 if (err) {
                     console.error("Error getting file stats:", err);
                     return res.status(500).send('Error accessing file');
                 }
-
-                // Set appropriate headers
                 res.setHeader('Content-Length', stats.size);
                 res.setHeader('Content-Disposition', `attachment; filename="${sanitizedFilename}"`);
 
-                // Stream the file instead of loading it all into memory
                 const fileStream = fs.createReadStream(filePath);
-                
+
                 fileStream.on('error', (err) => {
                     console.error("Error streaming file:", err);
                     if (!res.headersSent) {
@@ -283,9 +274,44 @@ const users = {
     },
 
     user_home: (req, res) => {
-        res.render('user_home');
+        if (!req.session.user) {
+            return res.redirect('/login');
+        }
+
+        User.getUserCases(req.session.user.user_id, (err, cases) => {
+            if (err) {
+                console.error('Error fetching user cases:', err);
+                return res.status(500).send('Error fetching cases');
+            }
+            const processedCases = cases.map(caseItem => ({
+                ...caseItem,
+                file_name: caseItem.file_path ? path.basename(caseItem.file_path) : null
+            }));
+            res.render('user_home', { cases: processedCases });
+        });
     },
 
+    downloadFile: (req, res) => {
+        const filename = req.params.filename;
+        const filePath = path.join(__dirname, '..', 'public', 'admin_cases', filename);
+
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+            if (err) {
+                console.error("File not found:", err);
+                return res.status(404).send('File not found');
+            }
+
+            res.download(filePath, (err) => {
+                if (err) {
+                    console.error("Error downloading file:", err);
+                    if (!res.headersSent) {
+                        res.status(500).send('Error downloading file');
+                    }
+                }
+            });
+        });
+    },
+    
     user_upload: (req, res) => {
         res.render('user_upload', { successMessage: null });
     },
