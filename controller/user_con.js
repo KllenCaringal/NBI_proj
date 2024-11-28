@@ -373,6 +373,13 @@ const users = {
             res.render('edit_profile', { user: user });
         });
     },
+
+    helpSupp:(req,res) => {
+        res.render('helpSupp');
+    },
+    about_us:(req, res) => {
+        res.render('about_us');
+    }
 };
 
 module.exports = users;
