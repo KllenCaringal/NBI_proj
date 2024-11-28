@@ -228,6 +228,9 @@ const users = {
         res.render('user_home');
     },
 
+    user_message: (req, res) => {
+        res.render('user_message');
+    },
     user_upload: (req, res) => {
         res.render('user_upload', { successMessage: null });
     },
