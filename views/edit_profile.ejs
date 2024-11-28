@@ -85,7 +85,7 @@
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
 
-            fetch('/edit_profile', {
+            fetch('/api/updateProfile', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

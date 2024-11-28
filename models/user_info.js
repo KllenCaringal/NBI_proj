@@ -236,11 +236,12 @@ const User = {
         });
     },
     
+    
     updateProfile: (userId, updatedData, callback) => {
         const query = `
             UPDATE users 
             SET firstname = ?, lastname = ?, gender = ?, contact_num = ?, 
-                email = ?, sitio = ?, barangay = ?, province = ?
+               sitio = ?, barangay = ?, province = ?
             WHERE user_id = ?
         `;
         const values = [
@@ -248,31 +249,6 @@ const User = {
             updatedData.lastname,
             updatedData.gender,
             updatedData.contact_num,
-            updatedData.email,
-            updatedData.sitio,
-            updatedData.barangay,
-            updatedData.province,
-            userId
-        ];
-        db.query(query, values, (err, results) => {
-            if (err) return callback(err, null);
-            return callback(null, results);
-        });
-    },
-
-    updateProfile: (userId, updatedData, callback) => {
-        const query = `
-            UPDATE users 
-            SET firstname = ?, lastname = ?, gender = ?, contact_num = ?, 
-                email = ?, sitio = ?, barangay = ?, province = ?
-            WHERE user_id = ?
-        `;
-        const values = [
-            updatedData.firstname,
-            updatedData.lastname,
-            updatedData.gender,
-            updatedData.contact_num,
-            updatedData.email,
             updatedData.sitio,
             updatedData.barangay,
             updatedData.province,
