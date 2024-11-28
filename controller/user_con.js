@@ -25,6 +25,16 @@ const uploadFileStorage = multer.diskStorage({
 });
 const fileUpload = multer({ storage: uploadFileStorage }).single('upload_file');
 
+const adminCaseStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/admin_cases');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+const adminCaseUpload = multer({ storage: adminCaseStorage }).single('file');
+
 const users = {
     registerPage: (req, res) => {
         res.render('register', { successMessage: null });
@@ -446,7 +456,46 @@ const users = {
     
     about_us:(req, res) => {
         res.render('about_us');
-    }
+    },
+
+    admin_addcase_page: (req, res) => {
+        User.getAllUsers((err, users) => {
+            if (err) {
+                console.error('Error fetching users:', err);
+                return res.status(500).send('Server error');
+            }
+            res.render('admin_addcase', { users });
+        });
+    },
+
+    admin_addcase: (req, res) => {
+        adminCaseUpload(req, res, (err) => {
+            if (err) {
+                console.error('Error uploading file:', err);
+                return res.status(500).send('Error uploading file.');
+            }
+
+            const { title, user_id, description } = req.body;
+            const filePath = req.file ? '/admin_cases/' + req.file.filename : null;
+
+            const caseData = {
+                title,
+                user_id,
+                description,
+                file_path: filePath,
+                created_at: new Date()
+            };
+
+            User.addAdminCase(caseData, (err, result) => {
+                if (err) {
+                    console.error('Error adding case:', err);
+                    return res.status(500).send('Error adding case.');
+                }
+                res.redirect('/admin-addcase');
+            });
+        });
+    },
+
 };
 
 module.exports = users;

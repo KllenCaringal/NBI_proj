@@ -35,4 +35,7 @@ router.get('/help_support', UserCon.helpSupp);
 router.post('/help_support', UserCon.submitInquiry);
 router.get('/about_us', UserCon.about_us);
 
+router.get('/admin-addcase', UserCon.admin_addcase_page);
+router.post('/admin-addcase', UserCon.admin_addcase);
+
 module.exports = router;

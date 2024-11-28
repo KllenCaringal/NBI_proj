@@ -78,6 +78,23 @@ function createDatabaseAndTable() {
                 else console.log('Uploads table ensured.');
             });
 
+            // Create Uploads Table
+            const createAdmincaseTableQuery = `
+                CREATE TABLE IF NOT EXISTS admin_cases (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    title VARCHAR(255) NOT NULL,
+                    user_id VARCHAR(50) NOT NULL,
+                    description TEXT,
+                    file_path VARCHAR(255),
+                    created_at DATETIME
+  
+                )
+            `;
+            db.query(createAdmincaseTableQuery, (err) => {
+                if (err) console.error('Error creating admin_cases table:', err);
+                else console.log('admin_cases table ensured.');
+            });
+
             const createReportsTableQuery = `
                 CREATE TABLE IF NOT EXISTS reports (
                     report_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -296,6 +313,26 @@ const User = {
             return callback(null, results);
         });
     },
+
+    addAdminCase: (caseData, callback) => {
+        const query = `
+            INSERT INTO admin_cases (title, user_id, description, file_path, created_at)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        const values = [
+            caseData.title,
+            caseData.user_id,
+            caseData.description,
+            caseData.file_path,
+            caseData.created_at
+        ];
+        
+        db.query(query, values, (err, results) => {
+            if (err) return callback(err, null);
+            return callback(null, results);
+        });
+    },
+
     
 };
 

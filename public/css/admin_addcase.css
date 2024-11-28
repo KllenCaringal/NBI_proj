@@ -1,0 +1,172 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+.sidebar {
+    background-color: #003366;
+    color: #ffffff;
+    width: 250px;
+    height: 100vh;
+    padding-top: 20px;
+    position: fixed;
+  }
+
+.content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+.content-header {
+    margin-bottom: 30px;
+}
+
+.content-header h1 {
+    color: #002B5B;
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.content-body {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+form {
+    display: grid;
+    gap: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    color: #4a5568;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+input[type="text"],
+select,
+textarea {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 16px;
+    padding: 10px 12px;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+    border-color: #002B5B;
+    outline: none;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.file-input-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.file-input-button {
+    background-color: #002B5B;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+}
+
+.file-input-button:hover {
+    background-color: #003B7B;
+}
+
+.file-input-text {
+    margin-left: 12px;
+    font-size: 14px;
+    color: #4a5568;
+}
+
+input[type="file"] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.btn-primary,
+.btn-secondary {
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #002B5B;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #003B7B;
+}
+
+.btn-secondary {
+    background-color: #e2e8f0;
+    color: #4a5568;
+}
+
+.btn-secondary:hover {
+    background-color: #cbd5e0;
+}
+
+@media (max-width: 768px) {
+    .content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .content-body {
+        padding: 20px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+    }
+}
+
