@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const emailService = require('../services/email_service.js');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -232,6 +233,25 @@ const users = {
         });
     },
 
+    downloadFile: (req, res) => {
+        const filename = req.params.filename;
+        const filePath = path.join(__dirname, '..', 'public', 'admin_cases', filename);
+
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+            if (err) {
+                console.error("File not found:", err);
+                return res.status(404).send('File not found');
+            }
+
+            res.download(filePath, filename, (err) => {
+                if (err) {
+                    console.error("Error downloading file:", err);
+                    res.status(500).send('Error downloading file');
+                }
+            });
+        });
+    },
+
     user_page: (req, res) => {
         res.render('user_page', { user: req.session.user });
     },
@@ -288,27 +308,6 @@ const users = {
                 file_name: caseItem.file_path ? path.basename(caseItem.file_path) : null
             }));
             res.render('user_home', { cases: processedCases });
-        });
-    },
-
-    downloadFile: (req, res) => {
-        const filename = req.params.filename;
-        const filePath = path.join(__dirname, '..', 'public', 'admin_cases', filename);
-
-        fs.access(filePath, fs.constants.F_OK, (err) => {
-            if (err) {
-                console.error("File not found:", err);
-                return res.status(404).send('File not found');
-            }
-
-            res.download(filePath, (err) => {
-                if (err) {
-                    console.error("Error downloading file:", err);
-                    if (!res.headersSent) {
-                        res.status(500).send('Error downloading file');
-                    }
-                }
-            });
         });
     },
     

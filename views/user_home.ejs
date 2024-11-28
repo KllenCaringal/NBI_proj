@@ -95,30 +95,6 @@
             settingsIcon.addEventListener('click', function() {
                 redirectToPage('/settings');
             });
-
-            // Add click event listeners to download buttons
-            document.querySelectorAll('.download-btn').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = this.getAttribute('href');
-                    fetch(url)
-                        .then(response => {
-                            if (response.ok) return response.blob();
-                            throw new Error('Network response was not ok.');
-                        })
-                        .then(blob => {
-                            const url = window.URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.style.display = 'none';
-                            a.href = url;
-                            a.download = this.getAttribute('href').split('/').pop();
-                            document.body.appendChild(a);
-                            a.click();
-                            window.URL.revokeObjectURL(url);
-                        })
-                        .catch(error => console.error('Download error:', error));
-                });
-            });
         });
 
         document.addEventListener('click', function(event) {
@@ -137,4 +113,3 @@
     </script>
 </body>
 </html>
-
