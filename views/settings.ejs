@@ -53,14 +53,14 @@
 
     <script>
         function goBack() {
-            window.history.back();
+            window.location.href = '/user_home';
         }
 
         function redirectToPage(url) {
             console.log('Redirecting to:', url);
-            // Implement actual redirection logic here
             window.location.href = url;
         }
+
         function handleLogout() {
             fetch('/logout', { method: 'GET' })
                 .then(response => {

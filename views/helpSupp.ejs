@@ -66,21 +66,30 @@
         <section class="section">
             <h2>Contact Support</h2>
             <div class="contact-form">
-                <form id="supportForm" action="#" method="post">
+                <form id="supportForm" action="/help_support" method="POST">
                     <div class="form-group">
                         <label for="inquiry-type">Type of Inquiry:</label>
-                        <select id="inquiry-type" name="inquiry-type" required>
+                        <select id="inquiry-type" name="inquiry_type" required>
                             <option value="">Select an inquiry type</option>
                             <option value="application">Application Process</option>
                             <option value="technical">Technical Support</option>
-                            <option value="payment">Payment Issues</option>
                             <option value="other">Other Concerns</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="name">Full Name:</label>
-                        <input type="text" id="name" name="name" required>
+                        <label for="user_id">User ID:</label>
+                        <input type="text" id="user_id" name="user_id" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="firstname">Firstname:</label>
+                        <input type="text" id="firstname" name="firstname" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastname">Lastname:</label>
+                        <input type="text" id="lastname" name="lastname" required>
                     </div>
 
                     <div class="form-group">
@@ -140,14 +149,6 @@
                 });
             });
 
-            // Form Submission
-            const form = document.getElementById('supportForm');
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                // Add your form submission logic here
-                alert('Your inquiry has been submitted. We will respond to your message shortly.');
-                form.reset();
-            });
         });
     </script>
 </body>

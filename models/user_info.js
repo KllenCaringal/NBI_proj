@@ -14,6 +14,7 @@ function createDatabaseAndTable() {
                 return;
             }
 
+            // Create Users Table
             const createUsersTableQuery = `
                 CREATE TABLE IF NOT EXISTS users (
                     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -41,6 +42,7 @@ function createDatabaseAndTable() {
                 else console.log('Users table ensured.');
             });
 
+            // Create Logs Table
             const createLogsTableQuery = `
                 CREATE TABLE IF NOT EXISTS logs (
                     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -58,6 +60,7 @@ function createDatabaseAndTable() {
                 else console.log('Logs table ensured.');
             });
 
+            // Create Uploads Table
             const createUploadsTableQuery = `
                 CREATE TABLE IF NOT EXISTS uploads (
                     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -74,11 +77,32 @@ function createDatabaseAndTable() {
                 if (err) console.error('Error creating uploads table:', err);
                 else console.log('Uploads table ensured.');
             });
+
+            const createReportsTableQuery = `
+                CREATE TABLE IF NOT EXISTS reports (
+                    report_id INT AUTO_INCREMENT PRIMARY KEY,
+                    user_id varchar(250) NOT NULL,
+                    firstname VARCHAR(100) NOT NULL,
+                    lastname VARCHAR(100) NOT NULL,
+                    email VARCHAR(255) NOT NULL,
+                    inquiry_type ENUM('application', 'technical', 'payment', 'other') NOT NULL,
+                    reference VARCHAR(255),
+                    message TEXT NOT NULL,
+                    status ENUM('pending', 'resolved') DEFAULT 'pending',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                )
+            `;
+            db.query(createReportsTableQuery, (err) => {
+                if (err) console.error('Error creating reports table:', err);
+                else console.log('Reports table ensured.');
+            });
         });
     });
 }
 
 createDatabaseAndTable();
+
 
 
 const User = {
@@ -158,7 +182,6 @@ const User = {
         });
     },
 
-    // Log user logout
     logUserLogout: (user_id, callback) => {
         const logout_time = new Date();
         const status = 0; // 0 for logout
@@ -245,20 +268,35 @@ const User = {
             WHERE user_id = ?
         `;
         const values = [
-            updatedData.firstname,
-            updatedData.lastname,
-            updatedData.gender,
-            updatedData.contact_num,
-            updatedData.sitio,
-            updatedData.barangay,
-            updatedData.province,
-            userId
+            updatedData.firstname, updatedData.lastname, updatedData.gender, updatedData.contact_num, updatedData.sitio, updatedData.barangay, updatedData.province, userId
         ];
         db.query(query, values, (err, results) => {
             if (err) return callback(err, null);
             return callback(null, results);
         });
-    }
+    },
+
+    addReport: (reportData, callback) => {
+        const query = `
+            INSERT INTO reports (user_id, firstname, lastname, email, inquiry_type, reference, message)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `;
+        const values = [
+            reportData.user_id,
+            reportData.firstname,
+            reportData.lastname,
+            reportData.email,
+            reportData.inquiry_type,
+            reportData.reference,
+            reportData.message,
+        ];
+    
+        db.query(query, values, (err, results) => {
+            if (err) return callback(err, null);
+            return callback(null, results);
+        });
+    },
+    
 };
 
 module.exports = User;

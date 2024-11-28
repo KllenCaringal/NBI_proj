@@ -32,6 +32,7 @@ router.get('/user_notifications', UserCon.user_notifications);
 router.post('/saveUpload', UserCon.saveUpload);
 
 router.get('/help_support', UserCon.helpSupp);
+router.post('/help_support', UserCon.submitInquiry);
 router.get('/about_us', UserCon.about_us);
 
 module.exports = router;

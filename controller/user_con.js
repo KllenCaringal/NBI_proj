@@ -371,9 +371,31 @@ const users = {
         });
     },
 
-    helpSupp:(req,res) => {
+    helpSupp: (req, res) => {
         res.render('helpSupp');
     },
+
+    submitInquiry: (req, res) => {
+        const { user_id, firstname, lastname, email, inquiry_type, reference, message } = req.body;
+        const reportData = {
+            user_id,
+            firstname,
+            lastname,
+            email,
+            inquiry_type,
+            reference: reference || null,
+            message,
+        };
+    
+        User.addReport(reportData, (err, results) => {
+            if (err) {
+                console.error("Error inserting inquiry into reports table:", err);
+                return res.status(500).send('An error occurred while submitting your inquiry.');
+            }
+            res.redirect('/help_support');
+        });
+    },
+    
     about_us:(req, res) => {
         res.render('about_us');
     }
