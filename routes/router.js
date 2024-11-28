@@ -27,7 +27,6 @@ router.get('/edit_profile', UserCon.edit_profile);
 router.post('/api/updateProfile', UserCon.updateProfile);
 
 router.get('/user_home', UserCon.user_home);
-router.get('/user_message', UserCon.user_message);
 router.get('/user_upload', UserCon.user_upload);
 router.get('/user_notifications', UserCon.user_notifications);
 router.post('/saveUpload', UserCon.saveUpload);
