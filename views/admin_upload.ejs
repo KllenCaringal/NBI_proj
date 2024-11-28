@@ -55,7 +55,19 @@
               <td><%= upload.concern %></td>
               <td><%= upload.date_sent %></td>
               <td><%= upload.date_of_need %></td>
-              <td><a href="/uploads/<%= upload.file_path %>" download>Download</a></td>
+              <td>
+                <% if (upload.file_path) { %>
+                  <a 
+                    href="/uploads/<%= upload.file_path %>" 
+                    class="download-link"
+                    onclick="return confirm('Download this file?')"
+                  >
+                    Download
+                  </a>
+                <% } else { %>
+                  No file
+                <% } %>
+              </td>
             </tr>
           <% }) %>
         </tbody>
@@ -76,3 +88,4 @@
   </script>
 </body>
 </html>
+

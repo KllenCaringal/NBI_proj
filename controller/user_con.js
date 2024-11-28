@@ -189,6 +189,48 @@ const users = {
         });
     },
 
+    downloadFile: (req, res) => {
+        const filename = req.params.filename;
+        // Ensure the filename is properly sanitized
+        const sanitizedFilename = path.basename(filename);
+        const filePath = path.join(__dirname, '..', 'public', 'uploads', sanitizedFilename);
+
+        // Log the attempted file access for debugging
+        console.log('Attempting to access file:', filePath);
+
+        // Check if file exists
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+            if (err) {
+                console.error("File not found:", err);
+                return res.status(404).send('File not found');
+            }
+
+            // Get file stats to check size and type
+            fs.stat(filePath, (err, stats) => {
+                if (err) {
+                    console.error("Error getting file stats:", err);
+                    return res.status(500).send('Error accessing file');
+                }
+
+                // Set appropriate headers
+                res.setHeader('Content-Length', stats.size);
+                res.setHeader('Content-Disposition', `attachment; filename="${sanitizedFilename}"`);
+
+                // Stream the file instead of loading it all into memory
+                const fileStream = fs.createReadStream(filePath);
+                
+                fileStream.on('error', (err) => {
+                    console.error("Error streaming file:", err);
+                    if (!res.headersSent) {
+                        res.status(500).send('Error downloading file');
+                    }
+                });
+
+                fileStream.pipe(res);
+            });
+        });
+    },
+
     user_page: (req, res) => {
         res.render('user_page', { user: req.session.user });
     },
@@ -212,7 +254,13 @@ const users = {
             if (err) {
                 return res.status(500).send('Error retrieving uploads');
             }
-            res.render('admin_upload', { uploads });
+            // Process the file paths to ensure they're correct
+            const processedUploads = uploads.map(upload => ({
+                ...upload,
+                // Remove the leading slash if it exists
+                file_path: upload.file_path ? upload.file_path.replace(/^\/uploads\//, '') : null
+            }));
+            res.render('admin_upload', { uploads: processedUploads });
         });
     },
 
