@@ -16,104 +16,107 @@ function createDatabaseAndTable() {
 
             // Create Users Table
             const createUsersTableQuery = `
-                CREATE TABLE IF NOT EXISTS users (
-                    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-                    user_id VARCHAR(250),
-                    firstname VARCHAR(250),
-                    lastname VARCHAR(250),
-                    age INT,
-                    gender VARCHAR(250),
-                    contact_num VARCHAR(250),
-                    email VARCHAR(250) UNIQUE,
-                    sitio VARCHAR(250),
-                    barangay VARCHAR(250),
-                    province VARCHAR(250),
-                    roles VARCHAR(250),
-                    verification_token VARCHAR(250),
-                    verified TINYINT(1) DEFAULT 0,
-                    token_expiry DATETIME,
-                    password VARCHAR(250),
-                    status VARCHAR(50) DEFAULT 'Active',
-                    profile_pic VARCHAR(250) DEFAULT NULL 
-                )
-            `;
-            db.query(createUsersTableQuery, (err) => {
-                if (err) console.error('Error creating users table:', err);
-                else console.log('Users table ensured.');
-            });
-
-            // Create Logs Table
-            const createLogsTableQuery = `
-                CREATE TABLE IF NOT EXISTS logs (
-                    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-                    user_id VARCHAR(250),
-                    role VARCHAR(50),
-                    firstname VARCHAR(250),
-                    lastname VARCHAR(250),
-                    login_time DATETIME,
-                    logout_time DATETIME,
-                    status TINYINT(1) DEFAULT 1
-                )
-            `;
-            db.query(createLogsTableQuery, (err) => {
-                if (err) console.error('Error creating logs table:', err);
-                else console.log('Logs table ensured.');
-            });
-
-            // Create Uploads Table
-            const createUploadsTableQuery = `
-                CREATE TABLE IF NOT EXISTS uploads (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    user_id VARCHAR(250),
-                    case_title VARCHAR(255) NOT NULL,
-                    concern TEXT NOT NULL,
-                    date_sent DATE NOT NULL,
-                    date_of_need DATE NOT NULL,
-                    file_path VARCHAR(255) NOT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            `;
-            db.query(createUploadsTableQuery, (err) => {
-                if (err) console.error('Error creating uploads table:', err);
-                else console.log('Uploads table ensured.');
-            });
-
-            // Create Uploads Table
-            const createAdmincaseTableQuery = `
-                CREATE TABLE IF NOT EXISTS admin_cases (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    title VARCHAR(255) NOT NULL,
-                    user_id VARCHAR(50) NOT NULL,
-                    description TEXT,
-                    file_path VARCHAR(255),
-                    created_at DATETIME
-  
-                )
-            `;
-            db.query(createAdmincaseTableQuery, (err) => {
-                if (err) console.error('Error creating admin_cases table:', err);
-                else console.log('admin_cases table ensured.');
-            });
-
-            const createReportsTableQuery = `
-                CREATE TABLE IF NOT EXISTS reports (
-                    report_id INT AUTO_INCREMENT PRIMARY KEY,
-                    user_id varchar(250) NOT NULL,
-                    firstname VARCHAR(100) NOT NULL,
-                    lastname VARCHAR(100) NOT NULL,
-                    email VARCHAR(255) NOT NULL,
-                    inquiry_type ENUM('application', 'technical', 'payment', 'other') NOT NULL,
-                    reference VARCHAR(255),
-                    message TEXT NOT NULL,
-                    status ENUM('pending', 'resolved') DEFAULT 'pending',
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-                )
-            `;
-            db.query(createReportsTableQuery, (err) => {
-                if (err) console.error('Error creating reports table:', err);
-                else console.log('Reports table ensured.');
-            });
+            CREATE TABLE IF NOT EXISTS users (
+                user_id VARCHAR(250) PRIMARY KEY, -- Set user_id as PRIMARY KEY
+                firstname VARCHAR(250),
+                lastname VARCHAR(250),
+                age INT,
+                gender VARCHAR(250),
+                contact_num VARCHAR(250),
+                email VARCHAR(250) UNIQUE,
+                sitio VARCHAR(250),
+                barangay VARCHAR(250),
+                province VARCHAR(250),
+                roles VARCHAR(250),
+                verification_token VARCHAR(250),
+                verified TINYINT(1) DEFAULT 0,
+                token_expiry DATETIME,
+                password VARCHAR(250),
+                status VARCHAR(50) DEFAULT 'Active',
+                profile_pic VARCHAR(250) DEFAULT NULL
+            )
+        `;
+        db.query(createUsersTableQuery, (err) => {
+            if (err) console.error('Error creating users table:', err);
+            else console.log('Users table ensured.');
+        });
+        
+        // Create Logs Table
+        const createLogsTableQuery = `
+            CREATE TABLE IF NOT EXISTS logs (
+                id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+                user_id VARCHAR(250),
+                role VARCHAR(50),
+                firstname VARCHAR(250),
+                lastname VARCHAR(250),
+                login_time DATETIME,
+                logout_time DATETIME,
+                status TINYINT(1) DEFAULT 1,
+                FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+            )
+        `;
+        db.query(createLogsTableQuery, (err) => {
+            if (err) console.error('Error creating logs table:', err);
+            else console.log('Logs table ensured.');
+        });
+        
+        // Create Uploads Table
+        const createUploadsTableQuery = `
+            CREATE TABLE IF NOT EXISTS uploads (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id VARCHAR(250),
+                case_title VARCHAR(255) NOT NULL,
+                concern TEXT NOT NULL,
+                date_sent DATE NOT NULL,
+                date_of_need DATE NOT NULL,
+                file_path VARCHAR(255) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+            )
+        `;
+        db.query(createUploadsTableQuery, (err) => {
+            if (err) console.error('Error creating uploads table:', err);
+            else console.log('Uploads table ensured.');
+        });
+        
+        // Create Admin Cases Table
+        const createAdmincaseTableQuery = `
+            CREATE TABLE IF NOT EXISTS admin_cases (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                user_id VARCHAR(250) NOT NULL,
+                description TEXT,
+                file_path VARCHAR(255),
+                created_at DATETIME,
+                FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+            )
+        `;
+        db.query(createAdmincaseTableQuery, (err) => {
+            if (err) console.error('Error creating admin_cases table:', err);
+            else console.log('Admin cases table ensured.');
+        });
+        
+        // Create Reports Table
+        const createReportsTableQuery = `
+            CREATE TABLE IF NOT EXISTS reports (
+                report_id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id VARCHAR(250) NOT NULL,
+                firstname VARCHAR(100) NOT NULL,
+                lastname VARCHAR(100) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                inquiry_type ENUM('application', 'technical', 'payment', 'other') NOT NULL,
+                reference VARCHAR(255),
+                message TEXT NOT NULL,
+                status ENUM('pending', 'resolved') DEFAULT 'pending',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+            )
+        `;
+        db.query(createReportsTableQuery, (err) => {
+            if (err) console.error('Error creating reports table:', err);
+            else console.log('Reports table ensured.');
+        });
         });
     });
 }
