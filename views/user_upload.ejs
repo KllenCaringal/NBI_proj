@@ -40,7 +40,7 @@
             <% if (successMessage) { %>
                 <div class="success-message"><%= successMessage %></div>
             <% } %>
-            <form action="/saveUpload" method="POST" enctype="multipart/form-data">
+            <form action="/saveUpload" method="POST" enctype="multipart/form-data" id="uploadForm">
                 <label for="user_id">User ID:</label>
                 <input type="text" id="user_id" name="user_id" required>
 
@@ -57,14 +57,19 @@
                 <input type="date" id="dateOfNeed" name="date_of_need" required>
 
                 <label for="file">Attach File:</label>
-                <input type="file" id="file" name="upload_file" accept="*/*" required>
+                <div class="file-input-wrapper">
+                    <input type="file" id="file" name="upload_file" accept="*/*" required class="file-input" aria-describedby="file-input-description">
+                    <label for="file" class="file-input-label">Choose File</label>
+                    <span id="file-input-description" class="file-input-text">No file chosen</span>
+                </div>
+                <div id="file-preview" class="file-preview"></div>
 
                 <button type="submit">Send</button>
             </form>
         </div>
     </div>
     <script>
-       function toggleSidebar() {
+          function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const title = document.getElementById('title');
             const hamburger = document.getElementById('hamburger');
@@ -98,6 +103,50 @@
                     console.error('Logout error:', error);
                 });
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('uploadForm');
+            const fileInput = document.getElementById('file');
+            const fileInputText = document.getElementById('file-input-description');
+            const filePreview = document.getElementById('file-preview');
+
+            fileInput.addEventListener('change', function(e) {
+                if (this.files && this.files.length > 0) {
+                    const file = this.files[0];
+                    fileInputText.textContent = file.name;
+                    
+                    // Clear previous preview
+                    filePreview.innerHTML = '';
+
+                    if (file.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.alt = file.name;
+                        img.onload = function() {
+                            URL.revokeObjectURL(this.src);
+                        }
+                        filePreview.appendChild(img);
+                    } else if (file.type === 'application/pdf') {
+                        const embed = document.createElement('embed');
+                        embed.src = URL.createObjectURL(file);
+                        embed.type = 'application/pdf';
+                        embed.width = '100%';
+                        embed.height = '600px';
+                        filePreview.appendChild(embed);
+                    } else {
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(file);
+                        link.download = file.name;
+                        link.textContent = `Download ${file.name}`;
+                        filePreview.appendChild(link);
+                    }
+                } else {
+                    fileInputText.textContent = 'No file chosen';
+                    filePreview.innerHTML = '';
+                }
+            });
+        });
     </script>
 </body>
 </html>
+

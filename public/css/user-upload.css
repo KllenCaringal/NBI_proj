@@ -224,6 +224,73 @@ button[type="submit"]:hover {
     background-color: var(--secondary-color);
 }
 
+.file-input-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.file-input {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+}
+
+.file-input-label {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.file-input-label:hover {
+    background-color: var(--secondary-color);
+}
+
+.file-input-text {
+    margin-left: 10px;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.file-preview {
+    margin-top: 15px;
+}
+
+.file-preview img {
+    max-width: 100%;
+    max-height: 300px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.file-preview embed {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.file-preview a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: var(--accent-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.file-preview a:hover {
+    background-color: var(--secondary-color);
+}
+
+
+
 @media (max-width: 768px) {
     .search-container {
         display: none;
