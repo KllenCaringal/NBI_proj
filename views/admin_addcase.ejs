@@ -10,26 +10,26 @@
 <body>
     <div class="sidebar">
         <div class="logo">
-          <img src="/images/nbi_logo.png" alt="NBI Logo">
-        </div>
-        <nav>
-          <ul>
-            <li><a href="/admin-dashboard"><i class="nav-item nav-link"></i> Dashboard</a></li>
-            <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
-            <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
-            <li><a href="/admin-addcase"><i class="nav-item nav-link"></i> Add Case</a></li>
-            <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
-            <li><a href="/admin-logs"><i class="nav-item nav-link"></i> Logs</a></li>
-            <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
-            <li><a href="/profile"><i class="nav-item nav-link"></i> Profile</a></li>
-          </ul>
-        </nav>
-        <div class="logout">
-          <a href="/logout">
-            <button>Logout</button>
-          </a>
-        </div>
-      </div>
+            <img src="/images/nbi_logo.png" alt="NBI Logo">
+          </div>
+          <nav>
+            <ul>
+              <li><a href="/admin-dashboard"><i class="nav-item nav-link"></i> Dashboard</a></li>
+              <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
+              <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
+              <li><a href="/admin-addcase"><i class="nav-item nav-link"></i> Add Case</a></li>
+              <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
+              <li><a href="/admin-logs"><i class="nav-item nav-link"></i> Logs</a></li>
+              <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
+              <li><a href="/profile"><i class="nav-item nav-link"></i> Profile</a></li>
+            </ul>
+          </nav>
+          <div class="logout">
+            <a href="/logout">
+              <button>Logout</button>
+            </a>
+          </div>
+    </div>
     <div class="content">
         <div class="content-header">
             <h1>Add New Case</h1>
@@ -56,10 +56,11 @@
                 <div class="form-group">
                     <label for="file">Upload File:</label>
                     <div class="file-input-wrapper">
-                        <input type="file" id="file" name="file" required>
-                        <span class="file-input-button">Choose File</span>
-                        <span class="file-input-text">No file chosen</span>
+                        <input type="file" id="file" name="file" required class="file-input" aria-describedby="file-input-description">
+                        <label for="file" class="file-input-label">Choose File</label>
+                        <span id="file-input-description" class="file-input-text">No file chosen</span>
                     </div>
+                    <div id="file-preview" class="file-preview"></div>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn-primary">Add Case</button>
@@ -73,7 +74,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('addCaseForm');
             const fileInput = document.getElementById('file');
-            const fileInputText = document.querySelector('.file-input-text');
+            const fileInputText = document.getElementById('file-input-description');
+            const filePreview = document.getElementById('file-preview');
 
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -84,9 +86,37 @@
 
             fileInput.addEventListener('change', function(e) {
                 if (this.files && this.files.length > 0) {
-                    fileInputText.textContent = this.files[0].name;
+                    const file = this.files[0];
+                    fileInputText.textContent = file.name;
+                    
+                    // Clear previous preview
+                    filePreview.innerHTML = '';
+
+                    if (file.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.alt = file.name;
+                        img.onload = function() {
+                            URL.revokeObjectURL(this.src);
+                        }
+                        filePreview.appendChild(img);
+                    } else if (file.type === 'application/pdf') {
+                        const embed = document.createElement('embed');
+                        embed.src = URL.createObjectURL(file);
+                        embed.type = 'application/pdf';
+                        embed.width = '100%';
+                        embed.height = '600px';
+                        filePreview.appendChild(embed);
+                    } else {
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(file);
+                        link.download = file.name;
+                        link.textContent = `Download ${file.name}`;
+                        filePreview.appendChild(link);
+                    }
                 } else {
                     fileInputText.textContent = 'No file chosen';
+                    filePreview.innerHTML = '';
                 }
             });
         });
