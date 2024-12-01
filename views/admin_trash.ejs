@@ -3,31 +3,137 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trash</title>
-  <link rel="stylesheet" href="/css/admin_trash.css">
+  <title>NBI Trash Panel</title>
+  <link rel="stylesheet" href="/css/admin_dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- For alerts -->
 </head>
 <body>
+
   <div class="sidebar">
     <div class="logo">
-      <img src="/images/nbi_logo.png" alt="Logo" />
+      <img src="/images/nbi_logo.png" alt="NBI Logo">
     </div>
     <nav>
       <ul>
+        <!-- Existing navigation items -->
         <li><a href="/admin-dashboard"><i class="nav-item nav-link"></i> Dashboard</a></li>
-        <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
-        <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
-        <li><a href="/admin-addcase"><i class="nav-item nav-link"></i> Add Case</a></li>
-        <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
-        <li><a href="/admin-logs"><i class="nav-item nav-link"></i> Logs</a></li>
-        <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
-        <li><a href="/profile"><i class="nav-item nav-link"></i> Profile</a></li>
+        <li><a href="/admin-trash" class="active"><i class="nav-item nav-link"></i> Trash</a></li>
+        <!-- Add other navigation items as necessary -->
       </ul>
     </nav>
     <div class="logout">
       <a href="/logout">
-        <button>Log Out</button>
+        <button>Logout</button>
       </a>
     </div>
   </div>
+
+  <div class="content">
+    <div class="header">NBI Trash Panel</div>
+
+    <div class="card">
+      <div class="card-title">Deleted Items</div>
+      <div class="card-content">
+        <table id="trashTable" class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Item Name</th>
+              <th>Type</th>
+              <th>Date Deleted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows will be dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Function to fetch trash data (simulated here)
+    async function fetchTrashData() {
+      return [
+        { id: 1, name: "Case #123", type: "Case", dateDeleted: "2024-11-28" },
+        { id: 2, name: "User John Doe", type: "User", dateDeleted: "2024-11-29" },
+        { id: 3, name: "Report 2024-Q1", type: "Report", dateDeleted: "2024-11-30" }
+      ];
+    }
+
+    // Function to populate the trash table
+    async function populateTrashTable() {
+      const trashData = await fetchTrashData();
+      const tableBody = document.getElementById('trashTable').querySelector('tbody');
+      tableBody.innerHTML = ''; // Clear existing rows
+
+      trashData.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.id}</td>
+          <td>${item.name}</td>
+          <td>${item.type}</td>
+          <td>${item.dateDeleted}</td>
+          <td>
+            <button class="restore-btn" data-id="${item.id}">Restore</button>
+            <button class="delete-btn" data-id="${item.id}">Delete</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      attachActionHandlers();
+    }
+
+    // Function to attach event handlers to action buttons
+    function attachActionHandlers() {
+      document.querySelectorAll('.restore-btn').forEach(button => {
+        button.addEventListener('click', function () {
+          const id = this.dataset.id;
+          Swal.fire({
+            title: "Restore Item",
+            text: `Are you sure you want to restore item #${id}?`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Restore"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Simulated restore action
+              console.log(`Item ${id} restored`);
+              Swal.fire("Restored!", "The item has been restored.", "success");
+              populateTrashTable(); // Refresh table
+            }
+          });
+        });
+      });
+
+      document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function () {
+          const id = this.dataset.id;
+          Swal.fire({
+            title: "Delete Item",
+            text: `Are you sure you want to permanently delete item #${id}? This action cannot be undone.`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Delete",
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Simulated delete action
+              console.log(`Item ${id} deleted`);
+              Swal.fire("Deleted!", "The item has been permanently deleted.", "success");
+              populateTrashTable(); // Refresh table
+            }
+          });
+        });
+      });
+    }
+
+    // Initial population of trash table
+    populateTrashTable();
+  </script>
+
 </body>
 </html>
