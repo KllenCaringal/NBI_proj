@@ -297,16 +297,34 @@ const users = {
         if (!req.session.user) {
             return res.redirect('/login');
         }
-
+    
         User.getUserCases(req.session.user.user_id, (err, cases) => {
             if (err) {
                 console.error('Error fetching user cases:', err);
                 return res.status(500).send('Error fetching cases');
             }
-            const processedCases = cases.map(caseItem => ({
-                ...caseItem,
-                file_name: caseItem.file_path ? path.basename(caseItem.file_path) : null
-            }));
+            
+            const processedCases = cases.map(caseItem => {
+                const result = {
+                    ...caseItem,
+                    file_name: caseItem.file_path ? path.basename(caseItem.file_path) : null
+                };
+    
+                // Try to read file contents if file exists
+                if (caseItem.file_path) {
+                    try {
+                        const filePath = path.join(__dirname, '..', 'public', caseItem.file_path);
+                        const fileContent = fs.readFileSync(filePath, 'utf8');
+                        result.fileContent = fileContent;
+                    } catch (error) {
+                        console.error(`Error reading file ${caseItem.file_path}:`, error);
+                        result.fileContent = null;
+                    }
+                }
+    
+                return result;
+            });
+    
             res.render('user_home', { cases: processedCases });
         });
     },
