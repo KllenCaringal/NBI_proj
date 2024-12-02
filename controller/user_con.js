@@ -4,37 +4,60 @@ const crypto = require('crypto');
 const emailService = require('../services/email_service.js');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs').promises;
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public/uploads'); 
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname); // Use the original filename
+        // Preserve original filename
+        cb(null, file.originalname);
     }
 });
-const upload = multer({ storage: storage }).single('profile_pic');
 
+const fileFilter = (req, file, cb) => {
+    // Accept all file types
+    cb(null, true);
+};
+
+const upload = multer({ 
+    storage: storage,
+    fileFilter: fileFilter,
+    preservePath: true // Preserve the full path
+}).single('profile_pic');
+
+// Update the storage configuration for user file uploads
 const uploadFileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public/uploads');
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname); // Use the original filename
+        cb(null, file.originalname);
     }
 });
-const fileUpload = multer({ storage: uploadFileStorage }).single('upload_file');
 
+const fileUpload = multer({ 
+    storage: uploadFileStorage,
+    fileFilter: fileFilter,
+    preservePath: true
+}).single('upload_file');
+
+// Update the storage configuration for admin case uploads
 const adminCaseStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public/admin_cases');
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname); // Use the original filename
+        cb(null, file.originalname);
     }
 });
-const adminCaseUpload = multer({ storage: adminCaseStorage }).single('file');
+
+const adminCaseUpload = multer({ 
+    storage: adminCaseStorage,
+    fileFilter: fileFilter,
+    preservePath: true
+}).single('file');
 
 const users = {
     registerPage: (req, res) => {
@@ -333,18 +356,32 @@ const users = {
         res.render('user_upload', { successMessage: null });
     },
 
-     saveUpload: (req, res) => {
-        fileUpload(req, res, (err) => {
-            if (err) {
-                console.error('Error uploading file:', err);
-                return res.status(500).send('Error uploading file.');
+    saveUpload: async (req, res) => {
+        try {
+            await new Promise((resolve, reject) => {
+                fileUpload(req, res, (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                });
+            });
+
+            if (!req.file) {
+                return res.status(400).send('No file uploaded.');
             }
 
-            const { user_id, case_title, concern, date_sent, date_of_need} = req.body;
-            const filePath = req.file ? '/uploads/' + req.file.originalname : null; // Use originalname
+            const { user_id, case_title, concern, date_sent, date_of_need } = req.body;
+            
+            // Read the buffer directly from the uploaded file
+            const fileBuffer = await fs.readFile(req.file.path);
+            
+            // Write the buffer to the destination
+            const destinationPath = path.join('public/uploads', req.file.originalname);
+            await fs.writeFile(destinationPath, fileBuffer);
+
+            const filePath = '/uploads/' + req.file.originalname;
 
             const uploadData = [
-               user_id, case_title, concern, date_sent, date_of_need, filePath
+                user_id, case_title, concern, date_sent, date_of_need, filePath
             ];
 
             User.addUpload(uploadData, (err, results) => {
@@ -354,8 +391,13 @@ const users = {
                 }
                 res.render('user_upload', { successMessage: 'File uploaded successfully!' });
             });
-        });
+
+        } catch (error) {
+            console.error('Error in file upload:', error);
+            res.status(500).send('Error processing file upload.');
+        }
     },
+
 
     user_notifications: (req, res) => {
         res.render('user_notifications');
@@ -512,15 +554,29 @@ const users = {
         });
     },
 
-    admin_addcase: (req, res) => {
-        adminCaseUpload(req, res, (err) => {
-            if (err) {
-                console.error('Error uploading file:', err);
-                return res.status(500).send('Error uploading file.');
+    admin_addcase: async (req, res) => {
+        try {
+            await new Promise((resolve, reject) => {
+                adminCaseUpload(req, res, (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                });
+            });
+
+            if (!req.file) {
+                return res.status(400).send('No file uploaded.');
             }
 
             const { title, user_id, description } = req.body;
-            const filePath = req.file ? '/admin_cases/' + req.file.originalname : null; // Use originalname
+
+            // Read the buffer directly from the uploaded file
+            const fileBuffer = await fs.readFile(req.file.path);
+            
+            // Write the buffer to the destination
+            const destinationPath = path.join('public/admin_cases', req.file.originalname);
+            await fs.writeFile(destinationPath, fileBuffer);
+
+            const filePath = '/admin_cases/' + req.file.originalname;
 
             const caseData = {
                 title,
@@ -537,8 +593,13 @@ const users = {
                 }
                 res.redirect('/admin-addcase');
             });
-        });
+
+        } catch (error) {
+            console.error('Error in admin case upload:', error);
+            res.status(500).send('Error processing file upload.');
+        }
     },
+
 
 };
 
