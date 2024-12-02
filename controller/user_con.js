@@ -8,10 +8,10 @@ const fs = require('fs');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/images'); 
+        cb(null, 'public/uploads'); 
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname)); 
+        cb(null, file.originalname); // Use the original filename
     }
 });
 const upload = multer({ storage: storage }).single('profile_pic');
@@ -21,7 +21,7 @@ const uploadFileStorage = multer.diskStorage({
         cb(null, 'public/uploads');
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
+        cb(null, file.originalname); // Use the original filename
     }
 });
 const fileUpload = multer({ storage: uploadFileStorage }).single('upload_file');
@@ -31,7 +31,7 @@ const adminCaseStorage = multer.diskStorage({
         cb(null, 'public/admin_cases');
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
+        cb(null, file.originalname); // Use the original filename
     }
 });
 const adminCaseUpload = multer({ storage: adminCaseStorage }).single('file');
@@ -332,7 +332,8 @@ const users = {
     user_upload: (req, res) => {
         res.render('user_upload', { successMessage: null });
     },
-    saveUpload: (req, res) => {
+
+     saveUpload: (req, res) => {
         fileUpload(req, res, (err) => {
             if (err) {
                 console.error('Error uploading file:', err);
@@ -340,7 +341,7 @@ const users = {
             }
 
             const { user_id, case_title, concern, date_sent, date_of_need} = req.body;
-            const filePath = req.file ? '/uploads/' + req.file.filename : null;
+            const filePath = req.file ? '/uploads/' + req.file.originalname : null; // Use originalname
 
             const uploadData = [
                user_id, case_title, concern, date_sent, date_of_need, filePath
@@ -519,7 +520,7 @@ const users = {
             }
 
             const { title, user_id, description } = req.body;
-            const filePath = req.file ? '/admin_cases/' + req.file.filename : null;
+            const filePath = req.file ? '/admin_cases/' + req.file.originalname : null; // Use originalname
 
             const caseData = {
                 title,
