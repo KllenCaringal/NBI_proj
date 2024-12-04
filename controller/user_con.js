@@ -312,8 +312,8 @@ const users = {
         res.render('admin_notification');
     },
 
-    admin_trash: (req, res) => {
-        res.render('admin_trash');
+    user_trash: (req, res) => {
+        res.render('user_trash');
     },
 
     user_home: (req, res) => {
@@ -600,7 +600,73 @@ const users = {
         }
     },
 
-
+    // Add this to the users object
+    deleteCase: (req, res) => {
+        const { id } = req.params;
+        const userId = req.session.user.user_id;
+    
+        User.moveToTrash('admin_cases', id, userId, (err, result) => {
+            if (err) {
+                console.error('Error deleting case:', err);
+                return res.status(500).json({ error: 'Error deleting case' });
+            }
+            res.json({ message: 'Case deleted successfully' });
+        });
+    },
+    
+    // Add this to get trash items
+    getTrashItems: (req, res) => {
+        console.log('getTrashItems called');
+        if (!req.session || !req.session.user || !req.session.user.user_id) {
+            console.error('User not authenticated');
+            return res.status(401).json({ error: 'User not authenticated' });
+        }
+    
+        const userId = req.session.user.user_id;
+        console.log('Fetching trash items for user:', userId);
+    
+        User.getTrashItems(userId, (err, items) => {
+            if (err) {
+                console.error('Error fetching trash items:', err);
+                return res.status(500).json({ error: 'Error fetching trash items' });
+            }
+            console.log('Trash items fetched:', items);
+            
+            // Ensure data is in the correct format
+            const formattedItems = items.map(item => ({
+                ...item,
+                data: typeof item.data === 'string' ? JSON.parse(item.data) : item.data
+            }));
+            
+            res.json(formattedItems);
+        });
+    },
+    
+    restoreTrashItem: (req, res) => {
+        const { id } = req.params;
+        const userId = req.session.user.user_id;
+    
+        User.restoreTrashItem(id, userId, (err, result) => {
+            if (err) {
+                console.error('Error restoring item:', err);
+                return res.status(500).json({ error: 'Error restoring item: ' + err.message });
+            }
+            res.json({ message: 'Item restored successfully' });
+        });
+    },
+    
+    deleteTrashItem: (req, res) => {
+        const { id } = req.params;
+        const userId = req.session.user.user_id;
+    
+        User.deleteTrashItem(id, userId, (err, result) => {
+            if (err) {
+                console.error('Error deleting item:', err);
+                return res.status(500).json({ error: 'Error deleting item: ' + err.message });
+            }
+            res.json({ message: 'Item deleted successfully' });
+        });
+    },
 };
 
 module.exports = users;

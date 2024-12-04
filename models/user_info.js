@@ -118,6 +118,25 @@ function createDatabaseAndTable() {
             else console.log('Reports table ensured.');
         });
         });
+
+        const createTrashTableQuery = `
+            CREATE TABLE IF NOT EXISTS trash (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                original_table VARCHAR(50) NOT NULL,
+                original_id INT NOT NULL,
+                user_id VARCHAR(250) NOT NULL,
+                title VARCHAR(255) NOT NULL,
+                description TEXT,
+                file_path VARCHAR(255),
+                created_at DATETIME,
+                deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+            )
+        `;
+        db.query(createTrashTableQuery, (err) => {
+            if (err) console.error('Error creating trash table:', err);
+            else console.log('Trash table ensured.');
+        });
     });
 }
 
@@ -348,6 +367,111 @@ const User = {
         });
     },
 
+    moveToTrash: (table, id, userId, callback) => {
+        const selectQuery = `SELECT * FROM ${table} WHERE id = ?`;
+        db.query(selectQuery, [id], (err, results) => {
+            if (err) return callback(err);
+            if (results.length === 0) return callback(new Error('Item not found'));
+    
+            const item = results[0];
+            const insertQuery = `
+                INSERT INTO trash 
+                (original_table, original_id, user_id, title, description, file_path, created_at) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            `;
+            const values = [
+                table,
+                id,
+                userId,
+                item.title || '',
+                item.description || '',
+                item.file_path || '',
+                item.created_at || new Date()
+            ];
+    
+            db.query(insertQuery, values, (err, result) => {
+                if (err) return callback(err);
+    
+                const deleteQuery = `DELETE FROM ${table} WHERE id = ?`;
+                db.query(deleteQuery, [id], (err, result) => {
+                    if (err) return callback(err);
+                    callback(null, result);
+                });
+            });
+        });
+    },
+    
+    getTrashItems: (userId, callback) => {
+        console.log('getTrashItems called with userId:', userId);
+        const query = `
+            SELECT id, original_table, original_id, user_id, title, description, file_path, created_at, deleted_at 
+            FROM trash 
+            WHERE user_id = ? 
+            ORDER BY deleted_at DESC
+        `;
+        console.log('Executing query:', query, 'with userId:', userId);
+        db.query(query, [userId], (err, results) => {
+            if (err) {
+                console.error('Database error:', err);
+                return callback(err);
+            }
+            if (!results) {
+                console.error('No results returned from database');
+                return callback(new Error('No results returned from database'));
+            }
+            console.log('Query results:', results);
+            callback(null, results);
+        });
+    },
+    
+    restoreTrashItem: (id, userId, callback) => {
+        db.beginTransaction((err) => {
+            if (err) return callback(err);
+    
+            const selectQuery = 'SELECT * FROM trash WHERE id = ? AND user_id = ?';
+            db.query(selectQuery, [id, userId], (err, results) => {
+                if (err) {
+                    return db.rollback(() => callback(err));
+                }
+    
+                if (results.length === 0) {
+                    return db.rollback(() => callback(new Error('Item not found')));
+                }
+    
+                const item = results[0];
+                const data = typeof item.data === 'string' ? JSON.parse(item.data) : item.data;
+    
+                const insertQuery = `INSERT INTO ${item.original_table} SET ?`;
+                db.query(insertQuery, data, (err, result) => {
+                    if (err) {
+                        return db.rollback(() => callback(err));
+                    }
+    
+                    const deleteQuery = 'DELETE FROM trash WHERE id = ?';
+                    db.query(deleteQuery, [id], (err, result) => {
+                        if (err) {
+                            return db.rollback(() => callback(err));
+                        }
+    
+                        db.commit((err) => {
+                            if (err) {
+                                return db.rollback(() => callback(err));
+                            }
+                            callback(null, result);
+                        });
+                    });
+                });
+            });
+        });
+    },
+    
+    deleteTrashItem: (id, userId, callback) => {
+        const query = 'DELETE FROM trash WHERE id = ? AND user_id = ?';
+        db.query(query, [id, userId], (err, result) => {
+            if (err) return callback(err);
+            callback(null, result);
+        });
+    }
     
 };
 

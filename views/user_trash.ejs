@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBI Case Management System - Trash</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/user_trash.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-left">
+            <div class="hamburger" onclick="toggleSidebar()">☰</div>
+            <img src="/images/nbi_logo.png" alt="NBI Logo" class="navbar-logo">
+            <div class="title">NBI SKGV - Trash</div>
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="Search trash..." aria-label="Search">
+        </div>
+        <div class="navbar-right profile-settings">
+            <div class="icon" id="profileIcon" title="View Profile">👤</div>
+            <div class="icon" id="settingsIcon" title="Account Settings">⚙️</div>
+        </div>
+    </div>
+
+    <div id="sidebar" class="sidebar">
+        <ul>
+            <li><a href="/user_home"><span class="sidebar-icon">🏠</span>Home</a></li>
+            <li><a href="/user_upload"><span class="sidebar-icon">📤</span>Upload</a></li>
+            <li><a href="/user_notifications"><span class="sidebar-icon">🔔</span>Notifications</a></li>
+            <li><a href="/user-trash"><span class="sidebar-icon">🗑️</span>Trash</a></li>
+        </ul>
+        <div class="logout" onclick="handleLogout()">
+            <span class="sidebar-icon">🚪</span>Logout
+        </div>
+    </div>
+
+    <div id="content" class="content">
+        <div class="trash-grid" id="trashGrid">
+            <!-- Trash items will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        let sidebarOpen = false;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            sidebarOpen = !sidebarOpen;
+            sidebar.classList.toggle('open');
+            content.classList.toggle('shifted');
+            
+            if (window.innerWidth <= 768) {
+                document.body.style.marginLeft = sidebarOpen ? '100%' : '0';
+            }
+        }
+
+        function redirectToPage(url) {
+            window.location.href = url;
+        }
+
+        function handleLogout() {
+            fetch('/logout', { method: 'GET' })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/login'; 
+                    }
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                });
+        }
+
+        function fetchTrashItems() {
+            console.log('Fetching trash items...');
+            fetch('/api/trash')
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Received data:', data);
+                    const trashGrid = document.getElementById('trashGrid');
+                    trashGrid.innerHTML = '';
+
+                    if (data.length === 0) {
+                        trashGrid.innerHTML = '<div class="no-trash"><p>No items in trash.</p></div>';
+                        return;
+                    }
+
+                    data.forEach(item => {
+                        const trashCard = document.createElement('div');
+                        trashCard.className = 'trash-card';
+                        trashCard.innerHTML = `
+                            <div class="trash-header">
+                                <div class="trash-title">${item.original_table}: ${item.title || 'Untitled'}</div>
+                            </div>
+                            <div class="trash-content">
+                                <div class="trash-meta">Deleted on: ${new Date(item.deleted_at).toLocaleString()}</div>
+                                <div class="trash-description">${item.description || 'No description'}</div>
+                            </div>
+                            <div class="trash-actions">
+                                <button class="trash-button restore-button" onclick="restoreItem(${item.id})">Restore</button>
+                                <button class="trash-button delete-button" onclick="deleteItem(${item.id})">Delete</button>
+                            </div>
+                        `;
+                        trashGrid.appendChild(trashCard);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching trash items:', error);
+                    const trashGrid = document.getElementById('trashGrid');
+                    trashGrid.innerHTML = `<div class="error-message"><p>Error loading trash items: ${error.message}</p></div>`;
+                });
+        }
+
+        function restoreItem(id) {
+            if (confirm('Are you sure you want to restore this item?')) {
+                fetch(`/api/trash/${id}/restore`, { method: 'POST' })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.message === 'Item restored successfully') {
+                            alert('Item restored successfully');
+                            fetchTrashItems();
+                        } else {
+                            throw new Error(data.error || 'Unknown error occurred');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error restoring item: ' + error.message);
+                    });
+            }
+        }
+
+        function deleteItem(id) {
+            if (confirm('Are you sure you want to permanently delete this item? This action cannot be undone.')) {
+                fetch(`/api/trash/${id}`, { method: 'DELETE' })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.message === 'Item deleted successfully') {
+                            alert('Item deleted successfully');
+                            fetchTrashItems();
+                        } else {
+                            throw new Error(data.error || 'Unknown error occurred');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error deleting item: ' + error.message);
+                    });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM content loaded');
+            const profileIcon = document.getElementById('profileIcon');
+            const settingsIcon = document.getElementById('settingsIcon');
+
+            profileIcon.addEventListener('click', function() {
+                redirectToPage('/profile');
+            });
+
+            settingsIcon.addEventListener('click', function() {
+                redirectToPage('/settings');
+            });
+
+            fetchTrashItems();
+        });
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.querySelector('.hamburger');
+            if (sidebarOpen && !sidebar.contains(event.target) && event.target !== hamburger) {
+                toggleSidebar();
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.body.style.marginLeft = '0';
+            }
+        });
+    </script>
+</body>
+</html>

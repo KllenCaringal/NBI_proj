@@ -19,7 +19,7 @@ router.get('/admin-dashboard', UserCon.admin_dashboard);
 router.get('/admin-users', UserCon.admin_users);
 router.get('/admin-upload', UserCon.admin_upload);
 router.get('/admin-notification', UserCon.admin_notification);
-router.get('/admin-trash', UserCon.admin_trash);
+router.get('/user-trash', UserCon.user_trash);
 router.get('/admin-logs', UserCon.admin_logs);
 
 router.get('/settings', UserCon.settings);
@@ -40,4 +40,9 @@ router.get('/about_us', UserCon.about_us);
 router.get('/admin-addcase', UserCon.admin_addcase_page);
 router.post('/admin-addcase', UserCon.admin_addcase);
 
+router.get('/user-trash', UserCon.user_trash);
+router.get('/api/trash', UserCon.getTrashItems);
+router.post('/api/trash/:id/restore', UserCon.restoreTrashItem);
+router.delete('/api/trash/:id', UserCon.deleteTrashItem);
+router.delete('/api/cases/:id', UserCon.deleteCase);
 module.exports = router;
