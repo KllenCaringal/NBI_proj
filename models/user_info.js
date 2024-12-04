@@ -439,10 +439,20 @@ const User = {
                 }
     
                 const item = results[0];
-                const data = typeof item.data === 'string' ? JSON.parse(item.data) : item.data;
     
-                const insertQuery = `INSERT INTO ${item.original_table} SET ?`;
-                db.query(insertQuery, data, (err, result) => {
+                const insertQuery = `INSERT INTO ${item.original_table} 
+                    (id, title, user_id, description, file_path, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?)`;
+                const insertValues = [
+                    item.original_id,
+                    item.title,
+                    item.user_id,
+                    item.description,
+                    item.file_path,
+                    item.created_at
+                ];
+    
+                db.query(insertQuery, insertValues, (err, result) => {
                     if (err) {
                         return db.rollback(() => callback(err));
                     }
