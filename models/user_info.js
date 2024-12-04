@@ -137,6 +137,23 @@ function createDatabaseAndTable() {
             if (err) console.error('Error creating trash table:', err);
             else console.log('Trash table ensured.');
         });
+
+        const createNotificationsTableQuery = `
+            CREATE TABLE IF NOT EXISTS notifications (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id VARCHAR(250) NOT NULL,
+                type VARCHAR(50) NOT NULL,
+                message TEXT NOT NULL,
+                is_read TINYINT(1) DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                read_at TIMESTAMP NULL,
+                FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+            )
+        `;
+        db.query(createNotificationsTableQuery, (err) => {
+            if (err) console.error('Error creating notifications table:', err);
+            else console.log('Notifications table ensured.');
+        });
     });
 }
 
