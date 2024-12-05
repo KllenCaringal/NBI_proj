@@ -71,6 +71,7 @@
             switch(type) {
                 case 'new_user': return 'priority-medium';
                 case 'new_upload': return 'priority-high';
+                case 'new_inquiry': return 'priority-high';
                 default: return 'priority-low';
             }
         }
@@ -83,7 +84,7 @@
             if (filter === 'unread') {
                 filteredNotifications = notifications.filter(n => !n.is_read);
             } else if (filter === 'priority') {
-                filteredNotifications = notifications.filter(n => n.type === 'new_upload');
+                filteredNotifications = notifications.filter(n => n.type === 'new_upload' || n.type === 'new_inquiry');
             }
 
             filteredNotifications.forEach(notification => {
@@ -95,7 +96,7 @@
                     </div>
                     <div class="notification-content">
                         <div class="notification-title">
-                            ${notification.type === 'new_user' ? 'New User Registered' : 'New File Upload'}
+                            ${getNotificationTitle(notification.type)}
                         </div>
                         <div class="notification-message">
                             ${notification.message}
@@ -113,6 +114,15 @@
                 `;
                 container.appendChild(notificationElement);
             });
+        }
+
+        function getNotificationTitle(type) {
+            switch(type) {
+                case 'new_user': return 'New User Registered';
+                case 'new_upload': return 'New File Upload';
+                case 'new_inquiry': return 'New Inquiry Submitted';
+                default: return 'Notification';
+            }
         }
 
         function filterNotifications(filter) {

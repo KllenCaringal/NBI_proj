@@ -788,7 +788,7 @@ const users = {
             res.json(notifications);
         });
     },
-    
+
     markAdminNotificationAsRead: (req, res) => {
         const notificationId = req.params.id;
         User.markAdminNotificationAsRead(notificationId, (err, result) => {
@@ -799,7 +799,7 @@ const users = {
             res.json({ success: true });
         });
     },
-    
+
     deleteAdminNotification: (req, res) => {
         const notificationId = req.params.id;
         User.deleteAdminNotification(notificationId, (err, result) => {
@@ -810,7 +810,6 @@ const users = {
             res.json({ success: true });
         });
     },
-    
 
 };
 
