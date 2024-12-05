@@ -498,8 +498,41 @@ const User = {
             if (err) return callback(err);
             callback(null, result);
         });
-    }
+    },
+
+    addNotification: (notificationData, callback) => {
+        const query = 'INSERT INTO notifications (user_id, type, message) VALUES (?, ?, ?)';
+        const values = [notificationData.user_id, notificationData.type, notificationData.message];
+        
+        db.query(query, values, (err, result) => {
+            if (err) return callback(err);
+            callback(null, result);
+        });
+    },
     
+    getNotifications: (userId, callback) => {
+        const query = 'SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC';
+        db.query(query, [userId], (err, results) => {
+            if (err) return callback(err);
+            callback(null, results);
+        });
+    },
+    
+    markNotificationAsRead: (notificationId, userId, callback) => {
+        const query = 'UPDATE notifications SET is_read = 1 WHERE id = ? AND user_id = ?';
+        db.query(query, [notificationId, userId], (err, result) => {
+            if (err) return callback(err);
+            callback(null, result);
+        });
+    },
+    
+    deleteNotification: (notificationId, userId, callback) => {
+        const query = 'DELETE FROM notifications WHERE id = ? AND user_id = ?';
+        db.query(query, [notificationId, userId], (err, result) => {
+            if (err) return callback(err);
+            callback(null, result);
+        });
+    },
 };
 
 module.exports = User;

@@ -6,6 +6,20 @@
     <title>NBI Case Management System - Trash</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/user_trash.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .notification-count {
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar">
@@ -18,6 +32,9 @@
             <input type="text" placeholder="Search trash..." aria-label="Search">
         </div>
         <div class="navbar-right profile-settings">
+            <div class="icon" id="notificationIcon" title="Notifications">
+                🔔<span id="notificationCount" class="notification-count"></span>
+            </div>
             <div class="icon" id="profileIcon" title="View Profile">👤</div>
             <div class="icon" id="settingsIcon" title="Account Settings">⚙️</div>
         </div>
@@ -166,6 +183,23 @@
             }
         }
 
+        function updateNotificationCount() {
+            axios.get('/api/notifications')
+                .then(response => {
+                    const unreadCount = response.data.filter(n => !n.is_read).length;
+                    const countElement = document.getElementById('notificationCount');
+                    if (unreadCount > 0) {
+                        countElement.textContent = unreadCount;
+                        countElement.style.display = 'inline-block';
+                    } else {
+                        countElement.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching notification count:', error);
+                });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM content loaded');
             const profileIcon = document.getElementById('profileIcon');
@@ -180,6 +214,8 @@
             });
 
             fetchTrashItems();
+            updateNotificationCount();
+            setInterval(updateNotificationCount, 60000);
         });
 
         document.addEventListener('click', function(event) {

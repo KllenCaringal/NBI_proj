@@ -5,7 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBI SKGV - Notifications</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-   <link rel="stylesheet" href="/css/user-notif.css">
+    <link rel="stylesheet" href="/css/user-notif.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-read {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-delete {
+            background-color: #f44336;
+            color: white;
+        }
+        .notification-item.read {
+            opacity: 0.6;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar">
@@ -37,31 +62,8 @@
 
     <div id="content" class="content">
         <h1>Notifications</h1>
-        <div class="notification-list">
-            <div class="notification-item">
-                <div class="notification-icon">🔔</div>
-                <div class="notification-content">
-                    <div class="notification-title">New Case Assigned</div>
-                    <div class="notification-message">You have been assigned to Case #12345. Please review the details and take necessary action.</div>
-                </div>
-                <div class="notification-time">2 hours ago</div>
-            </div>
-            <div class="notification-item">
-                <div class="notification-icon">📅</div>
-                <div class="notification-content">
-                    <div class="notification-title">Upcoming Meeting</div>
-                    <div class="notification-message">Reminder: Team meeting scheduled for tomorrow at 10:00 AM in Conference Room A.</div>
-                </div>
-                <div class="notification-time">1 day ago</div>
-            </div>
-            <div class="notification-item">
-                <div class="notification-icon">📊</div>
-                <div class="notification-content">
-                    <div class="notification-title">Monthly Report Due</div>
-                    <div class="notification-message">Your monthly activity report is due in 3 days. Please submit it before the deadline.</div>
-                </div>
-                <div class="notification-time">2 days ago</div>
-            </div>
+        <div id="notification-list" class="notification-list">
+            <!-- Notifications will be dynamically inserted here -->
         </div>
     </div>
 
@@ -96,6 +98,60 @@
                 });
         }
 
+        function fetchNotifications() {
+            axios.get('/api/notifications')
+                .then(response => {
+                    const notifications = response.data;
+                    const notificationList = document.getElementById('notification-list');
+                    notificationList.innerHTML = '';
+
+                    notifications.forEach(notification => {
+                        const notificationItem = document.createElement('div');
+                        notificationItem.className = `notification-item ${notification.is_read ? 'read' : ''}`;
+                        notificationItem.innerHTML = `
+                            <div class="notification-icon">🔔</div>
+                            <div class="notification-content">
+                                <div class="notification-title">${notification.type}</div>
+                                <div class="notification-message">${notification.message}</div>
+                            </div>
+                            <div class="notification-time">${new Date(notification.created_at).toLocaleString()}</div>
+                            <div class="notification-actions">
+                                ${!notification.is_read ? `<button class="btn btn-read" onclick="markAsRead(${notification.id})">Mark as Read</button>` : ''}
+                                <button class="btn btn-delete" onclick="deleteNotification(${notification.id})">Delete</button>
+                            </div>
+                        `;
+                        notificationList.appendChild(notificationItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching notifications:', error);
+                });
+        }
+
+        function markAsRead(notificationId) {
+            axios.post(`/api/notifications/${notificationId}/read`)
+                .then(response => {
+                    if (response.data.success) {
+                        fetchNotifications();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error marking notification as read:', error);
+                });
+        }
+
+        function deleteNotification(notificationId) {
+            axios.delete(`/api/notifications/${notificationId}`)
+                .then(response => {
+                    if (response.data.success) {
+                        fetchNotifications();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting notification:', error);
+                });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const profileIcon = document.getElementById('profileIcon');
             const settingsIcon = document.getElementById('settingsIcon');
@@ -107,6 +163,8 @@
             settingsIcon.addEventListener('click', function() {
                 redirectToPage('/settings');
             });
+
+            fetchNotifications();
         });
 
         document.addEventListener('click', function(event) {
@@ -125,3 +183,4 @@
     </script>
 </body>
 </html>
+

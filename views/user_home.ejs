@@ -6,12 +6,11 @@
     <title>NBI Case Management System - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/user-home.css">
-    <!-- Add Prism.js for syntax highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-javascript.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
-        /* Add this to your existing styles */
         .file-menu {
             position: relative;
             cursor: pointer;
@@ -42,6 +41,17 @@
         .file-menu-dropdown button:hover {
             background-color: #f0f0f0;
         }
+        .notification-count {
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -55,6 +65,9 @@
             <input type="text" placeholder="Search case number..." aria-label="Search">
         </div>
         <div class="navbar-right profile-settings">
+            <div class="icon" id="notificationIcon" title="Notifications">
+                🔔<span id="notificationCount" class="notification-count"></span>
+            </div>
             <div class="icon" id="profileIcon" title="View Profile">👤</div>
             <div class="icon" id="settingsIcon" title="Account Settings">⚙️</div>
         </div>
@@ -155,6 +168,23 @@
                 });
         }
 
+        function updateNotificationCount() {
+            axios.get('/api/notifications')
+                .then(response => {
+                    const unreadCount = response.data.filter(n => !n.is_read).length;
+                    const countElement = document.getElementById('notificationCount');
+                    if (unreadCount > 0) {
+                        countElement.textContent = unreadCount;
+                        countElement.style.display = 'inline-block';
+                    } else {
+                        countElement.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching notification count:', error);
+                });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const profileIcon = document.getElementById('profileIcon');
             const settingsIcon = document.getElementById('settingsIcon');
@@ -167,7 +197,6 @@
                 redirectToPage('/settings');
             });
 
-            // Add this new event listener for handling menu toggles and delete actions
             document.querySelector('.file-grid').addEventListener('click', function(event) {
                 const fileMenu = event.target.closest('.file-menu');
                 if (fileMenu) {
@@ -200,7 +229,6 @@
                 }
             });
 
-            // Keep the existing click event listener for closing dropdowns
             document.addEventListener('click', function(event) {
                 const dropdowns = document.querySelectorAll('.file-menu-dropdown');
                 dropdowns.forEach(dropdown => {
@@ -209,6 +237,9 @@
                     }
                 });
             });
+
+            updateNotificationCount();
+            setInterval(updateNotificationCount, 60000);
         });
 
         window.addEventListener('resize', function() {
@@ -223,4 +254,3 @@
     </script>
 </body>
 </html>
-

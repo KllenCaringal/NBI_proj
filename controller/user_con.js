@@ -316,41 +316,45 @@ const users = {
         res.render('user_trash');
     },
 
-    user_home: (req, res) => {
-        if (!req.session.user) {
-            return res.redirect('/login');
-        }
-    
-        User.getUserCases(req.session.user.user_id, (err, cases) => {
-            if (err) {
-                console.error('Error fetching user cases:', err);
-                return res.status(500).send('Error fetching cases');
-            }
-            
-            const processedCases = cases.map(caseItem => {
-                const result = {
-                    ...caseItem,
-                    file_name: caseItem.file_path ? path.basename(caseItem.file_path) : null
-                };
-    
-                // Try to read file contents if file exists
-                if (caseItem.file_path) {
-                    try {
-                        const filePath = path.join(__dirname, '..', 'public', caseItem.file_path);
-                        const fileContent = fs.readFileSync(filePath, 'utf8');
-                        result.fileContent = fileContent;
-                    } catch (error) {
-                        console.error(`Error reading file ${caseItem.file_path}:`, error);
-                        result.fileContent = null;
-                    }
-                }
-    
-                return result;
+   user_home: async (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+
+    try {
+        const cases = await new Promise((resolve, reject) => {
+            User.getUserCases(req.session.user.user_id, (err, cases) => {
+                if (err) reject(err);
+                else resolve(cases);
             });
-    
-            res.render('user_home', { cases: processedCases });
         });
-    },
+        
+        const processedCases = await Promise.all(cases.map(async (caseItem) => {
+            const result = {
+                ...caseItem,
+                file_name: caseItem.file_path ? path.basename(caseItem.file_path) : null
+            };
+
+            if (caseItem.file_path) {
+                try {
+                    const filePath = path.join(__dirname, '..', 'public', caseItem.file_path);
+                    const fileContent = await fs.readFile(filePath, 'utf8');
+                    result.fileContent = fileContent;
+                } catch (error) {
+                    console.error(`Error reading file ${caseItem.file_path}:`, error);
+                    result.fileContent = null;
+                }
+            }
+
+            return result;
+        }));
+
+        res.render('user_home', { cases: processedCases });
+    } catch (error) {
+        console.error('Error fetching user cases:', error);
+        res.status(500).send('Error fetching cases');
+    }
+},
     
     user_upload: (req, res) => {
         res.render('user_upload', { successMessage: null });
@@ -562,22 +566,22 @@ const users = {
                     else resolve();
                 });
             });
-
+    
             if (!req.file) {
                 return res.status(400).send('No file uploaded.');
             }
-
+    
             const { title, user_id, description } = req.body;
-
+    
             // Read the buffer directly from the uploaded file
             const fileBuffer = await fs.readFile(req.file.path);
             
             // Write the buffer to the destination
             const destinationPath = path.join('public/admin_cases', req.file.originalname);
             await fs.writeFile(destinationPath, fileBuffer);
-
+    
             const filePath = '/admin_cases/' + req.file.originalname;
-
+    
             const caseData = {
                 title,
                 user_id,
@@ -585,20 +589,33 @@ const users = {
                 file_path: filePath,
                 created_at: new Date()
             };
-
+    
             User.addAdminCase(caseData, (err, result) => {
                 if (err) {
                     console.error('Error adding case:', err);
                     return res.status(500).send('Error adding case.');
                 }
-                res.redirect('/admin-addcase');
+    
+                // Create a notification for the user
+                const notificationData = {
+                    user_id: caseData.user_id,
+                    type: 'new_case',
+                    message: `A new case "${caseData.title}" has been assigned to you.`,
+                };
+    
+                User.addNotification(notificationData, (err, notificationResult) => {
+                    if (err) {
+                        console.error('Error creating notification:', err);
+                    }
+                    res.redirect('/admin-addcase');
+                });
             });
-
+    
         } catch (error) {
             console.error('Error in admin case upload:', error);
             res.status(500).send('Error processing file upload.');
         }
-    },
+    },    
 
     // Add this to the users object
     deleteCase: (req, res) => {
@@ -667,6 +684,51 @@ const users = {
             res.json({ message: 'Item deleted successfully' });
         });
     },
+
+    getNotifications: (req, res) => {
+        if (!req.session.user) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+    
+        User.getNotifications(req.session.user.user_id, (err, notifications) => {
+            if (err) {
+                console.error('Error fetching notifications:', err);
+                return res.status(500).json({ error: 'Error fetching notifications' });
+            }
+            res.json(notifications);
+        });
+    },
+    
+    markNotificationAsRead: (req, res) => {
+        if (!req.session.user) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+    
+        const notificationId = req.params.id;
+        User.markNotificationAsRead(notificationId, req.session.user.user_id, (err, result) => {
+            if (err) {
+                console.error('Error marking notification as read:', err);
+                return res.status(500).json({ error: 'Error marking notification as read' });
+            }
+            res.json({ success: true });
+        });
+    },
+    
+    deleteNotification: (req, res) => {
+        if (!req.session.user) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+    
+        const notificationId = req.params.id;
+        User.deleteNotification(notificationId, req.session.user.user_id, (err, result) => {
+            if (err) {
+                console.error('Error deleting notification:', err);
+                return res.status(500).json({ error: 'Error deleting notification' });
+            }
+            res.json({ success: true });
+        });
+    },    
+
 };
 
 module.exports = users;

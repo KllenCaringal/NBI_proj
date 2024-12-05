@@ -45,4 +45,8 @@ router.get('/api/trash', UserCon.getTrashItems);
 router.post('/api/trash/:id/restore', UserCon.restoreTrashItem);
 router.delete('/api/trash/:id', UserCon.deleteTrashItem);
 router.delete('/api/cases/:id', UserCon.deleteCase);
+
+router.get('/api/notifications', UserCon.getNotifications);
+router.post('/api/notifications/:id/read', UserCon.markNotificationAsRead);
+router.delete('/api/notifications/:id', UserCon.deleteNotification);
 module.exports = router;
