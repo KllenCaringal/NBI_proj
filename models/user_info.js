@@ -1,6 +1,7 @@
 const db = require('../config/database');
 const bcrypt = require('bcrypt');
 
+
 function createDatabaseAndTable() {
     db.query("CREATE DATABASE IF NOT EXISTS nbi_users", (err) => {
         if (err) {
@@ -14,10 +15,10 @@ function createDatabaseAndTable() {
                 return;
             }
 
-            // Create Users Table
+            // Create Users Table first
             const createUsersTableQuery = `
             CREATE TABLE IF NOT EXISTS users (
-                user_id VARCHAR(250) PRIMARY KEY, -- Set user_id as PRIMARY KEY
+                user_id VARCHAR(250) PRIMARY KEY,
                 firstname VARCHAR(250),
                 lastname VARCHAR(250),
                 age INT,
@@ -35,14 +36,26 @@ function createDatabaseAndTable() {
                 status VARCHAR(50) DEFAULT 'Active',
                 profile_pic VARCHAR(250) DEFAULT NULL
             )
-        `;
-        db.query(createUsersTableQuery, (err) => {
-            if (err) console.error('Error creating users table:', err);
-            else console.log('Users table ensured.');
+            `;
+            db.query(createUsersTableQuery, (err) => {
+                if (err) {
+                    console.error('Error creating users table:', err);
+                    return;
+                }
+                console.log('Users table ensured.');
+
+                // Now create other tables that reference the users table
+                createOtherTables();
+            });
         });
-        
-        // Create Logs Table
-        const createLogsTableQuery = `
+    });
+}
+
+function createOtherTables() {
+    const tables = [
+        {
+            name: 'logs',
+            query: `
             CREATE TABLE IF NOT EXISTS logs (
                 id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
                 user_id VARCHAR(250),
@@ -54,14 +67,11 @@ function createDatabaseAndTable() {
                 status TINYINT(1) DEFAULT 1,
                 FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
             )
-        `;
-        db.query(createLogsTableQuery, (err) => {
-            if (err) console.error('Error creating logs table:', err);
-            else console.log('Logs table ensured.');
-        });
-        
-        // Create Uploads Table
-        const createUploadsTableQuery = `
+            `
+        },
+        {
+            name: 'uploads',
+            query: `
             CREATE TABLE IF NOT EXISTS uploads (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id VARCHAR(250),
@@ -73,14 +83,11 @@ function createDatabaseAndTable() {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
             )
-        `;
-        db.query(createUploadsTableQuery, (err) => {
-            if (err) console.error('Error creating uploads table:', err);
-            else console.log('Uploads table ensured.');
-        });
-        
-        // Create Admin Cases Table
-        const createAdmincaseTableQuery = `
+            `
+        },
+        {
+            name: 'admin_cases',
+            query: `
             CREATE TABLE IF NOT EXISTS admin_cases (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
@@ -90,14 +97,11 @@ function createDatabaseAndTable() {
                 created_at DATETIME,
                 FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
             )
-        `;
-        db.query(createAdmincaseTableQuery, (err) => {
-            if (err) console.error('Error creating admin_cases table:', err);
-            else console.log('Admin cases table ensured.');
-        });
-        
-        // Create Reports Table
-        const createReportsTableQuery = `
+            `
+        },
+        {
+            name: 'reports',
+            query: `
             CREATE TABLE IF NOT EXISTS reports (
                 report_id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id VARCHAR(250) NOT NULL,
@@ -112,14 +116,11 @@ function createDatabaseAndTable() {
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
             )
-        `;
-        db.query(createReportsTableQuery, (err) => {
-            if (err) console.error('Error creating reports table:', err);
-            else console.log('Reports table ensured.');
-        });
-        });
-
-        const createTrashTableQuery = `
+            `
+        },
+        {
+            name: 'trash',
+            query: `
             CREATE TABLE IF NOT EXISTS trash (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 original_table VARCHAR(50) NOT NULL,
@@ -132,13 +133,11 @@ function createDatabaseAndTable() {
                 deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
             )
-        `;
-        db.query(createTrashTableQuery, (err) => {
-            if (err) console.error('Error creating trash table:', err);
-            else console.log('Trash table ensured.');
-        });
-
-        const createNotificationsTableQuery = `
+            `
+        },
+        {
+            name: 'notifications',
+            query: `
             CREATE TABLE IF NOT EXISTS notifications (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id VARCHAR(250) NOT NULL,
@@ -149,13 +148,11 @@ function createDatabaseAndTable() {
                 read_at TIMESTAMP NULL,
                 FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
             )
-        `;
-        db.query(createNotificationsTableQuery, (err) => {
-            if (err) console.error('Error creating notifications table:', err);
-            else console.log('Notifications table ensured.');
-        });
-
-        const createAdminNotificationsTableQuery = `
+            `
+        },
+        {
+            name: 'admin_notifications',
+            query: `
             CREATE TABLE IF NOT EXISTS admin_notifications (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id VARCHAR(250) NOT NULL,
@@ -166,15 +163,21 @@ function createDatabaseAndTable() {
                 read_at TIMESTAMP NULL,
                 FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
             )
-        `;
-        db.query(createAdminNotificationsTableQuery, (err) => {
-            if (err) console.error('Error creating notifications table:', err);
-            else console.log('Admin_Notifications table ensured.');
+            `
+        }
+    ];
+
+    tables.forEach(table => {
+        db.query(table.query, (err) => {
+            if (err) console.error(`Error creating ${table.name} table:`, err);
+            else console.log(`${table.name} table ensured.`);
         });
     });
 }
 
 createDatabaseAndTable();
+
+console.log("Database and tables setup complete.");
 
 
 
