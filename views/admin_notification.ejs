@@ -6,10 +6,8 @@
     <title>NBI Administrative Notifications</title>
     <link rel="stylesheet" href="/css/admin_dashboard.css">
     <link rel="stylesheet" href="/css/admin_notification.css">
-    
 </head>
 <body>
-    <!-- Add sidebar from dashboard -->
     <div class="sidebar">
         <div class="logo">
             <img src="/images/nbi_logo.png" alt="Logo">
@@ -47,41 +45,11 @@
         </div>
     </div>
 
-    <!-- Original JavaScript remains unchanged -->
+    <script id="notificationsData" type="application/json">
+        <%- JSON.stringify(notifications) %>
+    </script>
     <script>
-        // All the original notification JavaScript code remains exactly the same
-        const notifications = [
-            {
-                id: 1,
-                type: 'case_update',
-                title: 'New Case Assignment',
-                message: 'Case #NBI-2024-0127 has been assigned to Agent Rodriguez. Requires immediate attention.',
-                timestamp: '2024-02-15T09:30:00',
-                priority: 'high',
-                unread: true,
-                category: 'Case Management'
-            },
-            {
-                id: 2,
-                type: 'clearance_request',
-                title: 'Clearance Application Review Required',
-                message: 'Batch of 50 clearance applications pending review from Manila Regional Office.',
-                timestamp: '2024-02-15T09:15:00',
-                priority: 'medium',
-                unread: true,
-                category: 'Clearance Processing'
-            },
-            {
-                id: 3,
-                type: 'system_alert',
-                title: 'System Maintenance Notice',
-                message: 'Scheduled system maintenance on February 16, 2024, from 22:00 to 23:00 PHT.',
-                timestamp: '2024-02-15T08:45:00',
-                priority: 'low',
-                unread: false,
-                category: 'System Administration'
-            }
-        ];
+        let notifications = JSON.parse(document.getElementById('notificationsData').textContent);
 
         function getTimeAgo(timestamp) {
             const now = new Date();
@@ -99,12 +67,11 @@
             }
         }
 
-        function getPriorityClass(priority) {
-            switch(priority) {
-                case 'high': return 'priority-high';
-                case 'medium': return 'priority-medium';
-                case 'low': return 'priority-low';
-                default: return '';
+        function getPriorityClass(type) {
+            switch(type) {
+                case 'new_user': return 'priority-medium';
+                case 'new_upload': return 'priority-high';
+                default: return 'priority-low';
             }
         }
 
@@ -114,29 +81,29 @@
 
             let filteredNotifications = notifications;
             if (filter === 'unread') {
-                filteredNotifications = notifications.filter(n => n.unread);
+                filteredNotifications = notifications.filter(n => !n.is_read);
             } else if (filter === 'priority') {
-                filteredNotifications = notifications.filter(n => n.priority === 'high');
+                filteredNotifications = notifications.filter(n => n.type === 'new_upload');
             }
 
             filteredNotifications.forEach(notification => {
                 const notificationElement = document.createElement('div');
-                notificationElement.className = `notification-item ${notification.unread ? 'unread' : ''}`;
+                notificationElement.className = `notification-item ${!notification.is_read ? 'unread' : ''}`;
                 notificationElement.innerHTML = `
                     <div class="notification-icon">
-                        <span class="priority-indicator ${getPriorityClass(notification.priority)}"></span>
+                        <span class="priority-indicator ${getPriorityClass(notification.type)}"></span>
                     </div>
                     <div class="notification-content">
                         <div class="notification-title">
-                            ${notification.title}
+                            ${notification.type === 'new_user' ? 'New User Registered' : 'New File Upload'}
                         </div>
                         <div class="notification-message">
                             ${notification.message}
                         </div>
                         <div class="notification-meta">
-                            <span>${notification.category} • ${getTimeAgo(notification.timestamp)}</span>
+                            <span>${notification.type} • ${getTimeAgo(notification.created_at)}</span>
                             <div class="notification-actions">
-                                ${notification.unread ? 
+                                ${!notification.is_read ? 
                                     `<button class="action-button mark-read" onclick="markAsRead(${notification.id})">Mark as Read</button>` : 
                                     ''}
                                 <button class="action-button delete" onclick="deleteNotification(${notification.id})">Delete</button>
@@ -157,19 +124,30 @@
         }
 
         function markAsRead(id) {
-            const notification = notifications.find(n => n.id === id);
-            if (notification) {
-                notification.unread = false;
-                renderNotifications();
-            }
+            fetch(`/api/admin-notifications/${id}/read`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const notification = notifications.find(n => n.id === id);
+                        if (notification) {
+                            notification.is_read = true;
+                            renderNotifications();
+                        }
+                    }
+                })
+                .catch(error => console.error('Error marking notification as read:', error));
         }
 
         function deleteNotification(id) {
-            const index = notifications.findIndex(n => n.id === id);
-            if (index > -1) {
-                notifications.splice(index, 1);
-                renderNotifications();
-            }
+            fetch(`/api/admin-notifications/${id}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        notifications = notifications.filter(n => n.id !== id);
+                        renderNotifications();
+                    }
+                })
+                .catch(error => console.error('Error deleting notification:', error));
         }
 
         // Initial render
@@ -177,26 +155,17 @@
             renderNotifications();
         });
 
-        // Simulate new notifications
+        // Fetch new notifications every 30 seconds
         setInterval(() => {
-            const randomTypes = ['case_update', 'clearance_request', 'system_alert'];
-            const randomPriorities = ['high', 'medium', 'low'];
-            const randomCategories = ['Case Management', 'Clearance Processing', 'System Administration'];
-            
-            if (Math.random() < 0.3) {
-                notifications.unshift({
-                    id: Date.now(),
-                    type: randomTypes[Math.floor(Math.random() * randomTypes.length)],
-                    title: `New ${randomCategories[Math.floor(Math.random() * randomCategories.length)]} Alert`,
-                    message: 'New notification message...',
-                    timestamp: new Date().toISOString(),
-                    priority: randomPriorities[Math.floor(Math.random() * randomPriorities.length)],
-                    unread: true,
-                    category: randomCategories[Math.floor(Math.random() * randomCategories.length)]
-                });
-                renderNotifications();
-            }
+            fetch('/api/admin-notifications')
+                .then(response => response.json())
+                .then(data => {
+                    notifications = data;
+                    renderNotifications();
+                })
+                .catch(error => console.error('Error fetching notifications:', error));
         }, 30000);
     </script>
 </body>
 </html>
+

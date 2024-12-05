@@ -49,4 +49,8 @@ router.delete('/api/cases/:id', UserCon.deleteCase);
 router.get('/api/notifications', UserCon.getNotifications);
 router.post('/api/notifications/:id/read', UserCon.markNotificationAsRead);
 router.delete('/api/notifications/:id', UserCon.deleteNotification);
+
+router.get('/api/admin-notifications', UserCon.getAdminNotifications);
+router.post('/api/admin-notifications/:id/read', UserCon.markAdminNotificationAsRead);
+router.delete('/api/admin-notifications/:id', UserCon.deleteAdminNotification);
 module.exports = router;

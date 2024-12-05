@@ -553,6 +553,49 @@ const User = {
             callback(null, result);
         });
     },
+
+    addAdminNotification: (notificationData, callback) => {
+        const query = `
+            INSERT INTO admin_notifications 
+            (user_id, type, message) 
+            VALUES (?, ?, ?)
+        `;
+        const values = [
+            notificationData.user_id,
+            notificationData.type,
+            notificationData.message
+        ];
+        
+        db.query(query, values, (err, result) => {
+            if (err) return callback(err);
+            callback(null, result);
+        });
+    },
+    
+    // Add this function to get admin notifications
+    getAdminNotifications: (callback) => {
+        const query = 'SELECT * FROM admin_notifications ORDER BY created_at DESC';
+        db.query(query, (err, results) => {
+            if (err) return callback(err);
+            callback(null, results);
+        });
+    },
+
+    markAdminNotificationAsRead: (notificationId, callback) => {
+        const query = 'UPDATE admin_notifications SET is_read = 1, read_at = CURRENT_TIMESTAMP WHERE id = ?';
+        db.query(query, [notificationId], (err, result) => {
+            if (err) return callback(err);
+            callback(null, result);
+        });
+    },
+
+    deleteAdminNotification: (notificationId, callback) => {
+        const query = 'DELETE FROM admin_notifications WHERE id = ?';
+        db.query(query, [notificationId], (err, result) => {
+            if (err) return callback(err);
+            callback(null, result);
+        });
+    },
 };
 
 module.exports = User;

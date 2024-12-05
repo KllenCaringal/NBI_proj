@@ -106,14 +106,28 @@ const users = {
                             return res.status(500).send('Error saving user to database.');
                         }
     
-                        emailService.sendVerificationEmail(email, verificationToken)
-                            .then(() => {
-                                res.render('register', { successMessage: 'Registration successful! Please verify your email.' });
-                            })
-                            .catch(emailErr => {
-                                console.error('Error sending verification email:', emailErr);
-                                res.status(500).send('Registration successful, but failed to send verification email.');
-                            });
+                        // Add admin notification
+                        const adminNotificationData = {
+                            user_id: user_id,
+                            type: 'new_user',
+                            message: `New user registered: ${firstname} ${lastname} (${user_id})`
+                        };
+    
+                        User.addAdminNotification(adminNotificationData, (notifErr) => {
+                            if (notifErr) {
+                                console.error('Error adding admin notification:', notifErr);
+                                // We don't return here as we still want to proceed with the registration process
+                            }
+    
+                            emailService.sendVerificationEmail(email, verificationToken)
+                                .then(() => {
+                                    res.render('register', { successMessage: 'Registration successful! Please verify your email.' });
+                                })
+                                .catch(emailErr => {
+                                    console.error('Error sending verification email:', emailErr);
+                                    res.status(500).send('Registration successful, but failed to send verification email.');
+                                });
+                        });
                     });
                 });
             });
@@ -309,7 +323,13 @@ const users = {
     },
 
     admin_notification: (req, res) => {
-        res.render('admin_notification');
+        User.getAdminNotifications((err, notifications) => {
+            if (err) {
+                console.error('Error fetching admin notifications:', err);
+                return res.status(500).send('Error fetching notifications');
+            }
+            res.render('admin_notification', { notifications: notifications });
+        });
     },
 
     user_trash: (req, res) => {
@@ -368,11 +388,11 @@ const users = {
                     else resolve();
                 });
             });
-
+    
             if (!req.file) {
                 return res.status(400).send('No file uploaded.');
             }
-
+    
             const { user_id, case_title, concern, date_sent, date_of_need } = req.body;
             
             // Read the buffer directly from the uploaded file
@@ -381,26 +401,42 @@ const users = {
             // Write the buffer to the destination
             const destinationPath = path.join('public/uploads', req.file.originalname);
             await fs.writeFile(destinationPath, fileBuffer);
-
+    
             const filePath = '/uploads/' + req.file.originalname;
-
+    
             const uploadData = [
                 user_id, case_title, concern, date_sent, date_of_need, filePath
             ];
-
+    
             User.addUpload(uploadData, (err, results) => {
                 if (err) {
                     console.error('Error saving upload:', err);
                     return res.status(500).send('Error saving upload.');
                 }
-                res.render('user_upload', { successMessage: 'File uploaded successfully!' });
+    
+                // Add admin notification
+                const adminNotificationData = {
+                    user_id: user_id,
+                    type: 'new_upload',
+                    message: `New case uploaded: ${case_title} by user ${user_id}`
+                };
+    
+                User.addAdminNotification(adminNotificationData, (notifErr) => {
+                    if (notifErr) {
+                        console.error('Error adding admin notification:', notifErr);
+                        // We don't return here as we still want to show success to the user
+                    }
+    
+                    res.render('user_upload', { successMessage: 'File uploaded successfully!' });
+                });
             });
-
+    
         } catch (error) {
             console.error('Error in file upload:', error);
             res.status(500).send('Error processing file upload.');
         }
     },
+    
 
 
     user_notifications: (req, res) => {
@@ -540,9 +576,23 @@ const users = {
                 console.error("Error inserting inquiry into reports table:", err);
                 return res.status(500).send('An error occurred while submitting your inquiry.');
             }
-            res.redirect('/help_support');
+    
+            const adminNotificationData = {
+                user_id: user_id,
+                type: 'new_report',
+                message: `New report submitted by ${firstname} ${lastname} (${user_id}). Type: ${inquiry_type}`
+            };
+    
+            User.addAdminNotification(adminNotificationData, (notifErr) => {
+                if (notifErr) {
+                    console.error('Error adding admin notification:', notifErr);
+                }
+    
+                res.redirect('/help_support');
+            });
         });
     },
+    
     
     about_us:(req, res) => {
         res.render('about_us');
@@ -728,6 +778,39 @@ const users = {
             res.json({ success: true });
         });
     },    
+
+    getAdminNotifications: (req, res) => {
+        User.getAdminNotifications((err, notifications) => {
+            if (err) {
+                console.error('Error fetching admin notifications:', err);
+                return res.status(500).json({ error: 'Error fetching notifications' });
+            }
+            res.json(notifications);
+        });
+    },
+    
+    markAdminNotificationAsRead: (req, res) => {
+        const notificationId = req.params.id;
+        User.markAdminNotificationAsRead(notificationId, (err, result) => {
+            if (err) {
+                console.error('Error marking admin notification as read:', err);
+                return res.status(500).json({ error: 'Error marking notification as read' });
+            }
+            res.json({ success: true });
+        });
+    },
+    
+    deleteAdminNotification: (req, res) => {
+        const notificationId = req.params.id;
+        User.deleteAdminNotification(notificationId, (err, result) => {
+            if (err) {
+                console.error('Error deleting admin notification:', err);
+                return res.status(500).json({ error: 'Error deleting notification' });
+            }
+            res.json({ success: true });
+        });
+    },
+    
 
 };
 
