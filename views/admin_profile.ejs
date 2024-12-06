@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile</title>
+    <link rel="stylesheet" href="/css/admin_profile.css">
+</head>
+<body>
+    <header class="header">
+        <button class="icon-button" onclick="history.back()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <h1>Admin Profile</h1>
+        <div class="header-right">
+            <div class="search-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="search" placeholder="Search..." class="search-input">
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="grid">
+            <!-- Profile Card -->
+            <div class="card">
+                <img src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-image" id="profilePic">
+                <h2 class="profile-name" id="fullName"></h2>
+                <p class="profile-id" id="userId"></p>
+                <div class="profile-details">
+                    <div>
+                        <label for="gender">Gender</label>
+                        <p id="gender"></p>
+                    </div>
+                    <div>
+                        <label for="contact">Contact</label>
+                        <p id="contact"></p>
+                    </div>
+                    <div>
+                        <label for="email">Email</label>
+                        <p id="email"></p>
+                    </div>
+                    <div>
+                        <label for="address">Address</label>
+                        <p id="address"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div>
+                <!-- Stats Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Total Admin Cases</h3>
+                    </div>
+                    <div class="total-cases">
+                        <div class="case-count" id="totalCaseCount">0</div>
+                        <div>
+                            <p>Total Cases</p>
+                            <p class="profile-name" id="totalCaseText">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cases List -->
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Admin Cases</h3>
+                    </div>
+                    <div id="casesList">
+                        <!-- Case items will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const profileFields = {
+            fullName: document.getElementById('fullName'),
+            gender: document.getElementById('gender'),
+            contact: document.getElementById('contact'),
+            email: document.getElementById('email'),
+            address: document.getElementById('address')
+        };
+        const casesList = document.getElementById('casesList');
+        const totalCaseCount = document.getElementById('totalCaseCount');
+        const totalCaseText = document.getElementById('totalCaseText');
+
+        let userData = null;
+
+        async function fetchUserData() {
+            try {
+                const response = await axios.get('/api/admin');
+                userData = response.data;
+                updateProfileUI(userData);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                alert('Failed to load user data. Please try again later.');
+            }
+        }
+
+        async function fetchCases() {
+            try {
+                const response = await axios.get('/api/admincases');
+                const cases = response.data;
+                if (cases.length === 0) {
+                    casesList.innerHTML = '<p>No cases found.</p>';
+                    totalCaseCount.textContent = '0';
+                    totalCaseText.textContent = '0';
+                } else {
+                    updateCasesUI(cases);
+                }
+            } catch (error) {
+                console.error('Error fetching cases:', error);
+                casesList.innerHTML = '<p>Error loading cases. Please try again later.</p>';
+                totalCaseCount.textContent = '0';
+                totalCaseText.textContent = '0';
+            }
+        }
+
+        function updateProfileUI(user) {
+            document.getElementById('profilePic').src = user.profile_pic || 'https://via.placeholder.com/150';
+            profileFields.fullName.textContent = `${user.firstname} ${user.lastname}`;
+            document.getElementById('userId').textContent = `User ID: ${user.user_id}`;
+            profileFields.gender.textContent = user.gender;
+            profileFields.contact.textContent = user.contact_num;
+            profileFields.email.textContent = user.email;
+            profileFields.address.textContent = `${user.sitio}, ${user.barangay}, ${user.province}`;
+        }
+
+        function updateCasesUI(cases) {
+            totalCaseCount.textContent = cases.length;
+            totalCaseText.textContent = cases.length;
+
+            casesList.innerHTML = '';
+            cases.forEach(caseItem => {
+                const caseElement = createCaseItem(caseItem);
+                casesList.appendChild(caseElement);
+            });
+        }
+
+        function createCaseItem(CaseData) {
+            const caseItem = document.createElement('div');
+            caseItem.className = 'case-item';
+            caseItem.innerHTML = `
+                <img src="https://via.placeholder.com/80" alt="${CaseData.title}" class="case-image">
+                <div class="case-info">
+                    <h4>${CaseData.title}</h4>
+                    <p>${CaseData.description}</p>
+                    <p>Created At: ${new Date(CaseData.created_at).toLocaleDateString()}</p>
+                    <p>User ID: ${CaseData.user_id}</p>
+                </div>
+                <div class="case-actions">
+                    <div class="dropdown">
+                        <button onclick="toggleDropdown(${CaseData.id})" class="icon-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                        </button>
+                        <div id="dropdown${CaseData.id}" class="dropdown-content">
+                            <a href="#" onclick="downloadCase(${CaseData.id})">Download Case</a>
+                            <a href="#" onclick="deleteCase(${CaseData.id})">Delete Case</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return caseItem;
+        }
+
+        function toggleDropdown(id) {
+            document.getElementById(`dropdown${id}`).classList.toggle("show");
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.icon-button')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        function downloadCase(id) {
+            alert(`Downloading case ${id}`);
+            // Implement actual download logic here
+        }
+
+        function deleteCase(id) {
+            if (confirm(`Are you sure you want to delete case ${id}?`)) {
+                // Implement actual delete logic here
+                axios.delete(`/api/admincases/${id}`)
+                    .then(() => {
+                        alert(`Case ${id} deleted successfully`);
+                        fetchCases(); // Refresh the cases list
+                    })
+                    .catch(error => {
+                        console.error('Error deleting case:', error);
+                        alert('Failed to delete case. Please try again later.');
+                    });
+            }
+        }
+
+        // Initial data fetch
+        fetchUserData();
+        fetchCases();
+    </script>
+</body>
+</html>

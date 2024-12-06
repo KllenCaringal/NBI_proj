@@ -811,6 +811,61 @@ const users = {
         });
     },
 
+    admin_profile: (req, res) => {
+        if (!req.session.user) {
+            console.log('User not logged in, redirecting to login');
+            return res.redirect('/login');
+        }
+        res.render('admin_profile');
+    },
+
+    admingetUserData: (req, res) => {
+        if (!req.session.user) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        const userId = req.session.user.user_id;
+
+        User.findByUserId(userId, (err, user) => {
+            if (err) {
+                console.error('Error fetching user data:', err);
+                return res.status(500).json({ error: 'Internal Server Error' });
+            }
+
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            res.json(user);
+        });
+    },
+
+    admingetCases: (req, res) => {
+        if (!req.session.user) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+    
+        const userId = req.session.user.user_id;
+        const userRole = req.session.user.roles;
+    
+        if (userRole === 'admin') {
+            User.getAllAdmincases((err, cases) => {
+                if (err) {
+                    console.error('Error fetching all cases:', err);
+                    return res.status(500).json({ error: 'Internal Server Error' });
+                }
+                res.json(cases);
+            });
+        } else {
+            User.getAdminCases(userId, (err, cases) => {
+                if (err) {
+                    console.error('Error fetching user cases:', err);
+                    return res.status(500).json({ error: 'Internal Server Error' });
+                }
+                res.json(cases);
+            });
+        }
+    },
 };
 
 module.exports = users;

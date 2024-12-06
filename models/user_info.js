@@ -596,6 +596,30 @@ const User = {
             callback(null, result);
         });
     },
+
+    getAllAdmincases: (callback) => {
+        const query = `
+            SELECT id, title, user_id, description, file_path, created_at
+            FROM admin_cases
+            ORDER BY created_at DESC
+        `;
+        db.query(query, (err, results) => {
+            if (err) return callback(err, null);
+            return callback(null, results);
+        });
+    },
+
+    getAdminCases: (userId, callback) => {
+        const query = `
+            SELECT id, title, user_id, description, file_path, created_at
+            FROM admin_cases
+            ORDER BY created_at DESC
+        `;
+        db.query(query, [userId], (err, results) => {
+            if (err) return callback(err, null);
+            return callback(null, results);
+        });
+    },
 };
 
 module.exports = User;

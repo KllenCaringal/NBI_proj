@@ -15,6 +15,10 @@ router.get('/profile', UserCon.profile);
 router.get('/api/user', UserCon.getUserData);
 router.get('/api/cases', UserCon.getCases);
 
+router.get('/admin_profile', UserCon.admin_profile);
+router.get('/api/admin', UserCon.admingetUserData);
+router.get('/api/admincases', UserCon.admingetCases);
+
 router.get('/admin-dashboard', UserCon.admin_dashboard);
 router.get('/admin-users', UserCon.admin_users);
 router.get('/admin-upload', UserCon.admin_upload);
