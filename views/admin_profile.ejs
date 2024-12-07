@@ -191,10 +191,9 @@
 
         function deleteCase(id) {
             if (confirm(`Are you sure you want to delete case ${id}?`)) {
-                // Implement actual delete logic here
                 axios.delete(`/api/admincases/${id}`)
                     .then(() => {
-                        alert(`Case ${id} deleted successfully`);
+                        alert(`Case ${id} moved to trash successfully`);
                         fetchCases(); // Refresh the cases list
                     })
                     .catch(error => {
@@ -210,3 +209,4 @@
     </script>
 </body>
 </html>
+

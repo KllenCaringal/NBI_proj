@@ -30,6 +30,7 @@ router.get('/admin-trash', UserCon.admin_trash);
 router.get('/api/admin-trash', UserCon.getAdminTrashItems);
 router.post('/api/admin-trash/:id/restore', UserCon.restoreAdminTrashItem);
 router.delete('/api/admin-trash/:id', UserCon.deleteAdminTrashItem);
+router.delete('/api/admincases/:id', UserCon.deleteAdminCase);
 
 router.get('/settings', UserCon.settings);
 router.get('/edit_profile', UserCon.edit_profile);
