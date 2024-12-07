@@ -436,8 +436,6 @@ const users = {
             res.status(500).send('Error processing file upload.');
         }
     },
-    
-
 
     user_notifications: (req, res) => {
         res.render('user_notifications');
@@ -865,6 +863,10 @@ const users = {
                 res.json(cases);
             });
         }
+    },
+
+    admin_trash: (req, res) => {
+        res.render('admin_trash');
     },
 };
 

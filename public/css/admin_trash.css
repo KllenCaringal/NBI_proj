@@ -1,0 +1,121 @@
+/* Base Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Sidebar Styling */
+  .sidebar {
+    background-color: var(--bg-color, #003366);
+    color: var(--text-color, #ffffff);
+    width: 250px;
+    height: 100vh;
+    padding-top: 20px;
+    position: fixed;
+  
+  }
+  
+  .logo img {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+  }
+  
+  /* Navigation */
+  nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+  }
+  
+  nav ul li {
+    margin: 15px 0;
+  }
+  
+  nav ul li a {
+    color: var(--text-color, #ffffff);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-size: 16px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  nav ul li a:hover,
+  nav ul li a.active {
+    background-color: var(--hover-bg-color, #005b99);
+    border-radius: 4px;
+  }
+  
+  nav ul li a:focus {
+    outline: 2px solid var(--text-color, #ffffff);
+  }
+  
+  /* Icon Spacing */
+  .icon {
+    margin-right: 10px;
+  }
+  
+  /* Logout Button */
+  .logout {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .logout button {
+    background-color: var(--logout-bg-color, #ff0000);
+    color: var(--text-color, #ffffff);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .logout button:hover {
+    background-color: var(--logout-hover-color, #cc0000);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 200px;
+    }
+  
+    .logo img {
+      width: 70%;
+    }
+  
+    nav ul li a {
+      font-size: 14px;
+    }
+  }
+  
+  /* Animation */
+  @keyframes slide-in {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  
+  /* CSS Variables for Dark Mode Support */
+  :root {
+    --bg-color: #003366;
+    --text-color: #ffffff;
+    --hover-bg-color: #005b99;
+    --logout-bg-color: #ff0000;
+    --logout-hover-color: #cc0000;
+  }
+
+.header {
+    font-size: 24px;
+    font-weight: 700;
+    color: #001f3f;
+    margin-bottom: 20px;
+  }

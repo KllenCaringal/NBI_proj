@@ -26,6 +26,8 @@ router.get('/admin-notification', UserCon.admin_notification);
 router.get('/user-trash', UserCon.user_trash);
 router.get('/admin-logs', UserCon.admin_logs);
 
+router.get('/admin-trash', UserCon.admin_trash);
+
 router.get('/settings', UserCon.settings);
 router.get('/edit_profile', UserCon.edit_profile);
 router.post('/api/updateProfile', UserCon.updateProfile);
