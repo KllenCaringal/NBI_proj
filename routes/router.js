@@ -27,6 +27,9 @@ router.get('/user-trash', UserCon.user_trash);
 router.get('/admin-logs', UserCon.admin_logs);
 
 router.get('/admin-trash', UserCon.admin_trash);
+router.get('/api/admin-trash', UserCon.getAdminTrashItems);
+router.post('/api/admin-trash/:id/restore', UserCon.restoreAdminTrashItem);
+router.delete('/api/admin-trash/:id', UserCon.deleteAdminTrashItem);
 
 router.get('/settings', UserCon.settings);
 router.get('/edit_profile', UserCon.edit_profile);

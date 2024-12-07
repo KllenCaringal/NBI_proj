@@ -620,6 +620,85 @@ const User = {
             return callback(null, results);
         });
     },
+
+    getAllTrashItems: (callback) => {
+        const query = `
+            SELECT id, original_table, original_id, user_id, title, description, file_path, created_at, deleted_at 
+            FROM trash 
+            ORDER BY deleted_at DESC
+        `;
+        db.query(query, (err, results) => {
+            if (err) {
+                console.error('Database error:', err);
+                return callback(err);
+            }
+            callback(null, results);
+        });
+    },
+
+    // Update restoreTrashItem to work for both user and admin
+    restoreTrashItem: (id, userId, callback) => {
+        db.beginTransaction((err) => {
+            if (err) return callback(err);
+
+            const selectQuery = userId ? 'SELECT * FROM trash WHERE id = ? AND user_id = ?' : 'SELECT * FROM trash WHERE id = ?';
+            const selectParams = userId ? [id, userId] : [id];
+
+            db.query(selectQuery, selectParams, (err, results) => {
+                if (err) {
+                    return db.rollback(() => callback(err));
+                }
+
+                if (results.length === 0) {
+                    return db.rollback(() => callback(new Error('Item not found')));
+                }
+
+                const item = results[0];
+
+                const insertQuery = `INSERT INTO ${item.original_table} 
+                    (id, title, user_id, description, file_path, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?)`;
+                const insertValues = [
+                    item.original_id,
+                    item.title,
+                    item.user_id,
+                    item.description,
+                    item.file_path,
+                    item.created_at
+                ];
+
+                db.query(insertQuery, insertValues, (err, result) => {
+                    if (err) {
+                        return db.rollback(() => callback(err));
+                    }
+
+                    const deleteQuery = 'DELETE FROM trash WHERE id = ?';
+                    db.query(deleteQuery, [id], (err, result) => {
+                        if (err) {
+                            return db.rollback(() => callback(err));
+                        }
+
+                        db.commit((err) => {
+                            if (err) {
+                                return db.rollback(() => callback(err));
+                            }
+                            callback(null, result);
+                        });
+                    });
+                });
+            });
+        });
+    },
+
+    // Update deleteTrashItem to work for both user and admin
+    deleteTrashItem: (id, userId, callback) => {
+        const query = userId ? 'DELETE FROM trash WHERE id = ? AND user_id = ?' : 'DELETE FROM trash WHERE id = ?';
+        const params = userId ? [id, userId] : [id];
+        db.query(query, params, (err, result) => {
+            if (err) return callback(err);
+            callback(null, result);
+        });
+    },
 };
 
 module.exports = User;

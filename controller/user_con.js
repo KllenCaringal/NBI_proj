@@ -868,6 +868,38 @@ const users = {
     admin_trash: (req, res) => {
         res.render('admin_trash');
     },
+
+    getAdminTrashItems: (req, res) => {
+        User.getAllTrashItems((err, items) => {
+            if (err) {
+                console.error('Error fetching admin trash items:', err);
+                return res.status(500).json({ error: 'Error fetching trash items' });
+            }
+            res.json(items);
+        });
+    },
+
+    restoreAdminTrashItem: (req, res) => {
+        const { id } = req.params;
+        User.restoreTrashItem(id, null, (err, result) => {
+            if (err) {
+                console.error('Error restoring item:', err);
+                return res.status(500).json({ error: 'Error restoring item: ' + err.message });
+            }
+            res.json({ message: 'Item restored successfully' });
+        });
+    },
+
+    deleteAdminTrashItem: (req, res) => {
+        const { id } = req.params;
+        User.deleteTrashItem(id, null, (err, result) => {
+            if (err) {
+                console.error('Error deleting item:', err);
+                return res.status(500).json({ error: 'Error deleting item: ' + err.message });
+            }
+            res.json({ message: 'Item deleted successfully' });
+        });
+    },
 };
 
 module.exports = users;

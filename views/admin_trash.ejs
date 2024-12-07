@@ -1,42 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Logs</title>
-  <link rel="stylesheet" href="/css/admin_trash.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBI Case Management System - Admin Trash</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin_trash.css">
 </head>
 <body>
-  <div class="sidebar">
-    <div class="logo">
-      <img src="/images/nbi_logo.png" alt="NBI Logo">
+    <div class="sidebar">
+        <div class="logo">
+            <img src="/images/nbi_logo.png" alt="NBI Logo">
+        </div>
+        <nav>
+            <ul>
+              <li><a href="/admin-dashboard"><i class="nav-item nav-link"></i> Dashboard</a></li>
+              <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
+              <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
+              <li><a href="/admin-addcase"><i class="nav-item nav-link"></i> Add Case</a></li>
+              <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
+              <li><a href="/admin-logs"><i class="nav-item nav-link"></i> Logs</a></li>
+              <li><a href="/admin_profile"><i class="nav-item nav-link"></i> Profile</a></li>
+              <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
+            </ul>
+          </nav>
+        <div class="logout">
+            <a href="/logout">
+                <button>Log Out</button>
+            </a>
+        </div>
     </div>
-    <nav>
-      <ul>
-        <li><a href="/admin-dashboard"><i class="nav-item nav-link"></i> Dashboard</a></li>
-        <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
-        <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
-        <li><a href="/admin-addcase"><i class="nav-item nav-link"></i> Add Case</a></li>
-        <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
-        <li><a href="/admin-logs"><i class="nav-item nav-link"></i> Logs</a></li>
-        <li><a href="/admin_profile"><i class="nav-item nav-link"></i> Profile</a></li>
-        <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
-      </ul>
-    </nav>
-    <div class="logout">
-      <a href="/logout">
-        <button>Log Out</button>
-      </a>
+
+    <div class="content">
+        <h1>Admin Trash</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search trash..." aria-label="Search">
+        </div>
+        <div class="content-box">
+            <div id="trashGrid">
+                <div class="no-trash">No items in trash.</div>
+            </div>
+        </div>
     </div>
-  </div>
 
- 
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-  <!-- DataTables JS -->
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        function fetchTrashItems() {
+            fetch('/api/admin-trash')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const trashGrid = document.getElementById('trashGrid');
+                    
+                    if (data.length === 0) {
+                        trashGrid.innerHTML = '<div class="no-trash">No items in trash.</div>';
+                        return;
+                    }
 
+                    trashGrid.innerHTML = '';
+                    data.forEach(item => {
+                        const trashCard = document.createElement('div');
+                        trashCard.className = 'trash-card';
+                        trashCard.innerHTML = `
+                            <div class="trash-header">
+                                <div class="trash-title">${item.original_table}: ${item.title || 'Untitled'}</div>
+                            </div>
+                            <div class="trash-content">
+                                <div class="trash-meta">Deleted on: ${new Date(item.deleted_at).toLocaleString()}</div>
+                                <div class="trash-description">${item.description || 'No description'}</div>
+                            </div>
+                            <div class="trash-actions">
+                                <button class="trash-button restore-button" onclick="restoreItem(${item.id})">Restore</button>
+                                <button class="trash-button delete-button" onclick="deleteItem(${item.id})">Delete</button>
+                            </div>
+                        `;
+                        trashGrid.appendChild(trashCard);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching trash items:', error);
+                    const trashGrid = document.getElementById('trashGrid');
+                    trashGrid.innerHTML = '<div class="error-message">Error loading trash items</div>';
+                });
+        }
+
+        function restoreItem(id) {
+            if (confirm('Are you sure you want to restore this item?')) {
+                fetch(`/api/admin-trash/${id}/restore`, { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === 'Item restored successfully') {
+                            fetchTrashItems();
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function deleteItem(id) {
+            if (confirm('Are you sure you want to permanently delete this item?')) {
+                fetch(`/api/admin-trash/${id}`, { method: 'DELETE' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === 'Item deleted successfully') {
+                            fetchTrashItems();
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchTrashItems();
+
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const trashCards = document.querySelectorAll('.trash-card');
+                trashCards.forEach(card => {
+                    const title = card.querySelector('.trash-title').textContent.toLowerCase();
+                    const description = card.querySelector('.trash-description').textContent.toLowerCase();
+                    if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
+
