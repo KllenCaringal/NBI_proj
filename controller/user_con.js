@@ -274,19 +274,19 @@ const users = {
         const filename = req.params.filename;
         const filePath = path.join(__dirname, '..', 'public', 'admin_cases', filename);
 
-        fs.access(filePath, fs.constants.F_OK, (err) => {
-            if (err) {
+        fs.access(filePath, fs.constants.F_OK)
+            .then(() => {
+                res.download(filePath, filename, (err) => {
+                    if (err) {
+                        console.error("Error downloading file:", err);
+                        res.status(500).send('Error downloading file');
+                    }
+                });
+            })
+            .catch((err) => {
                 console.error("File not found:", err);
-                return res.status(404).send('File not found');
-            }
-
-            res.download(filePath, filename, (err) => {
-                if (err) {
-                    console.error("Error downloading file:", err);
-                    res.status(500).send('Error downloading file');
-                }
+                res.status(404).send('File not found');
             });
-        });
     },
 
     user_page: (req, res) => {

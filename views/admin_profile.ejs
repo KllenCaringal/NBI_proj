@@ -159,7 +159,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
                         </button>
                         <div id="dropdown${CaseData.id}" class="dropdown-content">
-                            <a href="#" onclick="downloadCase(${CaseData.id})">Download Case</a>
+                            <a href="#" onclick="downloadCase('${CaseData.file_path}', '${CaseData.title}')">Download Case</a>
                             <a href="#" onclick="deleteCase(${CaseData.id})">Delete Case</a>
                         </div>
                     </div>
@@ -184,10 +184,37 @@
             }
         }
 
-        function downloadCase(id) {
-            alert(`Downloading case ${id}`);
-            // Implement actual download logic here
-        }
+        function downloadCase(filePath, fileName) {
+    if (!filePath) {
+        alert('No file available for download');
+        return;
+    }
+    
+    const fileNameFromPath = filePath.split('/').pop();
+    const downloadUrl = `/download/${encodeURIComponent(fileNameFromPath)}?type=admin_case`;
+    
+    fetch(downloadUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = fileName || fileNameFromPath;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            console.error('Error downloading file:', error);
+            alert('Failed to download file. Please try again later.');
+        });
+}
 
         function deleteCase(id) {
             if (confirm(`Are you sure you want to delete case ${id}?`)) {
@@ -209,4 +236,3 @@
     </script>
 </body>
 </html>
-

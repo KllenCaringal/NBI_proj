@@ -179,8 +179,6 @@ createDatabaseAndTable();
 
 console.log("Database and tables setup complete.");
 
-
-
 const User = {
     // Find user by email
     findByEmail: (email, callback) => {
