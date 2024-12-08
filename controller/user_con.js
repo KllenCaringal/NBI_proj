@@ -870,7 +870,7 @@ const users = {
     },
 
     getAdminTrashItems: (req, res) => {
-        User.getAdminTrashItems((err, items) => {
+        User.getAllTrashItems((err, items) => {
             if (err) {
                 console.error('Error fetching admin trash items:', err);
                 return res.status(500).json({ error: 'Error fetching trash items' });
@@ -880,19 +880,20 @@ const users = {
     },
 
     restoreAdminTrashItem: (req, res) => {
-        const { id } = req.params;
-        User.restoreAdminTrashItem(id, (err, result) => {
-            if (err) {
-                console.error('Error restoring admin trash item:', err);
-                return res.status(500).json({ error: 'Error restoring item: ' + err.message });
-            }
-            res.json({ message: 'Item restored successfully' });
-        });
+    const { id } = req.params;
+    User.restoreTrashItem(id, null, (err, result) => {
+        if (err) {
+            console.error('Error restoring admin trash item:', err);
+            return res.status(500).json({ error: 'Error restoring item: ' + err.message });
+        }
+        res.json({ message: 'Item restored successfully' });
+    });
     },
 
     deleteAdminTrashItem: (req, res) => {
         const { id } = req.params;
-        User.deleteAdminTrashItem(id, (err, result) => {
+        // Remove the userId parameter as it's not needed for admin operations
+        User.deleteTrashItem(id, null, (err, result) => {
             if (err) {
                 console.error('Error deleting admin trash item:', err);
                 return res.status(500).json({ error: 'Error deleting item: ' + err.message });

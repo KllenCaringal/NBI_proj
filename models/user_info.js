@@ -690,7 +690,6 @@ const User = {
         });
     },
 
-    // Update deleteTrashItem to work for both user and admin
     deleteTrashItem: (id, userId, callback) => {
         const query = userId ? 'DELETE FROM trash WHERE id = ? AND user_id = ?' : 'DELETE FROM trash WHERE id = ?';
         const params = userId ? [id, userId] : [id];
@@ -699,6 +698,8 @@ const User = {
             callback(null, result);
         });
     },
+
+
 };
 
 module.exports = User;
