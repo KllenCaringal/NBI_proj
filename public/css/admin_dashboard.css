@@ -1,116 +1,147 @@
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    display: flex;
-  }
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+}
 
-  .sidebar {
-    background-color: #003366;
-    color: #ffffff;
-    width: 250px;
-    height: 100vh;
-    padding-top: 20px;
-    position: fixed;
-  }
+.sidebar {
+  background-color: #003366;
+  color: #ffffff;
+  width: 250px;
+  height: 100vh;
+  padding-top: 20px;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-  .logo img {
-    display: block;
-    margin: 0 auto;
-    width: 80%;
-  }
+.logo {
+  padding: 0 20px 20px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-  nav ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 20px 0;
-  }
+.logo img {
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+}
 
-  nav ul li {
-    margin: 15px 0;
-  }
+.sidebar nav {
+  flex: 1;
+  overflow-y: auto;
+  margin: 20px 0;
+  padding-right: 10px;
+}
 
-  nav ul li a {
-    color: #ffffff;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    font-size: 16px;
-  }
+.sidebar nav::-webkit-scrollbar {
+  width: 8px;
+}
 
-  nav ul li a:hover,
-  nav ul li a.active {
-    background-color: #005b99;
-    border-radius: 4px;
-  }
+.sidebar nav::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
 
-  .icon {
-    margin-right: 10px;
-  }
+.sidebar nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
 
-  .logout {
-    position: absolute;
-    bottom: 20px;
-    width: 100%;
-    text-align: center;
-  }
+.sidebar nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
 
-  .logout button {
-    background-color: #ff0000;
-    color: #ffffff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
+nav ul {
+  list-style-type: none;
+  padding: 0 10px;
+  margin: 0;
+}
 
-  .logout button:hover {
-    background-color: #cc0000;
-  }
+nav ul li {
+  margin: 8px 0;
+}
 
-  
-  .content {
-    margin-left: 250px;
-    padding: 20px;
-    background-color: #f4f4f9;
-    height: 100vh;
-    overflow-y: auto;
-    width: calc(100% - 250px);
-  }
+nav ul li a {
+  color: #ffffff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  font-size: 16px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
 
-  .header {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
+nav ul li a:hover,
+nav ul li a.active {
+  background-color: #005b99;
+}
 
-  .card {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-  }
+.icon {
+  margin-right: 10px;
+}
 
-  .card-title {
-    font-size: 18px;
-    font-weight: bold;
-  }
+.logout {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-  .card-content {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #555555;
-  }
+.logout button {
+  background-color: #ff3b3b;
+  color: #ffffff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
 
-  .activity-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-  }
+.logout button:hover {
+  background-color: #e63535;
+}
 
+.content {
+  margin-left: 250px;
+  padding: 20px;
+  background-color: #f4f4f9;
+  min-height: 100vh;
+  width: calc(100% - 250px);
+  box-sizing: border-box;
+}
 
+.header {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
 
-  
+.card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.card-content {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555555;
+}
+
+.activity-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}

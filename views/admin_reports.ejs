@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBI Administrative Reports</title>
+    <link rel="stylesheet" href="/css/admin_reports.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="/images/nbi_logo.png" alt="NBI Logo">
+        </div>
+        <button class="menu-toggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <nav>
+            <ul>
+                <li><a href="/admin-dashboard"><i class="nav-item nav-link"></i> Dashboard</a></li>
+                <li><a href="/admin-users"><i class="nav-item nav-link"></i> Users</a></li>
+                <li><a href="/admin-upload"><i class="nav-item nav-link"></i> Upload</a></li>
+                <li><a href="/admin-addcase"><i class="nav-item nav-link"></i> Add Case</a></li>
+                <li><a href="/admin-reports"><i class="nav-item nav-link"></i> Reports</a></li>
+                <li><a href="/admin-notification"><i class="nav-item nav-link"></i> Notification</a></li>
+                <li><a href="/admin-logs"><i class="nav-item nav-link"></i> Logs</a></li>
+                <li><a href="/admin_profile"><i class="nav-item nav-link"></i> Profile</a></li>
+                <li><a href="/admin-trash"><i class="nav-item nav-link"></i> Trash</a></li>
+            </ul>
+        </nav>
+        <div class="logout">
+            <a href="/logout">
+                <button>Logout</button>
+            </a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="header">NBI Administrative Reports</div>
+
+        <div class="card">
+            <div class="card-title">Monthly Case Statistics</div>
+            <div class="card-content">
+                <canvas id="monthlyCaseChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">User Activity Report</div>
+            <div class="card-content">
+                <canvas id="userActivityChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">System Performance Metrics</div>
+            <div class="card-content">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle menu functionality
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        // Chart.js implementations (placeholder data)
+        const monthlyCaseCtx = document.getElementById('monthlyCaseChart').getContext('2d');
+        new Chart(monthlyCaseCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Number of Cases',
+                    data: [12, 19, 3, 5, 2, 3],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const userActivityCtx = document.getElementById('userActivityChart').getContext('2d');
+        new Chart(userActivityCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Active Users',
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            }
+        });
+
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(performanceCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['CPU', 'Memory', 'Disk', 'Network'],
+                datasets: [{
+                    label: 'Usage',
+                    data: [300, 50, 100, 40],
+                    backgroundColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)'
+                    ]
+                }]
+            }
+        });
+    </script>
+</body>
+</html>
+

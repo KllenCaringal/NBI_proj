@@ -116,7 +116,6 @@ const users = {
                         User.addAdminNotification(adminNotificationData, (notifErr) => {
                             if (notifErr) {
                                 console.error('Error adding admin notification:', notifErr);
-                                // We don't return here as we still want to proceed with the registration process
                             }
     
                             emailService.sendVerificationEmail(email, verificationToken)
@@ -913,6 +912,10 @@ const users = {
             }
             res.json({ message: 'Case deleted successfully' });
         });
+    },
+
+    admin_reports: (req, res) => {
+        res.render('admin_reports');
     },
 };
 

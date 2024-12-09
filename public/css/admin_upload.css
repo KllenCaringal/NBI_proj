@@ -10,62 +10,97 @@ body {
     height: 100vh;
     padding-top: 20px;
     position: fixed;
-    width: 250px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
-
+  
+  .logo {
+    padding: 0 20px 20px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
   .logo img {
     display: block;
     margin: 0 auto;
     width: 80%;
   }
-
+  
+  .sidebar nav {
+    flex: 1;
+    overflow-y: auto;
+    margin: 20px 0;
+    padding-right: 10px;
+  }
+  
+  .sidebar nav::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .sidebar nav::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+  
+  .sidebar nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+  
+  .sidebar nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+  }
+  
   nav ul {
     list-style-type: none;
-    padding: 0;
-    margin: 20px 0;
+    padding: 0 10px;
+    margin: 0;
   }
-
+  
   nav ul li {
-    margin: 15px 0;
+    margin: 8px 0;
   }
-
+  
   nav ul li a {
     color: #ffffff;
     text-decoration: none;
     display: flex;
     align-items: center;
-    padding: 10px;
+    padding: 12px 15px;
     font-size: 16px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
   }
-
+  
   nav ul li a:hover,
   nav ul li a.active {
     background-color: #005b99;
-    border-radius: 4px;
   }
-
+  
   .icon {
     margin-right: 10px;
   }
-
+  
   .logout {
-    position: absolute;
-    bottom: 20px;
-    width: 100%;
-    text-align: center;
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
-
+  
   .logout button {
-    background-color: #ff0000;
+    background-color: #ff3b3b;
     color: #ffffff;
     border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
+    padding: 12px 20px;
+    border-radius: 6px;
     cursor: pointer;
+    width: 100%;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
   }
-
-  .logout button:hover {
-    background-color: #cc0000;
+  
+.logout button:hover {
+    background-color: #e63535;
   }
 
     .main-content {
