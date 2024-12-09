@@ -41,23 +41,39 @@
         <div class="header">NBI Administrative Reports</div>
 
         <div class="card">
-            <div class="card-title">Monthly Case Statistics</div>
+            <div class="card-title">Reports</div>
             <div class="card-content">
-                <canvas id="monthlyCaseChart"></canvas>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">User Activity Report</div>
-            <div class="card-content">
-                <canvas id="userActivityChart"></canvas>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">System Performance Metrics</div>
-            <div class="card-content">
-                <canvas id="performanceChart"></canvas>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search reports...">
+                </div>
+                <table id="reportsTable">
+                    <thead>
+                        <tr>
+                            <th>Report ID</th>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Inquiry Type</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% reports.forEach(report => { %>
+                            <tr>
+                                <td><%= report.report_id %></td>
+                                <td><%= report.user_id %></td>
+                                <td><%= report.firstname %> <%= report.lastname %></td>
+                                <td><%= report.email %></td>
+                                <td><%= report.inquiry_type %></td>
+                                <td><%= report.status %></td>
+                                <td><%= new Date(report.created_at).toLocaleString() %></td>
+                                <td><%= report.message %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -68,62 +84,31 @@
             document.querySelector('.sidebar').classList.toggle('active');
         });
 
-        // Chart.js implementations (placeholder data)
-        const monthlyCaseCtx = document.getElementById('monthlyCaseChart').getContext('2d');
-        new Chart(monthlyCaseCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    label: 'Number of Cases',
-                    data: [12, 19, 3, 5, 2, 3],
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const table = document.getElementById('reportsTable');
+            const rows = table.getElementsByTagName('tr');
+
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = searchInput.value.toLowerCase();
+
+                for (let i = 1; i < rows.length; i++) {
+                    let found = false;
+                    const cells = rows[i].getElementsByTagName('td');
+
+                    for (let j = 0; j < cells.length; j++) {
+                        const cellText = cells[j].textContent.toLowerCase();
+                        if (cellText.includes(searchTerm)) {
+                            found = true;
+                            break;
+                        }
                     }
+
+                    rows[i].style.display = found ? '' : 'none';
                 }
-            }
-        });
-
-        const userActivityCtx = document.getElementById('userActivityChart').getContext('2d');
-        new Chart(userActivityCtx, {
-            type: 'line',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Active Users',
-                    data: [65, 59, 80, 81, 56, 55, 40],
-                    fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
-                }]
-            }
-        });
-
-        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
-        new Chart(performanceCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['CPU', 'Memory', 'Disk', 'Network'],
-                datasets: [{
-                    label: 'Usage',
-                    data: [300, 50, 100, 40],
-                    backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(54, 162, 235)',
-                        'rgb(255, 205, 86)',
-                        'rgb(75, 192, 192)'
-                    ]
-                }]
-            }
+            });
         });
     </script>
 </body>
 </html>
-

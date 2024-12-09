@@ -915,7 +915,13 @@ const users = {
     },
 
     admin_reports: (req, res) => {
-        res.render('admin_reports');
+        User.getReports((err, reports) => {
+            if (err) {
+                console.error('Error fetching reports:', err);
+                return res.status(500).send('Error fetching reports');
+            }
+            res.render('admin_reports', { reports: reports });
+        });
     },
 };
 

@@ -697,6 +697,13 @@ const User = {
         });
     },
 
+    getReports: (callback) => {
+        const query = 'SELECT * FROM reports ORDER BY created_at DESC';
+        db.query(query, (err, results) => {
+            if (err) return callback(err, null);
+            return callback(null, results);
+        });
+    },
 
 };
 
