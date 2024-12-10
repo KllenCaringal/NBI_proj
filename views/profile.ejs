@@ -142,7 +142,6 @@
                     <h4>${caseData.case_title}</h4>
                     <p>${caseData.concern}</p>
                     <p>Date Sent: ${new Date(caseData.date_sent).toLocaleDateString()}</p>
-                    ${userData.roles === 'admin' ? `<p>Uploader: (ID: ${caseData.user_id})</p>` : ''}
                 </div>
                 <div class="case-actions">
                     <div class="dropdown">
@@ -150,7 +149,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
                         </button>
                         <div id="dropdown${caseData.id}" class="dropdown-content">
-                            <a href="#" onclick="downloadCase(${caseData.id})">Download Case</a>
+                            <a href="#" onclick="downloadCase('${caseData.file_path}', '${caseData.case_title}')">Download Case</a>
                             <a href="#" onclick="deleteCase(${caseData.id})">Delete Case</a>
                         </div>
                     </div>
@@ -175,17 +174,59 @@
             }
         }
 
-        function downloadCase(id) {
-            alert(`Downloading case ${id}`);
-            // Implement actual download logic here
-        }
+        function downloadCase(filePath, fileName) {
+    if (!filePath) {
+        alert('No file available for download');
+        return;
+    }
+    
+    const fileNameFromPath = filePath.split('/').pop();
+    const downloadUrl = `/download/${encodeURIComponent(fileNameFromPath)}`;
+    
+    fetch(downloadUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = fileName || fileNameFromPath;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            console.error('Error downloading file:', error);
+            alert(`Failed to download file: ${error.message}. Please try again later.`);
+        });
+}
 
         function deleteCase(id) {
-            if (confirm(`Are you sure you want to delete case ${id}?`)) {
-                alert(`Case ${id} deleted`);
-                // Implement actual delete logic here and refresh the cases list
-            }
-        }
+    if (confirm(`Are you sure you want to delete case ${id}?`)) {
+        axios.delete(`/api/cases/${id}`)
+            .then(response => {
+                if (response.data && response.data.message) {
+                    alert(response.data.message);
+                } else {
+                    alert(`Case ${id} moved to trash successfully`);
+                }
+                fetchCases(); // Refresh the cases list
+            })
+            .catch(error => {
+                console.error('Error deleting case:', error);
+                let errorMessage = 'Failed to delete case. Please try again later.';
+                if (error.response && error.response.data && error.response.data.error) {
+                    errorMessage = error.response.data.error;
+                }
+                alert(errorMessage);
+            });
+    }
+}
 
         // Initial data fetch
         fetchUserData();
@@ -193,3 +234,4 @@
     </script>
 </body>
 </html>
+

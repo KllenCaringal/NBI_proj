@@ -705,6 +705,41 @@ const User = {
         });
     },
 
+    moveToTrashs: (table, id, userId, callback) => {
+        const selectQuery = `SELECT * FROM ${table} WHERE id = ? AND user_id = ?`;
+        db.query(selectQuery, [id, userId], (err, results) => {
+            if (err) return callback(err);
+            if (results.length === 0) return callback(new Error('Item not found or you do not have permission to delete it'));
+
+            const item = results[0];
+            const insertQuery = `
+                INSERT INTO trash 
+                (original_table, original_id, user_id, title, description, file_path, created_at) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            `;
+            const values = [
+                table,
+                id,
+                userId,
+                item.case_title || '',
+                item.concern || '',
+                item.file_path || '',
+                item.created_at || new Date()
+            ];
+
+            db.query(insertQuery, values, (err, result) => {
+                if (err) return callback(err);
+
+                const deleteQuery = `DELETE FROM ${table} WHERE id = ?`;
+                db.query(deleteQuery, [id], (err, result) => {
+                    if (err) return callback(err);
+                    callback(null, result);
+                });
+            });
+        });
+    },
+
+
 };
 
 module.exports = User;

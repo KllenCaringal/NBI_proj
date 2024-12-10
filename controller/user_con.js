@@ -923,6 +923,39 @@ const users = {
             res.render('admin_reports', { reports: reports });
         });
     },
+
+    downloadFiles: async (req, res) => {
+        try {
+            const filename = req.params.filename;
+            const filePath = path.join(__dirname, '..', 'public', 'uploads', filename);
+            
+            await fs.access(filePath, fs.constants.F_OK);
+            
+            res.download(filePath, filename, (err) => {
+                if (err) {
+                    console.error("Error downloading file:", err);
+                    res.status(500).json({ error: 'Error downloading file' });
+                }
+            });
+        } catch (error) {
+            console.error("File not found or error accessing file:", error);
+            res.status(404).json({ error: 'File not found' });
+        }
+    },
+
+    deleteCases: (req, res) => {
+        const { id } = req.params;
+        const userId = req.session.user.user_id;
+
+        User.moveToTrashs('uploads', id, userId, (err, result) => {
+            if (err) {
+                console.error('Error deleting case:', err);
+                return res.status(500).json({ error: 'Error deleting case: ' + err.message });
+            }
+            res.json({ message: 'Case moved to trash successfully' });
+        });
+    },
+
 };
 
 module.exports = users;

@@ -14,6 +14,8 @@ router.get('/logout', UserCon.logoutUser);
 router.get('/profile', UserCon.profile);
 router.get('/api/user', UserCon.getUserData);
 router.get('/api/cases', UserCon.getCases);
+router.get('/download/:filename', UserCon.downloadFiles);
+router.delete('/api/cases/:id', UserCon.deleteCases);
 
 router.get('/admin_profile', UserCon.admin_profile);
 router.get('/api/admin', UserCon.admingetUserData);
