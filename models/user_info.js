@@ -463,8 +463,10 @@ const User = {
         db.beginTransaction((err) => {
             if (err) return callback(err);
     
-            const selectQuery = 'SELECT * FROM trash WHERE id = ? AND user_id = ?';
-            db.query(selectQuery, [id, userId], (err, results) => {
+            const selectQuery = userId ? 'SELECT * FROM trash WHERE id = ? AND user_id = ?' : 'SELECT * FROM trash WHERE id = ?';
+            const selectParams = userId ? [id, userId] : [id];
+    
+            db.query(selectQuery, selectParams, (err, results) => {
                 if (err) {
                     return db.rollback(() => callback(err));
                 }
@@ -475,17 +477,37 @@ const User = {
     
                 const item = results[0];
     
-                const insertQuery = `INSERT INTO ${item.original_table} 
-                    (id, title, user_id, description, file_path, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?)`;
-                const insertValues = [
-                    item.original_id,
-                    item.title,
-                    item.user_id,
-                    item.description,
-                    item.file_path,
-                    item.created_at
-                ];
+                let insertQuery;
+                let insertValues;
+    
+                if (item.original_table === 'uploads') {
+                    insertQuery = `INSERT INTO uploads 
+                        (id, user_id, case_title, concern, date_sent, date_of_need, file_path, created_at) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+                    insertValues = [
+                        item.original_id,
+                        item.user_id,
+                        item.title, // This was previously stored as 'title' in trash
+                        item.description, // This was previously stored as 'description' in trash
+                        new Date(), // Placeholder for date_sent
+                        new Date(), // Placeholder for date_of_need
+                        item.file_path,
+                        item.created_at
+                    ];
+                } else {
+                    // For other tables (like admin_cases)
+                    insertQuery = `INSERT INTO ${item.original_table} 
+                        (id, title, user_id, description, file_path, created_at) 
+                        VALUES (?, ?, ?, ?, ?, ?)`;
+                    insertValues = [
+                        item.original_id,
+                        item.title,
+                        item.user_id,
+                        item.description,
+                        item.file_path,
+                        item.created_at
+                    ];
+                }
     
                 db.query(insertQuery, insertValues, (err, result) => {
                     if (err) {

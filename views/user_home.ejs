@@ -123,7 +123,7 @@
                                     }) %>
                                 </span>
                                 <% if (caseItem.file_name) { %>
-                                    <a href="/download/<%= encodeURIComponent(caseItem.file_name) %>" class="download-link">Download</a>
+                                    <a href="/download/<%= encodeURIComponent(caseItem.file_name) %>" class="download-link" onclick="return confirm('Download this file?')">Download</a>
                                 <% } %>
                             </div>
                         </div>

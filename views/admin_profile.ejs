@@ -185,29 +185,9 @@
     }
     
     const fileNameFromPath = filePath.split('/').pop();
-    const downloadUrl = `/download/${encodeURIComponent(fileNameFromPath)}?type=admin_case`;
+    const downloadUrl = `/download/${encodeURIComponent(fileNameFromPath)}`;
     
-    fetch(downloadUrl)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.blob();
-        })
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = fileName || fileNameFromPath;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-        })
-        .catch(error => {
-            console.error('Error downloading file:', error);
-            alert('Failed to download file. Please try again later.');
-        });
+    window.location.href = downloadUrl;
 }
 
         function deleteCase(id) {

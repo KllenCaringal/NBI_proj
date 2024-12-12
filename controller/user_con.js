@@ -269,24 +269,41 @@ const users = {
         });
     },
 
-    downloadFile: (req, res) => {
-        const filename = req.params.filename;
-        const filePath = path.join(__dirname, '..', 'public', 'admin_cases', filename);
+    downloadFile: async (req, res) => {
+        try {
+            const filename = req.params.filename;
+            let filePath;
 
-        fs.access(filePath, fs.constants.F_OK)
-            .then(() => {
-                res.download(filePath, filename, (err) => {
-                    if (err) {
-                        console.error("Error downloading file:", err);
-                        res.status(500).send('Error downloading file');
-                    }
-                });
-            })
-            .catch((err) => {
-                console.error("File not found:", err);
-                res.status(404).send('File not found');
+            // Check if it's an admin case or user upload
+            if (req.query.type === 'admin_case') {
+                filePath = path.join(__dirname, '..', 'public', 'admin_cases', filename);
+            } else {
+                filePath = path.join(__dirname, '..', 'public', 'uploads', filename);
+            }
+
+            // Check if file exists
+            await fs.access(filePath, fs.constants.F_OK);
+
+            // Set Content-Disposition header to force download
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+            // Stream the file
+            const fileStream = fs.createReadStream(filePath);
+            fileStream.pipe(res);
+
+            fileStream.on('error', (err) => {
+                console.error("Error streaming file:", err);
+                if (!res.headersSent) {
+                    res.status(500).send('Error downloading file');
+                }
             });
+
+        } catch (error) {
+            console.error("File not found or error accessing file:", error);
+            res.status(404).send('File not found');
+        }
     },
+
 
     user_page: (req, res) => {
         res.render('user_page', { user: req.session.user });
@@ -734,7 +751,7 @@ const users = {
         });
     },
     
-    restoreTrashItem: (req, res) => {
+    restoreTrashItems: (req, res) => {
         const { id } = req.params;
         const userId = req.session.user.user_id;
     
@@ -1010,24 +1027,7 @@ const users = {
         });
     },
 
-    downloadFiless: (req, res) => {
-        const filename = req.params.filename;
-        const filePath = path.join(__dirname, '..', 'public', 'admin_cases', filename);
-
-        fs.access(filePath, fs.constants.F_OK)
-            .then(() => {
-                res.download(filePath, filename, (err) => {
-                    if (err) {
-                        console.error("Error downloading file:", err);
-                        res.status(500).send('Error downloading file');
-                    }
-                });
-            })
-            .catch((err) => {
-                console.error("File not found:", err);
-                res.status(404).send('File not found');
-            });
-    },
+   
 
 };
 

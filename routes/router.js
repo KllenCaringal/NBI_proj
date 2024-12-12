@@ -40,7 +40,7 @@ router.get('/edit_profile', UserCon.edit_profile);
 router.post('/api/updateProfile', UserCon.updateProfile);
 
 router.get('/user_home', UserCon.user_home);
-router.get('/download/:filename', UserCon.downloadFiless);
+router.get('/download/:filename', UserCon.downloadFile);
 router.delete('/api/deletecase/:id', UserCon.delCase);
 
 router.get('/user_upload', UserCon.user_upload);
@@ -56,7 +56,7 @@ router.post('/admin-addcase', UserCon.admin_addcase);
 
 router.get('/user-trash', UserCon.user_trash);
 router.get('/api/trash', UserCon.getTrashItems);
-router.post('/api/trash/:id/restore', UserCon.restoreTrashItem);
+router.post('/api/trash/:id/restore', UserCon.restoreTrashItems);
 router.delete('/api/trash/:id', UserCon.deleteTrashItem);
 router.delete('/api/cases/:id', UserCon.deleteCase);
 
