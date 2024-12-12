@@ -739,6 +739,29 @@ const User = {
         });
     },
 
+    getUserCount: (callback) => {
+        const query = 'SELECT COUNT(*) as count FROM users';
+        db.query(query, (err, results) => {
+            if (err) return callback(err, null);
+            return callback(null, results[0].count);
+        });
+    },
+
+    getUploadCount: (callback) => {
+        const query = 'SELECT COUNT(*) as count FROM uploads';
+        db.query(query, (err, results) => {
+            if (err) return callback(err, null);
+            return callback(null, results[0].count);
+        });
+    },
+
+    getAdminCaseCount: (callback) => {
+        const query = 'SELECT COUNT(*) as count FROM admin_cases';
+        db.query(query, (err, results) => {
+            if (err) return callback(err, null);
+            return callback(null, results[0].count);
+        });
+    },
 
 };
 

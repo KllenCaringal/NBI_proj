@@ -68,4 +68,5 @@ router.post('/api/admin-notifications/:id/read', UserCon.markAdminNotificationAs
 router.delete('/api/admin-notifications/:id', UserCon.deleteAdminNotification);
 
 router.get('/admin-reports', UserCon.admin_reports);
+router.get('/api/search', UserCon.searchCases);
 module.exports = router;

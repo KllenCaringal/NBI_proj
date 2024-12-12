@@ -293,7 +293,35 @@ const users = {
     },
     
     admin_dashboard: (req, res) => {
-        res.render('admin_dashboard');
+        Promise.all([
+            new Promise((resolve, reject) => {
+                User.getUserCount((err, count) => {
+                    if (err) reject(err);
+                    else resolve(count);
+                });
+            }),
+            new Promise((resolve, reject) => {
+                User.getUploadCount((err, count) => {
+                    if (err) reject(err);
+                    else resolve(count);
+                });
+            }),
+            new Promise((resolve, reject) => {
+                User.getAdminCaseCount((err, count) => {
+                    if (err) reject(err);
+                    else resolve(count);
+                });
+            })
+        ]).then(([userCount, uploadCount, adminCaseCount]) => {
+            res.render('admin_dashboard', {
+                userCount,
+                uploadCount,
+                adminCaseCount
+            });
+        }).catch(err => {
+            console.error(err);
+            res.status(500).send('Error fetching dashboard data');
+        });
     },
 
     admin_users: (req, res) => {
@@ -953,6 +981,19 @@ const users = {
                 return res.status(500).json({ error: 'Error deleting case: ' + err.message });
             }
             res.json({ message: 'Case moved to trash successfully' });
+        });
+    },
+
+    searchCases: (req, res) => {
+        const userId = req.session.user.user_id;
+        const searchTerm = req.query.term;
+    
+        User.searchCases(userId, searchTerm, (err, results) => {
+            if (err) {
+                console.error('Error searching cases:', err);
+                return res.status(500).json({ error: 'An error occurred while searching cases' });
+            }
+            res.json(results);
         });
     },
 

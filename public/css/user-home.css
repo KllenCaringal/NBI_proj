@@ -67,7 +67,7 @@ body {
     width: 300px;
     font-size: 14px;
     background-color: var(--secondary-color);
-    color: var(--text-color);
+    font: black;
 }
 
 .profile-settings {

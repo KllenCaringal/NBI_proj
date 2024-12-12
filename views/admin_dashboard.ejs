@@ -6,7 +6,6 @@
   <title>NBI Administrative Dashboard</title>
   <link rel="stylesheet" href="/css/admin_dashboard.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Original styles remain unchanged -->
 </head>
 <body>
   
@@ -38,126 +37,195 @@
     <div class="header">NBI Administrative Control Panel</div>
 
     <div class="card">
-      <div class="card-title">System Overview</div>
+      <div class="card-title">User Statistics</div>
       <div class="card-content">
-        Welcome to the NBI Administrative Dashboard. This control panel provides comprehensive oversight of system operations, personnel management, and case tracking statistics.
+        <canvas id="userChart" width="400" height="200"></canvas>
       </div>
     </div>
 
-    <div class="card" style="background-color: #bfe9ff;">
-      <div class="card-title">Current System Statistics</div>
-      <div class="card-content">
-        <canvas id="statisticsChart" width="400" height="200"></canvas>
-        <div id="lastUpdate" style="text-align: right; font-size: 12px; color: #666;"></div>
+    <div class="card">
+      <div class="card-title">Case Statistics</div>
+      <div class="card-content chart-container">
+        <div class="chart-wrapper">
+          <canvas id="uploadChart"></canvas>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="adminCaseChart"></canvas>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    // Function to format numbers with commas
-    function formatNumber(num) {
-      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
-    // Function to update the last updated timestamp
-    function updateTimestamp() {
-      const now = new Date();
-      document.getElementById('lastUpdate').textContent = 
-        `Last Updated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
-    }
-
-    // Function to fetch data from server (simulated here)
-    async function fetchStatistics() {
-      // In a real implementation, this would be an API call
-      // For demonstration, generating random numbers
-      return {
-        activeCases: Math.floor(Math.random() * (500 - 300 + 1)) + 300,
-        activeAgents: Math.floor(Math.random() * (200 - 150 + 1)) + 150,
-        pendingReports: Math.floor(Math.random() * (100 - 50 + 1)) + 50,
-        dailyClearance: Math.floor(Math.random() * (1000 - 500 + 1)) + 500
-      };
-    }
-
-    // Function to update the chart
-    async function updateChart() {
-      const stats = await fetchStatistics();
-      
-      const ctx = document.getElementById('statisticsChart').getContext('2d');
-      
-      // Destroy existing chart if it exists
-      if (window.mainChart) {
-        window.mainChart.destroy();
-      }
-
-      // Create new chart
-      window.mainChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: [
-            'Active Cases',
-            'Active Field Agents',
-            'Pending Reports',
-            'Daily Clearance Applications'
-          ],
-          datasets: [{
-            label: 'Current Statistics',
-            data: [
-              stats.activeCases,
-              stats.activeAgents,
-              stats.pendingReports,
-              stats.dailyClearance
-            ],
-            backgroundColor: [
-              'rgba(54, 162, 235, 0.2)',
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(255, 206, 86, 0.2)',
-              'rgba(75, 192, 192, 0.2)'
-            ],
-            borderColor: [
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 99, 132, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)'
-            ],
-            borderWidth: 1
-          }]
+    // Common chart options
+    const commonOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            usePointStyle: true,
+            padding: 20,
+            font: {
+              size: 14
+            }
+          }
         },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return formatNumber(value);
-                }
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleFont: {
+            size: 16,
+            weight: 'bold'
+          },
+          bodyFont: {
+            size: 14
+          },
+          padding: 15,
+          cornerRadius: 5,
+          displayColors: false
+        }
+      }
+    };
+
+    // User Bar Chart
+    const userCtx = document.getElementById('userChart').getContext('2d');
+    new Chart(userCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Registered Users'],
+        datasets: [{
+          label: 'Number of Users',
+          data: [<%= userCount %>],
+          backgroundColor: 'rgba(54, 162, 235, 0.8)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Users',
+              font: {
+                size: 14,
+                weight: 'bold'
+              }
+            },
+            ticks: {
+              font: {
+                size: 12
               }
             }
           },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return ` ${formatNumber(context.raw)}`;
-                }
+          x: {
+            ticks: {
+              font: {
+                size: 14,
+                weight: 'bold'
               }
             }
           }
+        },
+        plugins: {
+          ...commonOptions.plugins,
+          title: {
+            display: true,
+            text: 'Total Registered Users',
+            font: {
+              size: 18,
+              weight: 'bold'
+            },
+            padding: {
+              top: 10,
+              bottom: 30
+            }
+          }
         }
-      });
+      }
+    });
 
-      updateTimestamp();
-    }
+    // Upload Pie Chart
+    const uploadCtx = document.getElementById('uploadChart').getContext('2d');
+    new Chart(uploadCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Uploads', 'Other'],
+        datasets: [{
+          data: [<%= uploadCount %>, 100 - <%= uploadCount %>],
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(200, 200, 200, 0.8)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(200, 200, 200, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        ...commonOptions,
+        cutout: '60%',
+        plugins: {
+          ...commonOptions.plugins,
+          title: {
+            display: true,
+            text: 'Upload Cases Distribution',
+            font: {
+              size: 18,
+              weight: 'bold'
+            },
+            padding: {
+              top: 10,
+              bottom: 30
+            }
+          }
+        }
+      }
+    });
 
-    // Initial update
-    updateChart();
-
-    // Update every 5 minutes
-    setInterval(updateChart, 300000);
-
-    // Add click handler to manually refresh
-    document.querySelector('.card-title').addEventListener('click', function() {
-      updateChart();
+    // Admin Case Pie Chart
+    const adminCaseCtx = document.getElementById('adminCaseChart').getContext('2d');
+    new Chart(adminCaseCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Admin Cases', 'Other'],
+        datasets: [{
+          data: [<%= adminCaseCount %>, 100 - <%= adminCaseCount %>],
+          backgroundColor: [
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(200, 200, 200, 0.8)'
+          ],
+          borderColor: [
+            'rgba(75, 192, 192, 1)',
+            'rgba(200, 200, 200, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        ...commonOptions,
+        cutout: '60%',
+        plugins: {
+          ...commonOptions.plugins,
+          title: {
+            display: true,
+            text: 'Admin Cases Distribution',
+            font: {
+              size: 18,
+              weight: 'bold'
+            },
+            padding: {
+              top: 10,
+              bottom: 30
+            }
+          }
+        }
+      }
     });
   </script>
 </body>

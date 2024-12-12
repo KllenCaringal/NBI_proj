@@ -66,8 +66,9 @@ body {
   border-radius: 20px;
   width: 300px;
   font-size: 14px;
-  background-color: var(--secondary-color);
-  color: var(--text-color);
+  background-color: rgb(255, 255, 255);
+  font:black;
+ 
 }
 
 .profile-settings {
