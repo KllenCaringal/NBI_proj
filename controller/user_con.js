@@ -997,6 +997,38 @@ const users = {
         });
     },
 
+    delCase: (req, res) => {
+        const { id } = req.params;
+        const userId = req.session.user.user_id;
+    
+        User.moveToTrash('admin_cases', id, userId, (err, result) => {
+            if (err) {
+                console.error('Error deleting case:', err);
+                return res.status(500).json({ error: 'Error deleting case' });
+            }
+            res.json({ message: 'Case deleted successfully' });
+        });
+    },
+
+    downloadFiless: (req, res) => {
+        const filename = req.params.filename;
+        const filePath = path.join(__dirname, '..', 'public', 'admin_cases', filename);
+
+        fs.access(filePath, fs.constants.F_OK)
+            .then(() => {
+                res.download(filePath, filename, (err) => {
+                    if (err) {
+                        console.error("Error downloading file:", err);
+                        res.status(500).send('Error downloading file');
+                    }
+                });
+            })
+            .catch((err) => {
+                console.error("File not found:", err);
+                res.status(404).send('File not found');
+            });
+    },
+
 };
 
 module.exports = users;

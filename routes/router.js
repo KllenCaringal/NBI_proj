@@ -40,7 +40,8 @@ router.get('/edit_profile', UserCon.edit_profile);
 router.post('/api/updateProfile', UserCon.updateProfile);
 
 router.get('/user_home', UserCon.user_home);
-router.get('/download/:filename', UserCon.downloadFile);
+router.get('/download/:filename', UserCon.downloadFiless);
+router.delete('/api/deletecase/:id', UserCon.delCase);
 
 router.get('/user_upload', UserCon.user_upload);
 router.get('/user_notifications', UserCon.user_notifications);
