@@ -272,6 +272,28 @@ body {
     color: var(--text-secondary);
 }
 
+.pdf-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 20px;
+    background-color: #1e1e1e;
+    color: var(--text-color);
+}
+
+.pdf-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.pdf-info {
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-top: 8px;
+}
+
 @media (max-width: 768px) {
     .search-container {
         display: none;

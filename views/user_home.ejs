@@ -96,6 +96,7 @@
                                     let fileIcon = '📄';
                                     const ext = caseItem.file_name ? caseItem.file_name.split('.').pop().toLowerCase() : '';
                                     if (['js', 'jsx', 'ts', 'tsx'].includes(ext)) fileIcon = '📝';
+                                    if (ext === 'pdf') fileIcon = '📄';
                                 %>
                                 <span class="file-icon"><%= fileIcon %></span>
                                 <span class="file-name"><%= caseItem.file_name || caseItem.title %></span>
@@ -107,8 +108,20 @@
                             </div>
                         </div>
                         <div class="file-preview">
-                            <% if (caseItem.fileContent) { %>
-                                <pre class="code-preview"><code class="language-javascript"><%= caseItem.fileContent.substring(0, 200) %>...</code></pre>
+                            <% if (caseItem.file_name) { %>
+                                <% 
+                                const ext = caseItem.file_name.split('.').pop().toLowerCase();
+                                if (ext === 'pdf') { %>
+                                    <div class="pdf-preview">
+                                        <div class="pdf-icon">📄</div>
+                                        <p>PDF Document</p>
+                                        <p class="pdf-info">Click download to view</p>
+                                    </div>
+                                <% } else if (caseItem.fileContent) { %>
+                                    <pre class="code-preview"><code class="language-javascript"><%= caseItem.fileContent.substring(0, 200) %>...</code></pre>
+                                <% } else { %>
+                                    <div class="no-preview">No preview available</div>
+                                <% } %>
                             <% } else { %>
                                 <div class="no-preview">No preview available</div>
                             <% } %>
@@ -282,3 +295,4 @@
     </script>
 </body>
 </html>
+
