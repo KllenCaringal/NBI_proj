@@ -1034,7 +1034,29 @@ const users = {
                 console.error('Error resolving report:', err);
                 return res.status(500).json({ success: false, error: 'Error resolving report' });
             }
-            res.json({ success: true });
+            
+            // Fetch the report details to get the user_id
+            User.getReportById(reportId, (err, report) => {
+                if (err) {
+                    console.error('Error fetching report details:', err);
+                    return res.status(500).json({ success: false, error: 'Error fetching report details' });
+                }
+                
+                // Create a notification for the user
+                const notificationData = {
+                    user_id: report.user_id,
+                    type: 'report_resolved',
+                    message: `Your report (ID: ${reportId}) has been resolved.`
+                };
+                
+                User.addNotification(notificationData, (err, notificationResult) => {
+                    if (err) {
+                        console.error('Error creating notification:', err);
+                        // We still return success even if notification creation fails
+                    }
+                    res.json({ success: true });
+                });
+            });
         });
     },
 

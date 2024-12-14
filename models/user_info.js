@@ -792,6 +792,14 @@ const User = {
         });
     },
 
+    getReportById: (reportId, callback) => {
+        const query = 'SELECT * FROM reports WHERE report_id = ?';
+        db.query(query, [reportId], (err, results) => {
+            if (err) return callback(err, null);
+            return callback(null, results[0]);
+        });
+    },
+
 };
 
 module.exports = User;

@@ -30,6 +30,13 @@
         .notification-item.read {
             opacity: 0.6;
         }
+        .notification-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        .resolved-icon {
+            color: #4CAF50;
+        }
     </style>
 </head>
 <body>
@@ -108,13 +115,22 @@
                     notifications.forEach(notification => {
                         const notificationItem = document.createElement('div');
                         notificationItem.className = `notification-item ${notification.is_read ? 'read' : ''}`;
+
+                        let iconClass = 'notification-icon';
+                        let icon = '🔔';
+
+                        if (notification.type === 'report_resolved') {
+                            icon = '✅';
+                            iconClass += ' resolved-icon';
+                        }
+
                         notificationItem.innerHTML = `
-                            <div class="notification-icon">🔔</div>
+                            <div class="${iconClass}">${icon}</div>
                             <div class="notification-content">
-                                <div class="notification-title">${notification.type}</div>
+                                <div class="notification-title">${notification.type === 'report_resolved' ? 'Report Resolved' : notification.type}</div>
                                 <div class="notification-message">${notification.message}</div>
+                                <div class="notification-time">${new Date(notification.created_at).toLocaleString()}</div>
                             </div>
-                            <div class="notification-time">${new Date(notification.created_at).toLocaleString()}</div>
                             <div class="notification-actions">
                                 ${!notification.is_read ? `<button class="btn btn-read" onclick="markAsRead(${notification.id})">Mark as Read</button>` : ''}
                                 <button class="btn btn-delete" onclick="deleteNotification(${notification.id})">Delete</button>
@@ -206,3 +222,4 @@
     </script>
 </body>
 </html>
+
