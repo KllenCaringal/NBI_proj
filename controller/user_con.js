@@ -1027,7 +1027,17 @@ const users = {
         });
     },
 
-   
+    resolveReport: (req, res) => {
+        const reportId = req.params.id;
+        User.resolveReport(reportId, (err, result) => {
+            if (err) {
+                console.error('Error resolving report:', err);
+                return res.status(500).json({ success: false, error: 'Error resolving report' });
+            }
+            res.json({ success: true });
+        });
+    },
+
 
 };
 

@@ -333,7 +333,6 @@ const User = {
         });
     },
     
-    
     updateProfile: (userId, updatedData, callback) => {
         const query = `
             UPDATE users 
@@ -782,6 +781,14 @@ const User = {
         db.query(query, (err, results) => {
             if (err) return callback(err, null);
             return callback(null, results[0].count);
+        });
+    },
+
+    resolveReport: (reportId, callback) => {
+        const query = 'UPDATE reports SET status = "resolved" WHERE report_id = ?';
+        db.query(query, [reportId], (err, result) => {
+            if (err) return callback(err);
+            callback(null, result);
         });
     },
 

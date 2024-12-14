@@ -46,34 +46,44 @@
                 <div class="search-container">
                     <input type="text" id="searchInput" placeholder="Search reports...">
                 </div>
-                <table id="reportsTable">
-                    <thead>
-                        <tr>
-                            <th>Report ID</th>
-                            <th>User ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Inquiry Type</th>
-                            <th>Status</th>
-                            <th>Created At</th>
-                            <th>Message</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% reports.forEach(report => { %>
+                <div class="table-container">
+                    <table id="reportsTable">
+                        <thead>
                             <tr>
-                                <td><%= report.report_id %></td>
-                                <td><%= report.user_id %></td>
-                                <td><%= report.firstname %> <%= report.lastname %></td>
-                                <td><%= report.email %></td>
-                                <td><%= report.inquiry_type %></td>
-                                <td><%= report.status %></td>
-                                <td><%= new Date(report.created_at).toLocaleString() %></td>
-                                <td><%= report.message %></td>
+                                <th>Report ID</th>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Inquiry Type</th>
+                                <th>Status</th>
+                                <th>Created At</th>
+                                <th>Message</th>
+                                <th>Action</th>
                             </tr>
-                        <% }); %>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <% reports.forEach(report => { %>
+                                <tr>
+                                    <td data-label="Report ID"><%= report.report_id %></td>
+                                    <td data-label="User ID"><%= report.user_id %></td>
+                                    <td data-label="Name"><%= report.firstname %> <%= report.lastname %></td>
+                                    <td data-label="Email"><%= report.email %></td>
+                                    <td data-label="Inquiry Type"><%= report.inquiry_type %></td>
+                                    <td data-label="Status" class="status-cell"><%= report.status %></td>
+                                    <td data-label="Created At"><%= new Date(report.created_at).toLocaleString() %></td>
+                                    <td data-label="Message"><%= report.message %></td>
+                                    <td data-label="Action">
+                                        <% if (report.status === 'pending') { %>
+                                            <button class="resolve-btn" data-report-id="<%= report.report_id %>">Resolve</button>
+                                        <% } else { %>
+                                            Resolved
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -109,6 +119,37 @@
                 }
             });
         });
+
+        // Resolve button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const resolveButtons = document.querySelectorAll('.resolve-btn');
+            resolveButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const reportId = this.getAttribute('data-report-id');
+                    fetch(`/api/resolve-report/${reportId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.textContent = 'Resolved';
+                            this.disabled = true;
+                            this.closest('tr').querySelector('.status-cell').textContent = 'resolved';
+                        } else {
+                            alert('Failed to resolve the report. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                    });
+                });
+            });
+        });
     </script>
 </body>
 </html>
+

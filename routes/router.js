@@ -70,4 +70,6 @@ router.delete('/api/admin-notifications/:id', UserCon.deleteAdminNotification);
 
 router.get('/admin-reports', UserCon.admin_reports);
 router.get('/api/search', UserCon.searchCases);
+router.post('/api/resolve-report/:id', UserCon.resolveReport);
+
 module.exports = router;
